@@ -48,10 +48,10 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-$db['default']['hostname'] = 'localhost';
-$db['default']['username'] = '';
-$db['default']['password'] = '';
-$db['default']['database'] = '';
+$db['default']['hostname'] = 'dev.monterey-j.com';
+$db['default']['username'] = 'nccp_admin';
+$db['default']['password'] = 'd7yt$7s2Ol9!5~742ee';
+$db['default']['database'] = 'nccp';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;

@@ -1,0 +1,77 @@
+/*
+Theme Name: NCCP Mobile
+Theme URI: http://monterey-j.com
+Author: Tim Shaw
+Author URI: http://monterey-j.com
+Description: The main theme for the NCCP Mobile project.
+Version: 1.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Tags: light, mobile, two-columns, flexible-width, custom-background, custom-header, custom-menu
+*/
+
+/* Reset all the junky CSS yo */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td { border: 0; font-family: inherit; font-size: 100%; font-style: inherit; font-weight: inherit; margin: 0; outline: 0; padding: 0; vertical-align: baseline; }
+:focus { outline: 0; }
+body { background: #fff; line-height: 1; margin: 0; padding: 0; }
+ol, ul { list-style: none; }
+table {	border-collapse: separate; border-spacing: 0; }
+caption, th, td { font-weight: normal; text-align: left; }
+blockquote:before, blockquote:after, q:before, q:after { content: ""; }
+blockquote, q {	quotes: "" ""; }
+a img {	border: 0; }
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section { display: block; }
+li { list-style: none; }
+
+/* Tag-level styles */
+
+div { position: relative; }
+body {}
+h1, h2, h3, h4 {}
+
+/* Fluid structure */
+
+@media (max-width: 800px) {
+	
+
+
+}
+
+@media (max-width: 650px) {
+	
+
+
+}
+
+@media (max-width: 450px) {
+	
+
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+	
+	
+
+}
+
+
+/* Print */
+
+@media print {
+
+	/* Stuff */
+
+}
+
+/* IE8 */ 
+ 
+#ie8 {} 

@@ -25,7 +25,7 @@ define('DB_USER', 'nccp_admin');
 define('DB_PASSWORD', 'd7yt$7s2Ol9!5~742ee');
 
 /** MySQL hostname */
-define('DB_HOST', 'localhost');
+define('DB_HOST', 'dev.monterey-j.com');
 
 /** Database Charset to use in creating database tables. */
 define('DB_CHARSET', 'utf8');

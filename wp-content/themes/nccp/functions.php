@@ -1,6 +1,29 @@
 <?php
 
 //////////////////////////////////////////////////////////////////
+// Theme code ////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+
+// Register scripts/styles
+
+wp_register_script( 'html5', get_template_directory_uri() . '/js/html5.js' );
+wp_register_script( 'jquery', get_template_directory_uri() . '/js/jquery-1.8.3.min.js' );
+wp_register_script( 'jquery-mobile', get_template_directory_uri() . '/js/jquery.mobile-1.2.0.min.js', array( 'jquery' ) );
+wp_register_script( 'js-main', get_template_directory_uri() . '/js/main.js', array( 'jquery', 'jquery-mobile' ) );
+
+wp_register_style( 'font-titillium', 'http://fonts.googleapis.com/css?family=Titillium+Web:400,400italic,600,700,600italic,200' );
+wp_register_style( 'style-main', get_stylesheet_directory_uri() . '/style.css' );
+
+// Enqueue scripts/styles
+
+wp_enqueue_script( 'jquery' );
+wp_enqueue_script( 'jquery-mobile' );
+wp_enqueue_script( 'js-main' );
+
+wp_enqueue_style( 'font-titillium' );
+wp_enqueue_style( 'style-main' );
+
+//////////////////////////////////////////////////////////////////
 // Theme functions ///////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 

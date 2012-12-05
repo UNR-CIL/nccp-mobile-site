@@ -12,30 +12,54 @@ class API extends CI_Controller {
 
 	}
 
-	public function update_sensors () {
-		$sensors = $this->get_sensors();
-
-		//$data = new SoapClient( 'http://sensor.nevada.edu/Services/DataRetrieval/DataRetrieval.svc?wsdl' );
-
-		//print_r( $data->__getFunctions() );
-
-		//echo "update";
-	}
-
+	// Returns all time zones in the system
 	public function get_time_zones () {
+		return $this->return_results( $this->db->query( "SELECT * FROM ci_timezones" ) );		
+	}
+
+	// id is a string specifying the time zone (ex. 'Pacific Standard Time')
+	// Returns an offset and various names for the time zone
+	public function get_time_zone ( $id ) {
+		return $this->return_results( $this->db->query( sprintf( 
+			"SELECT * FROM ci_timezones WHERE `nccp_timezone_id` = '%s'",
+			$id 
+		)));
+	}
+
+	// Returns all current sensors in database
+	// Note that this is probably a bad idea because there
+	// are over 2000 sensors on average
+	public function get_all_sensors () {
+		return $this->return_results( $this->db->query( sprintf(
+			"SELECT * FROM ci_logical_sensor"
+		)));
+	}
+
+	// Returns sensors based on specified search properties
+	public function get_sensors ( $args ) {
+		
+	}
+
+	// Get single sensor based on specified search properties
+	public function get_sensor ( $args ) {
 
 	}
 
-	public function get_sensors () {
-		$measurements = new SoapClient( 'http://sensor.nevada.edu/Services/Measurements/Measurement.svc?wsdl' );
+	// Get sensor deployment.  This includes multiple sensors
+	// per deployment.
+	public function get_deployment ( $deployment_id ) {
 
-		$sensors = $measurements->ListLogicalSensorInformation();
-
-		print_r( $sensors->ListLogicalSensorInformationResult->LogicalSensor[0] );
 	}
 
-	public function get_sensor ( $sensor_id ) {
+	// Get sensor property based on search properties.  Note that property ID 
+	// corresponds to multiple sensors
+	public function get_property ( $args ) {
 
+	}
+
+	// Checks query object for results and returns results if so or false if not
+	public function return_results ( $query_object ) {
+		return $query_object->num_rows() > 0 ? $query_object->result() : false;
 	}
 
 }

@@ -4,7 +4,7 @@ class MobileTools {
 
 	// Functions
 	public function __construct () {
-
+		// Placeholder
 	}
 
 	public function detect_mobile ( $return_info = false ) { // Pass true if more specific info is needed

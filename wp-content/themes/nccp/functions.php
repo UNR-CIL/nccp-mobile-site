@@ -4,28 +4,45 @@
 // Theme code ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 
-// Register scripts/styles
+// Register scripts/styles with the proper authorities
 
-wp_register_script( 'html5', get_template_directory_uri() . '/js/html5.js' );
-wp_register_script( 'jquery', get_template_directory_uri() . '/js/jquery-1.8.3.min.js' );
-wp_register_script( 'jquery-mobile', get_template_directory_uri() . '/js/jquery.mobile-1.2.0.min.js', array( 'jquery' ) );
-wp_register_script( 'js-main', get_template_directory_uri() . '/js/main.js', array( 'jquery', 'jquery-mobile' ) );
+if ( ! is_admin() ) 
+	add_action( 'wp_enqueue_scripts', 'theme_styles' ); // Front
+else
+	add_action( 'wp_enqueue_scripts', 'admin_styles' ); // Back
 
-wp_register_style( 'font-titillium', 'http://fonts.googleapis.com/css?family=Titillium+Web:400,400italic,600,700,600italic,200' );
-wp_register_style( 'style-main', get_stylesheet_directory_uri() . '/style.css' );
+if ( ! is_admin() ) 
+	add_action( 'wp_enqueue_scripts', 'theme_scripts' ); // Front
+else
+	add_action( 'wp_enqueue_scripts', 'admin_scripts' ); // Back
 
-// Enqueue scripts/styles
-
-wp_enqueue_script( 'jquery' );
-wp_enqueue_script( 'jquery-mobile' );
-wp_enqueue_script( 'js-main' );
-
-wp_enqueue_style( 'font-titillium' );
-wp_enqueue_style( 'style-main' );
 
 //////////////////////////////////////////////////////////////////
 // Theme functions ///////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
+
+// WP action functions
+
+function theme_styles () {
+	wp_enqueue_style( 'font-titillium', 'http://fonts.googleapis.com/css?family=Titillium+Web:400,400italic,600,700,600italic,200' );
+	wp_enqueue_style( 'style-main', get_stylesheet_directory_uri() . '/style.css' );
+}
+
+function admin_styles () {
+	//wp_enqueue_style( 'style-main' );
+}
+
+function theme_scripts () {
+	wp_enqueue_script( 'jquery', get_template_directory_uri() . '/js/jquery-1.8.3.min.js' );
+	wp_enqueue_script( 'jquery-mobile', get_template_directory_uri() . '/js/jquery.mobile-1.2.0.min.js', array( 'jquery' ) );
+	wp_enqueue_script( 'js-main', get_template_directory_uri() . '/js/main.js', array( 'jquery', 'jquery-mobile' ) );
+}
+
+function admin_scripts () {
+	wp_enqueue_script( 'jquery', get_template_directory_uri() . '/js/jquery-1.8.3.min.js' );
+}
+
+// Helper functions
 
 function detect_mobile ( $return_info = false ) { // Pass true if more specific info is needed
 

@@ -14,6 +14,10 @@
  * @package WordPress
  */
 
+// Hardcoded site URLs - this is just for dev purposes
+define( 'WP_HOME','http://nccp.local' );
+define( 'WP_SITEURL','http://nccp.local' );
+
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
 define('DB_NAME', 'nccp');

@@ -1,9 +1,10 @@
 
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-// Raw calls from the NCCP API
+// Raw calls from the NCCP API - Data service
 // Note that most of these tend to be REALLY SLOW, so they generally
 // shouldn't be called publicly, use the regular API class instead
+// This API assumes data is already populated from the database using api_raw_measurements calls
 
 class API_Raw_Data extends CI_Controller {
 
@@ -16,10 +17,8 @@ class API_Raw_Data extends CI_Controller {
 		$this->data_client = new SoapClient( 'http://sensor.nevada.edu/Services/DataRetrieval/DataRetrieval.svc?wsdl' );
 	}
 
-	public function update_sensors () {
-
-		$sensors = $this->get_sensors();
-
+	public function build_sensor_specification () {
+		
 	}
 
 	// Retrieve list of available time zones in the NCCP API
@@ -40,19 +39,6 @@ class API_Raw_Data extends CI_Controller {
 
 	}
 
-	public function convert_from ( $unit_id ) {
-		$id = $this->uri->segment( 3 ) ? $this->uri->segment( 3 ) : $unit_id;
-
-		$conversions = $this->measurements_client->ListAvailableConversionsFrom( array( 'originalUnitId' => $id ) );
-		print_r( $conversions );
-		
-	}
-
-	public function convert_to ( $unit_id ) {
-		$id = $this->uri->segment( 3 ) ? $this->uri->segment( 3 ) : $unit_id;
-
-		$conversions = $this->measurements_client->ListAvailableConversionsTo( array( 'newUnitId' => $id ) );
-		print_r( $conversions );
-	}
+	
 
 }

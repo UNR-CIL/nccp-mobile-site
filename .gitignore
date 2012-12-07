@@ -2,3 +2,5 @@ design
 *.psd
 bak
 generated
+notes.txt
+wp-config.php

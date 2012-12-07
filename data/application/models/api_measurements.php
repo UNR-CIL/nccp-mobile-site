@@ -1,18 +1,18 @@
 
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 // Raw calls from the NCCP API - Measurements service
 // Note that most of these tend to be REALLY SLOW, so they generally
 // shouldn't be called publicly, use the regular API class instead
 
-class API_Raw_Measurements extends CI_Controller {
+class API_Measurements extends CI_Model {
 
 	private $measurements_client;
 
 	public function __construct () {
 
 		parent::__construct();
-		$this->load->database();
+		//$this->load->database();
 
 		$this->measurements_client = new SoapClient( 'http://sensor.nevada.edu/Services/Measurements/Measurement.svc?wsdl' );
 

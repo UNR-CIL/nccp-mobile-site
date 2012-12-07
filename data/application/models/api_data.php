@@ -6,14 +6,17 @@
 // shouldn't be called publicly, use the regular API class instead
 // This API assumes data is already populated from the database using api_raw_measurements calls
 
-class Data extends CI_Controller {
+class Api_data extends CI_Model {
+
+	private $data_client;
 
 	public function __construct () {
 
 		parent::__construct();
+		$this->load->database();
 
-		$this->load->model('Api_data');
-
+		$this->data_client = new SoapClient( 'http://sensor.nevada.edu/Services/DataRetrieval/DataRetrieval.svc?wsdl' );
+	
 	}
 
 	public function build_sensor_specification () {

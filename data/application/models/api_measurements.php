@@ -39,14 +39,17 @@ class Api_measurements extends CI_Model {
 				preg_match( "/\((.+)\s(.+)\s(.+)\)/i", $sensor->LocationWkt, $coords );
 				
 				// Insert the main sensor data
+				$now = new DateTime();
+
 				$this->db->query( sprintf(
-					"INSERT INTO ci_logical_sensor VALUES ( NULL, %d, '%s', '%s', '%s', '%s', %d )",
+					"INSERT INTO ci_logical_sensor VALUES ( NULL, %d, '%s', '%s', '%s', '%s', %d, '%s' )",
 					$sensor->Id,
 					$sensor->MeasurementInterval,
 					$coords[2],
 					$coords[1],
 					$coords[3],
-					$sensor->SurfaceAltitudeOffset
+					$sensor->SurfaceAltitudeOffset,
+					$now->format( "Y-m-d H:i:s" )
 				));
 
 				// Insert Deployment info

@@ -16,15 +16,22 @@ class Data extends CI_Controller {
 
 	}
 
-	public function build_sensor_specification () {
-		
+	// This does what it says - so be forewarned, it takes a whiiiiile
+	public function update_all_sensor_data () {
+
 	}
 
-	// Retrieve list of available time zones in the NCCP API
-	public function get_time_zones () {
+	// Update sensor data of specific logical sensor
+	public function update_sensor_data ( $id ) {
 
-		$timezones = $this->measurements_client->ObtainTimeZones();
-		print_r( $timezones );
+	}	
+
+	public function search () {
+
+		$start = new DateTime( '2012-12-01T03:00:00' );
+		$end = clone $start;
+		$end->add( new DateInterval('P6M') );
+		$this->Api_data->search( array( 6, 7 ), $start, $end );
 
 	}
 

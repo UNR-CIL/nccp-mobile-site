@@ -58,7 +58,7 @@ class API extends CI_Controller {
 	}
 
 	// Checks query object for results and returns results if so or false if not
-	public function return_results ( $query_object ) {
+	private function return_results ( $query_object ) {
 		return $query_object->num_rows() > 0 ? $query_object->result() : false;
 	}
 

@@ -66,13 +66,35 @@ class Data extends CI_Controller {
 		// and perform the data update
 		if ( isset( $start ) && isset( $end ) ) {
 			$num_results = $this->Api_data->NumberOfResults( array( $this->input->post('sensor_id') ), $start, $end );
-			echo $num_results;
+
+			$count = 0;
+
+			// Now that we have that, fetch the data values
+			$data = $this->Api_data->search( array( $this->input->post('sensor_id') ), $start, $end, 0, 1000 );
+
+			// jQuery.post( '/data/index.php/data/update_sensor_data', { method: 'duration', duration: 'P6M', sensor_id: 7 }, function ( response ) { console.log( response ) } );
+			//print_r( $data );
+
+			$this->process_data_set( $data );
+
+			//print_r( $num_results );
 		}
 
 		//$start = new DateTime( '2002-12-08T00:00:00' );
 		//$end = clone $start;
 		//$end->add( new DateInterval('P10Y') );		
 
+	}
+
+
+	private function process_data_set ( $data ) {
+		foreach ( $data as $row )
+			$this->db->query( sprintf(
+				"INSERT INTO ci_logical_sensor_data VALUES( NULL, %d, '%s', %.18f )",
+				$row->LogicalSensorId,
+				$row->TimeStamp,
+				$row->Value
+			));
 	}	
 
 }

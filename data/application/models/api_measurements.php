@@ -14,7 +14,7 @@ class Api_measurements extends CI_Model {
 		parent::__construct();
 		$this->load->database();
 
-		$this->measurements_client = new SoapClient( 'http://sensor.nevada.edu/Services/Measurements/Measurement.svc?wsdl' );
+		$this->measurements_client = new SoapClient( $this->config->item('wsdl_path') . '/Measurement.svc' );
 
 	}
 

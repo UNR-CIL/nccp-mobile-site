@@ -1,5 +1,8 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+// WSDL url path, root from which data api WSDLs are loaded
+$config['wsdl_path'] = "http://nccp.local/data/assets/wsdl";
+
 /*
 |--------------------------------------------------------------------------
 | Base Site URL

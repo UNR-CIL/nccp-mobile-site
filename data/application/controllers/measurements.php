@@ -9,9 +9,10 @@ class Measurements extends CI_Controller {
 	public function __construct () {
 
 		parent::__construct();
-
 		$this->load->model('Api_measurements');
-		
+
+		date_default_timezone_set( 'America/Los_Angeles' );
+
 	}
 
 	// Update the database with the current list of sensors

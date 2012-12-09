@@ -10,25 +10,53 @@ class Api_data extends CI_Model {
 
 	private $data_client;
 	private $default_timezone = 'Pacific Standard Time'; // This is assumed to be PST for the moment
+	private $specification = null;
 
 	public function __construct () {
 
 		parent::__construct();
 		$this->load->database();
-
-		$this->data_client = new SoapClient( 'http://sensor.nevada.edu/Services/DataRetrieval/DataRetrieval.svc?wsdl' );
+		$this->data_client = new SoapClient( $this->config->item('wsdl_path') . '/DataRetrieval.svc' );
 	
 	}
 
-	public function search ( $sensor_ids, $start, $end ) {
-		// Get the specification object
-		$specification = $this->build_sensor_specification( $sensor_ids, $start, $end );
+	///////////////////////////////////////////////////////////////
+	// API FUNCTIONS //////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////
+
+	public function search ( $sensor_ids = null, $start = null, $end = null ) {
+		// Build new specification is sensor_ids was passed
+		if ( $sensor_ids  )
+			$this->specification = $this->build_sensor_specification( $sensor_ids, $start, $end );
+		elseif ( ! $this->specification ) // Otherwise check if specification was built already
+			return false;
 
 		// Send the query to the data API
-		$results = $this->data_client->Search( array( "search" => $specification, "skip" => 0, "take" => 10 ) );
+		$results = $this->data_client->Search( array( "search" => $this->specification, "skip" => 0, "take" => 10 ) );
 
 		print_r( $results );
 	}
+
+	public function NumberOfResults ( $sensor_ids, $start, $end ) {
+
+		// Build new specification is sensor_ids was passed
+		if ( $sensor_ids  )
+			$this->specification = $this->build_sensor_specification( $sensor_ids, $start, $end );
+		elseif ( ! $this->specification ) // Otherwise check if specification was built already
+			return false;
+
+		// Send the query to the data API
+		$results = $this->data_client->NumberOfResults( array( "search" => $this->specification ) );
+
+		//print_r( $results );
+
+		return ! empty( $results ) ? $results->NumberOfResultsResult : false; 
+		
+	}
+
+	///////////////////////////////////////////////////////////////
+	// HELPER FUNCTIONS ///////////////////////////////////////////
+	///////////////////////////////////////////////////////////////
 
 	// Build sensor specification for passing to data search method
 	// Sensor IDs is an array of sensor IDs (can be a single value)
@@ -45,6 +73,7 @@ class Api_data extends CI_Model {
 
 		// Get timezone information
 		$timezone = $this->get_timezone( $this->default_timezone );
+		//print_r( $timezone );
 
 		// Build the sensor specification
 		$specification = new stdClass();
@@ -59,12 +88,12 @@ class Api_data extends CI_Model {
 	    }	    
 
 	    $specification->TimeZone = new stdClass();
-	    $specification->TimeZone->BaseUtcOffset = $timezone->offset;
-	    $specification->TimeZone->DaylightName = $timezone->daylight_name;
-	    $specification->TimeZone->DisplayName = $timezone->display_name;  
-	    $specification->TimeZone->Id = $timezone->nccp_timezone_id;  
-	    $specification->TimeZone->StandardName = $timezone->standard_name;
-	    $specification->TimeZone->SupportsDaylightSavingsTime = $timezone->dst_support;
+	    $specification->TimeZone->BaseUtcOffset = $timezone[0]->offset;
+	    $specification->TimeZone->DaylightName = $timezone[0]->daylight_name;
+	    $specification->TimeZone->DisplayName = $timezone[0]->display_name;  
+	    $specification->TimeZone->Id = $timezone[0]->nccp_timezone_id;  
+	    $specification->TimeZone->StandardName = $timezone[0]->standard_name;
+	    $specification->TimeZone->SupportsDaylightSavingsTime = $timezone[0]->dst_support;
 
 	    // Get formatted dates for start and end
 
@@ -149,10 +178,12 @@ class Api_data extends CI_Model {
 	// Checks query object for results and returns results if so or false if not
 	private function return_results ( $query_object ) {
 
-		if ( $query_object->num_rows() > 0 )
+		return $query_object->num_rows() > 0 ? $query_object->result() : false;
+
+		/*if ( $query_object->num_rows() > 0 )
 			return $query_object->num_rows() == 1 ? $query_object->row() : $query_object->result();
 		else
-			return false;
+			return false;*/
 
 	}
 

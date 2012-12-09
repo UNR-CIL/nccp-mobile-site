@@ -34,7 +34,7 @@ function admin_styles () {
 
 function theme_scripts () {
 	wp_enqueue_script( 'jquery', get_template_directory_uri() . '/js/jquery-1.8.3.min.js' );
-	wp_enqueue_script( 'jquery-mobile', get_template_directory_uri() . '/js/jquery.mobile-1.2.0.min.js', array( 'jquery' ) );
+	//wp_enqueue_script( 'jquery-mobile', get_template_directory_uri() . '/js/jquery.mobile-1.2.0.min.js', array( 'jquery' ) );
 	wp_enqueue_script( 'js-main', get_template_directory_uri() . '/js/main.js', array( 'jquery', 'jquery-mobile' ) );
 }
 

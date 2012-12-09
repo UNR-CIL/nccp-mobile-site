@@ -67,27 +67,30 @@ class Data extends CI_Controller {
 		if ( isset( $start ) && isset( $end ) ) {
 			$num_results = $this->Api_data->NumberOfResults( array( $this->input->post('sensor_id') ), $start, $end );
 
-			$count = 0;
-
-			// Now that we have that, fetch the data values
-			$data = $this->Api_data->search( array( $this->input->post('sensor_id') ), $start, $end, 0, 1000 );
-
-			// jQuery.post( '/data/index.php/data/update_sensor_data', { method: 'duration', duration: 'P6M', sensor_id: 7 }, function ( response ) { console.log( response ) } );
-			//print_r( $data );
-
-			$this->process_data_set( $data );
+			$skip = 0;
 
 			//print_r( $num_results );
-		}
 
-		//$start = new DateTime( '2002-12-08T00:00:00' );
-		//$end = clone $start;
-		//$end->add( new DateInterval('P10Y') );		
+			while ( $skip < $num_results ) {
+				// Now that we have that, fetch the data values
+				$data = $this->Api_data->search( array( $this->input->post('sensor_id') ), $start, $end, $skip, 1000 );
+				$this->process_data_set( $data );
+				$skip += 1000;
+			}	
+
+			// If that succeeded, output success
+			echo json_encode( array(
+				'success' => $num_results . " entries entered successfully."
+			));		
+
+			// jQuery.post( '/data/index.php/data/update_sensor_data', { method: 'duration', duration: 'P6M', sensor_id: 7 }, function ( response ) { console.log( response ) } );
+			//print_r( $data );			
+		}	
 
 	}
 
 
-	private function process_data_set ( $data ) {
+	private function process_data_set ( &$data ) {
 		foreach ( $data as $row )
 			$this->db->query( sprintf(
 				"INSERT INTO ci_logical_sensor_data VALUES( NULL, %d, '%s', %.18f )",

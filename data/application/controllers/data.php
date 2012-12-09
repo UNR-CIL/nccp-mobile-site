@@ -28,8 +28,10 @@ class Data extends CI_Controller {
 	// This responds only to POST data
 	public function update_sensor_data () {
 
-		if ( ! $this->input->post('sensor_id') )
-			die( 'sensor_id required.' );
+		if ( ! $this->input->post('sensor_ids') )
+			die( 'At least one sensor id is required.' );
+
+		$sensor_ids = explode( ',', $this->input->post('sensor_ids') );
 
 		// Set time period based on requested method
 		if ( $this->input->post('method') )
@@ -47,11 +49,12 @@ class Data extends CI_Controller {
 					$start->sub( new DateInterval( $this->input->post( 'duration' ) ) );
 				break;
 
-				case 'update': // Update the sensor with all records since it was last updated
+				case 'update': // Update the sensors with all records since it was last updated
 				case 'default':
+					// Get start from first
 					$query = $this->db->query( sprintf(
 						"SELECT `last_updated` FROM ci_logical_sensor WHERE `nccp_id` = %d",
-						$this->input->post('sensor_id')
+						$sensor_ids[0]
 					));
 
 					if ( $query->num_rows() > 0 ) {
@@ -65,15 +68,18 @@ class Data extends CI_Controller {
 		// If start/end is cool, get the number of results from the API
 		// and perform the data update
 		if ( isset( $start ) && isset( $end ) ) {
-			$num_results = $this->Api_data->NumberOfResults( array( $this->input->post('sensor_id') ), $start, $end );
+			$num_results = $this->Api_data->NumberOfResults( $sensor_ids, $start, $end );
 
 			$skip = 0;
 
 			//print_r( $num_results );
 
 			while ( $skip < $num_results ) {
+				// Set the time limit before proceeding
+				set_time_limit( 300 );
+
 				// Now that we have that, fetch the data values
-				$data = $this->Api_data->search( array( $this->input->post('sensor_id') ), $start, $end, $skip, 1000 );
+				$data = $this->Api_data->search( $sensor_ids, $start, $end, $skip, 1000 );
 				$this->process_data_set( $data );
 				$skip += 1000;
 			}	
@@ -89,15 +95,33 @@ class Data extends CI_Controller {
 
 	}
 
-
 	private function process_data_set ( &$data ) {
-		foreach ( $data as $row )
+		// Normal inserts
+		/*foreach ( $data as $row )
 			$this->db->query( sprintf(
-				"INSERT INTO ci_logical_sensor_data VALUES( NULL, %d, '%s', %.18f )",
+				"INSERT IGNORE INTO ci_logical_sensor_data VALUES( %d, '%s', %.18f )",
 				$row->LogicalSensorId,
 				$row->TimeStamp,
 				$row->Value
-			));
+			));*/
+
+		// Compound insert statements
+		$sql = "INSERT IGNORE INTO ci_logical_sensor_data VALUES ";
+
+		foreach ( $data as $index => $row ) {
+			$sql .= sprintf(
+				"( %d, '%s', %.18f )",
+				$row->LogicalSensorId,
+				$row->TimeStamp,
+				$row->Value
+			);
+
+			if ( $index != ( count( $data ) - 1 ) )
+				$sql .= ',';
+		}
+
+		$this->db->query( $sql );
+
 	}	
 
 }

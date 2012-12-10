@@ -104,8 +104,7 @@ class Api_measurements extends CI_Model {
 					$sensor->Unit->Id
 				));
 			}	
-		}	
-
+		}
 	}
 
 	// Update the current list of available timezones

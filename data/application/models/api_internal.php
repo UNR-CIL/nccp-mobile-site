@@ -14,25 +14,31 @@ class API extends CI_Controller {
 
 	// Returns all time zones in the system
 	public function get_time_zones () {
-		return $this->return_results( $this->db->query( "SELECT * FROM ci_timezones" ) );		
+
+		return $this->return_results( $this->db->query( "SELECT * FROM ci_timezones" ) );	
+
 	}
 
 	// id is a string specifying the time zone (ex. 'Pacific Standard Time')
 	// Returns an offset and various names for the time zone
 	public function get_time_zone ( $id ) {
+
 		return $this->return_results( $this->db->query( sprintf( 
 			"SELECT * FROM ci_timezones WHERE `nccp_timezone_id` = '%s'",
 			$id 
 		)));
+
 	}
 
 	// Returns all current sensors in database
 	// Note that this is probably a bad idea because there
 	// are over 2000 sensors on average
 	public function get_all_sensors () {
+
 		return $this->return_results( $this->db->query( sprintf(
 			"SELECT * FROM ci_logical_sensor"
 		)));
+
 	}
 
 	// Returns sensors based on specified search properties
@@ -59,7 +65,9 @@ class API extends CI_Controller {
 
 	// Checks query object for results and returns results if so or false if not
 	private function return_results ( $query_object ) {
+
 		return $query_object->num_rows() > 0 ? $query_object->result() : false;
+		
 	}
 
 }

@@ -31,6 +31,9 @@ class Data extends CI_Controller {
 		if ( ! $this->input->post('sensor_ids') )
 			die( 'At least one sensor id is required.' );
 
+		// Set up timekeeping
+		$start_time = new DateTime();
+
 		$sensor_ids = explode( ',', $this->input->post('sensor_ids') );
 
 		// Set time period based on requested method
@@ -80,13 +83,28 @@ class Data extends CI_Controller {
 
 				// Now that we have that, fetch the data values
 				$data = $this->Api_data->search( $sensor_ids, $start, $end, $skip, 1000 );
-				$this->process_data_set( $data );
+				$this->process_data_set( $data, $num_results, $skip );
 				$skip += 1000;
 			}	
 
-			// If that succeeded, output success
+			// Update modified time on sensor ids
+			foreach ( $sensor_ids as $sensor ) {
+				$now = new DateTime();
+				$this->db->query( sprintf(
+					"UPDATE ci_logical_sensor SET `last_updated` = '%s' WHERE `nccp_id` = %d",
+					$this->format_date( $now, 'mysql' ),
+					$sensor
+				));
+			}				
+
+			// If that succeeded, calculate time and output success
+			$end_time = new DateTime();
+
+			$difference = $start_time->diff( $end_time );
+
 			echo json_encode( array(
-				'success' => $num_results . " entries entered successfully."
+				'success' => $num_results . " entries entered successfully.",
+				'time_elapsed' => $difference->format( '%h:%i:%s' )
 			));		
 
 			// jQuery.post( '/data/index.php/data/update_sensor_data', { method: 'duration', duration: 'P6M', sensor_id: 7 }, function ( response ) { console.log( response ) } );
@@ -95,7 +113,8 @@ class Data extends CI_Controller {
 
 	}
 
-	private function process_data_set ( &$data ) {
+	private function process_data_set ( &$data, $num_results, $skip ) {	
+
 		// Normal inserts
 		/*foreach ( $data as $row )
 			$this->db->query( sprintf(
@@ -109,6 +128,26 @@ class Data extends CI_Controller {
 		$sql = "INSERT IGNORE INTO ci_logical_sensor_data VALUES ";
 
 		foreach ( $data as $index => $row ) {
+			// If this is the first record, set the first updated record
+			if ( $index == 0 && $skip == 0 ) {
+				$now = new DateTime();
+				$this->db->query( sprintf(
+					"UPDATE ci_logical_sensor SET `first_updated` = '%s' WHERE `nccp_id` = %d",
+					$this->format_date( $now ),
+					$row->LogicalSensorId
+				));
+			}
+
+			// If the the last record, update the last updated record
+			if ( $index == ( count( $data ) - 1 ) && $skip > $num_results ) {
+				$now = new DateTime();
+				$this->db->query( sprintf(
+					"UPDATE ci_logical_sensor SET `last_updated` = '%s' WHERE `nccp_id` = %d",
+					$this->format_date( $now ),
+					$row->LogicalSensorId
+				));
+			}
+
 			$sql .= sprintf(
 				"( %d, '%s', %.18f )",
 				$row->LogicalSensorId,
@@ -121,6 +160,14 @@ class Data extends CI_Controller {
 		}
 
 		$this->db->query( $sql );
+
+	}
+
+	// Formats DateTime object into useable string, either
+	// in standard mysql or asp formats
+	private function format_date ( $date, $type = 'asp' ) {
+
+		return $type == 'asp' ? $date->format( "Y-m-d\TH:i:s" ) : $date->format( "Y-m-d H:i:s" );
 
 	}	
 

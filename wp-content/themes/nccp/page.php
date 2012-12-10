@@ -8,8 +8,8 @@
  * different template.
  *
  * @package WordPress
- * @subpackage Twenty_Eleven
- * @since Twenty Eleven 1.0
+ * 
+ * Template Name: Page
  */
 
 get_header(); ?>

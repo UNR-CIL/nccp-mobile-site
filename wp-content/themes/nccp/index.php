@@ -1,3 +1,9 @@
+<?php
+/*
+ * Template Name: Home
+ */
+?>
+
 <?php get_header(); ?>
 
 		<div id="primary">
@@ -8,7 +14,7 @@
 				<?php /* Start the Loop */ ?>
 				<?php while ( have_posts() ) : the_post(); ?>
 
-					<?php get_template_part( 'content', get_post_format() ); ?>
+					<?php get_template_part( 'content', 'home' ); ?>
 
 				<?php endwhile; ?>
 

@@ -1,47 +1,51 @@
 // Google Maps functionality
 
 $(function () {
-	// Set the map options
-    var options = {
-        center: new google.maps.LatLng(39.67337, -116.795654),
-        zoom: 7,
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        styles:
-        [
-          {
-            "featureType": "administrative.province",
-            "stylers": [
-              { "weight": 2.7 }
-            ]
-          },{
-            "featureType": "poi",
-            "stylers": [
-              { "visibility": "on" },
-              { "lightness": -11 },
-              { "saturation": 10 }
-            ]
-          },{
-            "featureType": "road",
-            "stylers": [
-              { "weight": 2.1 },
-              { "saturation": -11 },
-              { "gamma": 0.85 },
-              { "lightness": -4 }
-            ]
-          },{
-          }
-        ]
-    };
-
-    // Create the map
-    var map = new google.maps.Map(document.getElementById("gmap"), options);
-
-    // Load gmap icons/infoboxes if gmap exists
     
-    var markers = [];
-    var infoboxes = [];
+    if ( $('#gmap').length ) {
+        // Set viewport height based on window size
+        $('#gmap').height( Math.ceil( $(window).height() * 0.8 ) );
+    
+    	// Set the map options
+        var options = {
+            center: new google.maps.LatLng(39.67337, -116.795654),
+            zoom: 7,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            styles:
+            [
+              {
+                "featureType": "administrative.province",
+                "stylers": [
+                  { "weight": 2.7 }
+                ]
+              },{
+                "featureType": "poi",
+                "stylers": [
+                  { "visibility": "on" },
+                  { "lightness": -11 },
+                  { "saturation": 10 }
+                ]
+              },{
+                "featureType": "road",
+                "stylers": [
+                  { "weight": 2.1 },
+                  { "saturation": -11 },
+                  { "gamma": 0.85 },
+                  { "lightness": -4 }
+                ]
+              },{
+              }
+            ]
+        };
+    
+        // Create the map
+        var map = new google.maps.Map(document.getElementById("gmap"), options);
+    
+        // Load gmap icons/infoboxes if gmap exists
+        
+        var markers = [];
+        var infoboxes = [];
 
-	if ( $('#gmap').length ) {
 		$.post( '/data/index.php/api/get_sensor_locations', function ( response ) { 
 			var locations = $.parseJSON( response );
 			

@@ -36,7 +36,7 @@
 
 		<header id="header">
 			<div id="logo">
-				<a href="<?php home_url(); ?>"><img src="<?php echo get_template_directory_uri(); ?>/img/logo.png" border="0" /></a>
+				<a href="<?php echo home_url(); ?>"><img src="<?php echo get_template_directory_uri(); ?>/img/logo.png" border="0" /></a>
 			</div>
 			<div id="main-navigation">
 				<?php wp_nav_menu( 'Main Navigation' ); ?>

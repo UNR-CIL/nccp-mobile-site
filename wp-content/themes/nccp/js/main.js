@@ -16,75 +16,78 @@ $(function () {
     
     // Flots
     
-    get_sensor_data( 7, 'day', true, function ( response ) { 
-        var options = {
-            xaxis : {
-                mode: "time", 
-                minTickSize: [ 1, "day" ]    
-            },
-            zoom : {
-                interactive: true    
-            },
-            pan : {
-                interactive: true    
-            },
-            crosshair : {
-                mode: "x"    
-            },
-            series: {
-                color: '#DB5C1F'    
-            }        
-        }
+    if ( $('.flot').length ) {
+        get_sensor_data( 7, 'day', true, function ( response ) { 
+            var options = {
+                xaxis : {
+                    mode: "time", 
+                    minTickSize: [ 1, "day" ]    
+                },
+                zoom : {
+                    interactive: true    
+                },
+                pan : {
+                    interactive: true    
+                },
+                crosshair : {
+                    mode: "x"    
+                },
+                series: {
+                    color: '#DB5C1F'    
+                }        
+            }
+            
+            $.plot( $("#flot-1"), [$.parseJSON(response)], options );     
+        });
         
-        $.plot( $("#flot-1"), [$.parseJSON(response)], options );     
-    });
-    
-    get_sensor_data( 5, 'hour', true, function ( response ) { 
-        var options = {
-            xaxis : {
-                mode: "time", 
-                minTickSize: [ 1, "hour" ]                    
-            },
-            zoom : {
-                interactive: true    
-            },
-            pan : {
-                interactive: true    
-            },
-            crosshair : {
-                mode: "x"    
-            },
-            series : {
-                color: '#297fd0',
-                bars: { show: true }    
-            }        
-        }
+        get_sensor_data( 5, 'hour', true, function ( response ) { 
+            var options = {
+                xaxis : {
+                    mode: "time", 
+                    minTickSize: [ 1, "hour" ]                    
+                },
+                zoom : {
+                    interactive: true    
+                },
+                pan : {
+                    interactive: true    
+                },
+                crosshair : {
+                    mode: "x"    
+                },
+                series : {
+                    color: '#297fd0',
+                    bars: { show: true }    
+                }        
+            }
+            
+            $.plot( $("#flot-2"), [$.parseJSON(response)], options );     
+        }); 
         
-        $.plot( $("#flot-2"), [$.parseJSON(response)], options );     
-    }); 
-    
-    get_sensor_data( 4, 'minute', true, function ( response ) { 
-        var options = {
-            xaxis : {
-                mode: "time", 
-                minTickSize: [ 1, "minute" ]    
-            },
-            zoom : {
-                interactive: true    
-            },
-            pan : {
-                interactive: true    
-            },
-            crosshair : {
-                mode: "x"    
-            },
-            series : {
-                color: '#5ab71c'    
-            }        
-        }
-        
-        $.plot( $("#flot-3"), [$.parseJSON(response)], options );     
-    });  
+        get_sensor_data( 4, 'minute', true, function ( response ) { 
+            var options = {
+                xaxis : {
+                    mode: "time", 
+                    minTickSize: [ 1, "minute" ]    
+                },
+                zoom : {
+                    interactive: true    
+                },
+                pan : {
+                    interactive: true    
+                },
+                crosshair : {
+                    mode: "x"    
+                },
+                series : {
+                    color: '#5ab71c'    
+                }        
+            }
+            
+            $.plot( $("#flot-3"), [$.parseJSON(response)], options );     
+        });    
+    }    
+      
 });
 
 

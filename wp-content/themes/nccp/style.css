@@ -37,6 +37,7 @@ li { list-style: none; }
 div { position: relative; }
 body { font-family: 'RobotoRegular', sans-serif; width: 100%; height: 100%; background: white; line-height: 1.4em; }
 h1, h2, h3, h4 { font-family: "RobotoMediumItalic"; line-height: 1.8em; }
+h1 { font-size: 1.8em; }
 h2 { font-size: 1.5em; color: #505B63; vertical-align: top;}
 p { margin-bottom: 2%; }
 p:last-child { margin-bottom: 0; }

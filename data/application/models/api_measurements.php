@@ -42,7 +42,7 @@ class Api_measurements extends CI_Model {
 				$now = new DateTime();
 
 				$this->db->query( sprintf(
-					"INSERT INTO ci_logical_sensor VALUES ( NULL, %d, '%s', '%s', '%s', '%s', %d, '%s' )",
+					"INSERT INTO ci_logical_sensor VALUES ( NULL, %d, '%s', '%s', '%s', '%s', %d, '%s', NULL, NULL )",
 					$sensor->Id,
 					$sensor->MeasurementInterval,
 					$coords[2],
@@ -68,7 +68,7 @@ class Api_measurements extends CI_Model {
 
 				// Insert Sensor Property info
 				$this->db->query( sprintf(
-					"INSERT INTO ci_logical_sensor_property VALUES ( NULL, %d, '%s', '%s', %d, '%s' )",
+					"INSERT IGNORE INTO ci_logical_sensor_property VALUES ( %d, '%s', '%s', %d, '%s' )",
 					$sensor->MonitoredProperty->Id,
 					addslashes( $sensor->MonitoredProperty->Description ),
 					$sensor->MonitoredProperty->Name,

@@ -148,11 +148,15 @@ class Data extends CI_Controller {
 				));
 			}
 
+			// Create unix timestamp from data timestamp
+			$date = new DateTime( $row->TimeStamp );
+
 			$sql .= sprintf(
-				"( %d, '%s', %.18f )",
+				"( %d, '%s', %.18f, %d )",
 				$row->LogicalSensorId,
 				$row->TimeStamp,
-				$row->Value
+				$row->Value,
+				$date->getTimestamp()
 			);
 
 			if ( $index != ( count( $data ) - 1 ) )

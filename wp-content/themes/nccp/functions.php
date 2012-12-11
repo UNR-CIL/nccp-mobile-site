@@ -48,6 +48,7 @@ function theme_scripts () {
 	wp_enqueue_script( 'js-main', get_template_directory_uri() . '/js/main.js', array( 'jquery-local' ) );
 	wp_enqueue_script( 'google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBxK-OTkhR7AXxyzaRCbuFhzmVBTHhmOrs&sensor=false' );
 	wp_enqueue_script( 'google-maps', get_template_directory_uri() . '/js/gmaps.js', array( 'google-maps-api', 'jquery-local' ) );
+	wp_enqueue_script( 'infobox', get_template_directory_uri() . '/js/infobox.js', array( 'google-maps' ) );
 	wp_enqueue_script( 'flot', get_template_directory_uri() . '/js/jquery.flot.js', array( 'jquery-local' ) );
 	wp_enqueue_script( 'jquery-colorhelpers', get_template_directory_uri() . '/js/jquery.colorhelpers.js', array( 'jquery-local' ) );
 	wp_enqueue_script( 'flot-categories', get_template_directory_uri() . '/js/jquery.flot.categories.js', array( 'jquery-local' ) );

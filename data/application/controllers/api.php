@@ -1,13 +1,13 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 // API class for accessing API info from database.  
 // Use raw_api to call the NCCP Web Services directly
 
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-
-class API extends CI_Controller {
+class Api extends CI_Controller {
 
 	public function __construct () {
 		
 		parent::__construct();
+		$this->load->model('Api_internal');
 		$this->load->database();
 
 	}
@@ -30,9 +30,43 @@ class API extends CI_Controller {
 	// Note that this is probably a bad idea because there
 	// are over 2000 sensors on average
 	public function get_all_sensors () {
-		return $this->return_results( $this->db->query( sprintf(
+		$sensors = $this->db->query( sprintf(
 			"SELECT * FROM ci_logical_sensor"
-		)));
+		));
+
+		// Convert to JSON and boot out the door
+		//echo json_encode( $sensors );
+	}
+
+	// Return the current list sensor physical locations
+	public function get_sensor_locations () {
+
+		 echo json_encode( $this->Api_internal->get_sensor_locations() );
+
+	}
+
+	// Get sensor data for specified period and sensor ID
+	// Expects params in POST
+	// If flot param is passed will strip tag names and return only an array of pairs
+	public function get_sensor_data () {
+		if ( $this->input->post('sensor_id') ) {
+			if ( $this->input->post('flot') ) {
+				$data = $this->Api_internal->get_sensor_data( $this->input->post('sensor_id'), $this->input->post('period') );
+
+				$final = array();
+
+				foreach ( $data as $row ) {
+					$date = new DateTime( $row->timestamp );
+					$final[] = array( $date->getTimestamp() * 1000, (float)$row->value );
+				}
+
+				echo json_encode( $final );
+			} else 
+
+				echo json_encode( $this->Api_internal->get_sensor_data( $this->input->post('sensor_id'), $this->input->post('period') ) );
+		} else
+			echo json_encode( array( 'error' => 'Must include at least one sensor ID.' ) );
+
 	}
 
 	// Returns sensors based on specified search properties
@@ -63,3 +97,5 @@ class API extends CI_Controller {
 	}
 
 }
+
+?>

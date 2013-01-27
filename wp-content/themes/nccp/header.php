@@ -41,7 +41,7 @@
 
 		<header id="header" data-role="header">
 			<div id="logo">
-				<a href="<?php echo home_url(); ?>/" data-role="button" data-transition="slidefade"><img src="<?php echo get_template_directory_uri(); ?>/img/logo.png" border="0" /></a>
+				<a href="<?php echo home_url(); ?>/" data-transition="slidefade"><img src="<?php echo get_template_directory_uri(); ?>/img/logo.png" border="0" /></a>
 			</div>
 			<div id="main-navigation">
 				<ul id="menu-main-navigation" class="menu">
@@ -82,7 +82,7 @@
 								$next = true;		
 
 							$output .= sprintf( 
-								'<li id="menu-item-%d" class="menu-item menu-item-%d page-item page-item-%d %s">
+								'<li data-role="button" id="menu-item-%d" class="menu-item menu-item-%d page-item page-item-%d %s">
 									<a href="%s" data-transition="%s" class="%s" %s>%s</a>',
 								$item->ID,
 								$item->ID,
@@ -97,7 +97,7 @@
 						}
 					}
 
-					wp_nav_menu( array( 'menu' => 'Main Navigation', 'walker' => new menu_walker ) );
+					wp_nav_menu( array( 'menu' => 'Main Navigation', 'walker' => new menu_walker, 'depth' => 2 ) );
 					?>					
 				</ul>
 			</div>

@@ -39,6 +39,7 @@ function theme_styles () {
 
 	wp_enqueue_style( 'fonts', get_stylesheet_directory_uri() . '/css/fonts.css' );
 	wp_enqueue_style( 'jquery-mobile-styles', 'http://code.jquery.com/mobile/1.2.0/jquery.mobile.structure-1.2.0.min.css' );	
+	wp_enqueue_style( 'jquery-mobile-styles-custom', get_stylesheet_directory_uri() . '/css/mobile-themes/nccp.css' );	
 	wp_enqueue_style( 'style-main', get_stylesheet_directory_uri() . '/style.css' );
 
 }

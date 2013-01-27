@@ -9,19 +9,20 @@ $( function () {
 
     $(window).swiperight( function () {
         if ( $('.ui-page-active .page-prev').length )
-            $.mobile.changePage( $('.ui-page-active .page-prev').attr( 'href' ) );
+            $.mobile.changePage( $('.ui-page-active .page-prev').attr( 'href' ), {
+                transition: 'slide',
+                reverse: true
+            });
     });
 
     // Go to next page on left swipe
 
     $(window).swipeleft( function () {
         if ( $('.ui-page-active .page-next').length )
-            $.mobile.changePage( $('.ui-page-active .page-next').attr( 'href' ) );
-    });
-
-    
-
-    
+            $.mobile.changePage( $('.ui-page-active .page-next').attr( 'href' ), {
+                transition: 'slide'
+            });
+    });    
 
 });
 

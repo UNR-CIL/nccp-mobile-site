@@ -1,6 +1,6 @@
 // Google Maps functionality
 
-$(function () {
+$(document).bind( 'pageinit', function () {
     
     if ( $('#gmap').length ) {
         // Set viewport height based on window size

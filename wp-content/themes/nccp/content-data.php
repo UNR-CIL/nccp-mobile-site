@@ -11,6 +11,10 @@
 	</header>
 
 	<div class="entry-content">
-		<?php the_content(); ?>
+		
+		<div class="data-form">
+			
+		</div>
+
 	</div>
 </div>

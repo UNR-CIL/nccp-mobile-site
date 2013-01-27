@@ -3,8 +3,6 @@
  * The Template for displaying all single posts.
  *
  * @package WordPress
- * @subpackage Twenty_Eleven
- * @since Twenty Eleven 1.0
  */
 
 get_header(); ?>
@@ -21,8 +19,6 @@ get_header(); ?>
 					</nav><!-- #nav-single -->
 
 					<?php get_template_part( 'content', 'single' ); ?>
-
-					<?php comments_template( '', true ); ?>
 
 				<?php endwhile; // end of the loop. ?>
 

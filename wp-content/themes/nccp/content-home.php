@@ -1,6 +1,6 @@
 <?php
 /**
- * The template used for displaying page content in page.php
+ * Sub-template for displaying home content - called from index
  *
  * @package WordPress
  */

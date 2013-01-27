@@ -1,6 +1,7 @@
 <?php
 /*
  * Template Name: API
+ * Description: Handles API interaction.  Superseded by /data interface.
  */
 $measurements = new SoapClient( 'http://sensor.nevada.edu/Services/Measurements/Measurement.svc?wsdl' );
 

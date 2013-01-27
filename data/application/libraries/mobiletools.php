@@ -1,4 +1,6 @@
 <?php
+// Simple library for detecting mobile devices
+
 class MobileTools {
 	// Members
 

@@ -1,3 +1,6 @@
+<?php
+// Simple view for displaying data index
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -4,10 +4,7 @@
 
 	</div><!-- #main -->
 
-	<footer id="footer">		
-
-			
-	</footer>
+	<footer id="footer"></footer>
 </div><!-- #page -->
 
 <?php wp_footer(); // This is always called last ?>

@@ -1,11 +1,42 @@
-// Main javascript functionality
+// Main javascript functionality (not including gmaps, which has a separate file)
 
+// The normal jquery init event will only be fired on initial page load, not AJAX loads
+// This means control events should be bound here because they're bound in pageinit they'll be
+// bound with EVERY pageload instead of only once
+$( function () {
+    
+    // Go to previous on right swipe
 
-$(function () {
+    $(window).swiperight( function () {
+        if ( $('.ui-page-active .page-prev').length )
+            $.mobile.changePage( $('.ui-page-active .page-prev').attr( 'href' ) );
+    });
+
+    // Go to next page on left swipe
+
+    $(window).swipeleft( function () {
+        if ( $('.ui-page-active .page-next').length )
+            $.mobile.changePage( $('.ui-page-active .page-next').attr( 'href' ) );
+    });
+
+    
+
+    
+
+});
+
+// This stuff will fire on every page load, AJAX or otherwise
+$(document).bind( 'pageinit', function () {
+
+    // Find the parent page - this will change as pages are loaded dynamically and you
+    // can't reliably use the widget selectors because they won't have gone through yet by the
+    // time pageinit fires.  All parent selectors should be namespaced by this (i.e. page.find( blah ) 
+    // instead of $( blah ))
+    var page = ( $('#page[data-external-page="true"]').length ) ? $('#page[data-external-page="true"]') : $('#page');
     
     // Menu
 
-    $('#main-navigation').on( 'mouseover', '#menu-main-navigation > li > a', function () {       
+    page.find('#main-navigation').on( 'mouseover', '#menu-main-navigation > li > a', function () {       
         var parent = $(this).parent('li');
         var siblings = parent.siblings('li');
             

@@ -1,6 +1,7 @@
 <?php
 /*
  * Template Name: Home
+ * Description: The homepage template
  */
 ?>
 

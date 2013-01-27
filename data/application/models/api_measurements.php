@@ -2,7 +2,7 @@
 <?php
 
 // Raw calls from the NCCP API - Measurements service
-// Note that most of these tend to be REALLY SLOW, so they generally
+// Note that most of these tend to be slow, so they generally
 // shouldn't be called publicly, use the regular API class instead
 
 class Api_measurements extends CI_Model {

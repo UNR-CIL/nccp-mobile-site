@@ -1,5 +1,9 @@
 <?php
 
+// Template functions.  This includes any logic which has to be handled globally
+// (outside of page template) or defined globally.  This file is also used to hook
+// in necessary styles and scripts for both the front and back ends.
+
 //////////////////////////////////////////////////////////////////
 // Theme code ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
@@ -30,51 +34,58 @@ function main_menus () {
 
 }
 
+// Global styles
 function theme_styles () {
 
 	wp_enqueue_style( 'fonts', get_stylesheet_directory_uri() . '/css/fonts.css' );
+	wp_enqueue_style( 'jquery-mobile-styles', 'http://code.jquery.com/mobile/1.2.0/jquery.mobile.structure-1.2.0.min.css' );	
 	wp_enqueue_style( 'style-main', get_stylesheet_directory_uri() . '/style.css' );
 
 }
 
+// Styles to only be included in the admin version of the site
 function admin_styles () {
 	//wp_enqueue_style( 'style-main' );
 }
 
+// Global scripts
 function theme_scripts () {
 
-	wp_enqueue_script( 'jquery-local', get_template_directory_uri() . '/js/jquery-1.8.3.min.js' );
-	//wp_enqueue_script( 'jquery-mobile', get_template_directory_uri() . '/js/jquery.mobile-1.2.0.min.js', array( 'jquery-local' ) );
-	wp_enqueue_script( 'js-main', get_template_directory_uri() . '/js/main.js', array( 'jquery-local' ) );
+	wp_enqueue_script( 'jquery-cdn', 'http://code.jquery.com/jquery-1.8.2.min.js' );
+	wp_enqueue_script( 'jquery-mobile-cdn', 'http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js', array( 'jquery-cdn' ) );
+	//wp_enqueue_script( 'jquery-draggable', get_template_directory_uri() . '/js/jquery-ui-1.9.0.draggable.min.js', array( 'jquery-cdn', 'jquery-migrate-cdn' ) );
 	wp_enqueue_script( 'google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBxK-OTkhR7AXxyzaRCbuFhzmVBTHhmOrs&sensor=false' );
-	wp_enqueue_script( 'google-maps', get_template_directory_uri() . '/js/gmaps.js', array( 'google-maps-api', 'jquery-local' ) );
+	wp_enqueue_script( 'google-maps', get_template_directory_uri() . '/js/gmaps.js', array( 'google-maps-api', 'jquery-cdn' ) );
 	wp_enqueue_script( 'infobox', get_template_directory_uri() . '/js/infobox.js', array( 'google-maps' ) );
-	wp_enqueue_script( 'flot', get_template_directory_uri() . '/js/jquery.flot.js', array( 'jquery-local' ) );
-	wp_enqueue_script( 'jquery-colorhelpers', get_template_directory_uri() . '/js/jquery.colorhelpers.js', array( 'jquery-local' ) );
-	wp_enqueue_script( 'flot-categories', get_template_directory_uri() . '/js/jquery.flot.categories.js', array( 'jquery-local' ) );
-	wp_enqueue_script( 'flot-crosshair', get_template_directory_uri() . '/js/jquery.flot.crosshair.js', array( 'jquery-local' ) );
-	wp_enqueue_script( 'flot-errorbars', get_template_directory_uri() . '/js/jquery.flot.errorbars.js', array( 'jquery-local' ) );
-	wp_enqueue_script( 'flot-fillbetween', get_template_directory_uri() . '/js/jquery.flot.fillbetween.js', array( 'jquery-local' ) );
-	wp_enqueue_script( 'flot-image', get_template_directory_uri() . '/js/jquery.flot.image.js', array( 'jquery-local' ) );
-	wp_enqueue_script( 'flot-navigate', get_template_directory_uri() . '/js/jquery.flot.navigate.js', array( 'jquery-local' ) );
-	wp_enqueue_script( 'flot-pie', get_template_directory_uri() . '/js/jquery.flot.pie.js', array( 'jquery-local' ) );
-	wp_enqueue_script( 'flot-resize', get_template_directory_uri() . '/js/jquery.flot.resize.js', array( 'jquery-local' ) );
-	wp_enqueue_script( 'flot-selection', get_template_directory_uri() . '/js/jquery.flot.selection.js', array( 'jquery-local' ) );
-	wp_enqueue_script( 'flot-stack', get_template_directory_uri() . '/js/jquery.flot.stack.js', array( 'jquery-local' ) );
-	wp_enqueue_script( 'flot-symbol', get_template_directory_uri() . '/js/jquery.flot.symbol.js', array( 'jquery-local' ) );
-	wp_enqueue_script( 'flot-threshold', get_template_directory_uri() . '/js/jquery.flot.threshold.js', array( 'jquery-local' ) );
-	wp_enqueue_script( 'flot-time', get_template_directory_uri() . '/js/jquery.flot.time.js', array( 'jquery-local' ) );
+	wp_enqueue_script( 'flot', 'http://cdnjs.cloudflare.com/ajax/libs/flot/0.7/jquery.flot.min.js', array( 'jquery-cdn' ) );	
+	wp_enqueue_script( 'js-main', get_template_directory_uri() . '/js/main.js', array( 'jquery-cdn', 'jquery-mobile-cdn' ) );	
+	//wp_enqueue_script( 'flot-categories', get_template_directory_uri() . '/js/jquery.flot.categories.js', array( 'jquery-cdn' ) );
+	//wp_enqueue_script( 'flot-crosshair', get_template_directory_uri() . '/js/jquery.flot.crosshair.js', array( 'jquery-cdn' ) );
+	//wp_enqueue_script( 'flot-errorbars', get_template_directory_uri() . '/js/jquery.flot.errorbars.js', array( 'jquery-cdn' ) );
+	//wp_enqueue_script( 'flot-fillbetween', get_template_directory_uri() . '/js/jquery.flot.fillbetween.js', array( 'jquery-cdn' ) );
+	//wp_enqueue_script( 'flot-image', get_template_directory_uri() . '/js/jquery.flot.image.js', array( 'jquery-cdn' ) );
+	//wp_enqueue_script( 'flot-navigate', get_template_directory_uri() . '/js/jquery.flot.navigate.js', array( 'jquery-cdn' ) );
+	//wp_enqueue_script( 'flot-pie', get_template_directory_uri() . '/js/jquery.flot.pie.js', array( 'jquery-cdn' ) );
+	//wp_enqueue_script( 'flot-resize', get_template_directory_uri() . '/js/jquery.flot.resize.js', array( 'jquery-cdn' ) );
+	//wp_enqueue_script( 'flot-selection', get_template_directory_uri() . '/js/jquery.flot.selection.js', array( 'jquery-cdn' ) );
+	//wp_enqueue_script( 'flot-stack', get_template_directory_uri() . '/js/jquery.flot.stack.js', array( 'jquery-cdn' ) );
+	//wp_enqueue_script( 'flot-symbol', get_template_directory_uri() . '/js/jquery.flot.symbol.js', array( 'jquery-cdn' ) );
+	//wp_enqueue_script( 'flot-threshold', get_template_directory_uri() . '/js/jquery.flot.threshold.js', array( 'jquery-cdn' ) );
+	//wp_enqueue_script( 'flot-time', get_template_directory_uri() . '/js/jquery.flot.time.js', array( 'jquery-cdn' ) );
+	//wp_enqueue_script( 'jquery-colorhelpers', get_template_directory_uri() . '/js/jquery.colorhelpers.js', array( 'jquery-cdn' ) );
 
 }
 
+// Scripts to only be included in the admin section of the site
 function admin_scripts () {
 
-	wp_enqueue_script( 'jquery-local', get_template_directory_uri() . '/js/jquery-1.8.3.min.js' );
+	//wp_enqueue_script( 'jquery-local', get_template_directory_uri() . '/js/jquery-1.8.3.min.js' );
 
 }
 
 // Helper functions
 
+// Is the client mobile?  If so, optionally, what OS do they have and what device is it?
 function detect_mobile ( $return_info = false ) { // Pass true if more specific info is needed
 
 	$user_agents = $_SERVER['HTTP_USER_AGENT'];

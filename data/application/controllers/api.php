@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 // API class for accessing API info from database.  
-// Use raw_api to call the NCCP Web Services directly
+// Use measurements/data to call the NCCP Web Services directly
 
 class Api extends CI_Controller {
 

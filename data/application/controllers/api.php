@@ -1,6 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
 // API class for accessing API info from database.  
 // Use measurements/data to call the NCCP Web Services directly
+// This controller provides access to internal data from the NCCP
+// API along with information about the data (list of sensors, timezones,
+// types, properties, etc.)
 
 class Api extends CI_Controller {
 
@@ -9,6 +13,13 @@ class Api extends CI_Controller {
 		parent::__construct();
 		$this->load->model('Api_internal');
 		$this->load->database();
+
+	}
+
+	// Return the current list of available properties
+	public function get_properties () {
+		
+		echo json_encode( $this->return_results( $this->db->query( "SELECT property_id, description, name FROM ci_logical_sensor_property ORDER BY name" ) ) );
 
 	}
 
@@ -30,12 +41,14 @@ class Api extends CI_Controller {
 	// Note that this is probably a bad idea because there
 	// are over 2000 sensors on average
 	public function get_all_sensors () {
+
 		$sensors = $this->db->query( sprintf(
 			"SELECT * FROM ci_logical_sensor"
 		));
 
 		// Convert to JSON and boot out the door
 		//echo json_encode( $sensors );
+
 	}
 
 	// Return the current list sensor physical locations
@@ -49,6 +62,7 @@ class Api extends CI_Controller {
 	// Expects params in POST
 	// If flot param is passed will strip tag names and return only an array of pairs
 	public function get_sensor_data () {
+
 		if ( $this->input->post('sensor_id') ) {
 			if ( $this->input->post('flot') ) {
 				$data = $this->Api_internal->get_sensor_data( $this->input->post('sensor_id'), $this->input->post('period') );

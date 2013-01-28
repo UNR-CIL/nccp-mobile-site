@@ -37,7 +37,7 @@
 
 	<div id="background"><img src="<?php echo get_template_directory_uri(); ?>/img/bg.jpg" border="0" /></div>
 
-	<div id="page" data-role="page">
+	<div id="page" data-role="page" data-theme="b">
 
 		<header id="header" data-role="header">
 			<div id="logo">
@@ -82,7 +82,7 @@
 								$next = true;		
 
 							$output .= sprintf( 
-								'<li data-role="button" id="menu-item-%d" class="menu-item menu-item-%d page-item page-item-%d %s">
+								'<li id="menu-item-%d" class="menu-item menu-item-%d page-item page-item-%d %s">
 									<a href="%s" data-transition="%s" class="%s" %s>%s</a>',
 								$item->ID,
 								$item->ID,

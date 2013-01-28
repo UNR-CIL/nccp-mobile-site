@@ -22,7 +22,14 @@ $( function () {
             $.mobile.changePage( $('.ui-page-active .page-next').attr( 'href' ), {
                 transition: 'slide'
             });
-    });    
+    });  
+
+    // Data events
+
+    $(".data-form input[type='checkbox']").on( "change", function(event, ui) {
+        // Last bit with removeClass is necessary due to a bug with JQM on button refresh
+        $(this).parent().children('label').buttonMarkup({theme: $(this).prop('checked') ? 'a' : 'b' }).removeClass('ui-btn-hover-b');
+    });
 
 });
 
@@ -34,6 +41,8 @@ $(document).bind( 'pageinit', function () {
     // time pageinit fires.  All parent selectors should be namespaced by this (i.e. page.find( blah ) 
     // instead of $( blah ))
     var page = ( $('#page[data-external-page="true"]').length ) ? $('#page[data-external-page="true"]') : $('#page');
+
+
     
     // Menu
 

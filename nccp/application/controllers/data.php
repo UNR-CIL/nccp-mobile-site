@@ -26,7 +26,7 @@ class Data extends CI_Controller {
 		$query = $this->db->query( "SELECT * FROM ci_logical_sensor" );
 
 		foreach ( $query->result() as $sensor ) {
-			$this->update_sensor_data( $sensor->logical_sensor_id );
+			$this->update_sensor_data( $sensor->logical_sensor_id, 'P1M' );
 			set_time_limit( 300 );
 		}
 
@@ -39,7 +39,7 @@ class Data extends CI_Controller {
 	// Params:
 	// sensor_ids - single or comma-separated list
 	// period - how far back to update, specified in interval format (P6M, P2W, etc.)
-	public function update_sensor_data ( $sensor = null ) {
+	public function update_sensor_data ( $sensor = null, $period = null ) {
 
 		// How many records should be processed at once
 		// 1000 is simply the max the NCCP API will return, so no point going
@@ -48,14 +48,15 @@ class Data extends CI_Controller {
 
 		// Make sure we should be here
 		if ( ! ( $this->input->post('sensor_id') || $sensor ) ) die( 'Sensor id is required.' );
-		if ( ! $this->input->post('period') ) die( 'Period must be specified' );
+		if ( ! ( $this->input->post('period') || $period ) ) die( 'Period must be specified' );
 
-		$sensor_id = $sensor ? $sensor : $this->input->post('sensor_id');		
+		$sensor_id = $sensor ? $sensor : $this->input->post('sensor_id');
+		$period = $period ? $period : $this->input->post( 'period' );
 
 		// Set up timekeeping - note that the END is always now, the START is at the end - <specified period>
 		$end = new DateTime();
 		$start = clone $end;
-		$start->sub( new DateInterval( $this->input->post( 'period' ) ) );
+		$start->sub( new DateInterval( $period ) );
 
 		// Get the last dates the sensor was updated and see if that period is shorter than the specified one
 		$query = $this->db->query( sprintf(
@@ -73,7 +74,7 @@ class Data extends CI_Controller {
 
 			// Figure out how much data there is
 			$num_results = $this->Api_data->NumberOfResults( array( $sensor_id ), $start, $end );
-			print_r( $num_results . "\n" );
+			//print_r( $num_results . "\n" );
 
 			$skip = 0;
 

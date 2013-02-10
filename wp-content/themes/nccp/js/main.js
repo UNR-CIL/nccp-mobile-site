@@ -57,7 +57,7 @@ $(document).bind( 'pageinit', function () {
     
     // Flots
     
-    if ( $('.flot').length ) {
+    /*if ( $('.flot').length ) {
         get_sensor_data( 7, 'day', true, function ( response ) { 
             var options = {
                 xaxis : {
@@ -127,7 +127,7 @@ $(document).bind( 'pageinit', function () {
             
             $.plot( $("#flot-3"), [$.parseJSON(response)], options );     
         });    
-    }    
+    }*/    
       
 });
 

@@ -6,11 +6,13 @@
  */
 ?>
 
+<div class="divider"><div class="divider-bottom"></div></div>
+
 <div class="home-banner">
 	Welcome to the Nevada Climate Change Portal
 </div>
 
-<div class="divider"><div class="divider-bottom"></div></div>
+<div class="divider dark"><div class="divider-bottom"></div></div>
 
 <div id="main-content">
 	<div class="column main">
@@ -23,12 +25,11 @@
 
 <div class="divider"><div class="divider-bottom"></div></div>
 
-<div id="flot-container" class="content-container">
-	<h2>A Few Numbers</h2>
-	<div id="flot-1" class="flot"></div>
-	<div id="flot-2" class="flot"></div>
-	<div id="flot-3" class="flot"></div>
-</div>
+<svg id="testvg"></svg>
+
+Numbers!
+
+Graphs!
 
 <div class="divider"><div class="divider-bottom"></div></div>
 

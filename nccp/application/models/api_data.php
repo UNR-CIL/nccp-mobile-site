@@ -4,7 +4,7 @@
 // Raw calls from the NCCP API - Data service
 // Note that most of these tend to be REALLY SLOW, so they generally
 // shouldn't be called publicly, use the regular API class instead
-// This API assumes data is already populated from the database using api_measurements calls
+// This API assumes the sensor list is already populated from the database using api_measurements calls
 
 class Api_data extends CI_Model {
 

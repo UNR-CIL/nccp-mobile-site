@@ -29,6 +29,7 @@ class Api_data extends CI_Model {
 	///////////////////////////////////////////////////////////////
 
 	public function search ( $sensor_ids = null, $start = null, $end = null, $skip = 0, $take = 1000 ) {
+
 		// Build new specification is sensor_ids was passed
 		if ( $sensor_ids  )
 			$this->specification = $this->build_sensor_specification( $sensor_ids, $start, $end );
@@ -39,7 +40,7 @@ class Api_data extends CI_Model {
 		$results = $this->data_client->Search( array( "search" => $this->specification, "skip" => $skip, "take" => $take ) );
 
 		return $results->SearchResult->Result;
-		//print_r( $results );
+
 	}
 
 	public function NumberOfResults ( $sensor_ids, $start, $end ) {
@@ -102,8 +103,6 @@ class Api_data extends CI_Model {
 
 	    $specification->Starting = $this->format_date( $start );
 	    $specification->Ending = $this->format_date( $end );
-
-	    //print_r( $specification );
 
 	    return $specification;
 

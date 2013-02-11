@@ -18,19 +18,21 @@ class Measurements extends CI_Controller {
 	// Update the database with the current list of sensors
 	public function update_sensors () {			
 
-		$this->Api_measurements->update_sensors();
+		echo json_encode( $this->Api_measurements->update_sensors() );
 
 	}
 
 	// Get the current list of available sensors
 	public function get_sensors () {
+
 		echo json_encode( $this->Api_measurements->get_sensors() );
+
 	}
 
 	// Update the current list of available timezones
 	public function update_timezones () {
 
-		$this->Api_measurements->update_timezones();
+		echo json_encode( $this->Api_measurements->update_timezones() );
 
 	}
 

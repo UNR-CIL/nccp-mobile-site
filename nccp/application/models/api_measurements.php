@@ -123,11 +123,12 @@ class Api_measurements extends CI_Model {
 				set_time_limit( 300 );
 			}
 
-			echo 'Sensors successfully updated.';
+			return array( 'success' => 'Sensors successfully updated.' );
 
 		} else
 
-			echo 'Sensors could not be fetched.';
+			return array( 'error' => 'Sensors could not be fetched.' );
+
 	}
 
 	// Update the current list of available timezones
@@ -139,8 +140,6 @@ class Api_measurements extends CI_Model {
 			$this->db->query( "TRUNCATE TABLE ci_timezones" ); // Clear the current timezone listing
 
 			foreach ( $timezones as $timezone ) {
-				print_r( $timezone );
-
 				$this->db->query( sprintf(
 					"INSERT INTO ci_timezones VALUES ( NULL, '%s', '%s', '%s', '%s', '%s', %d )",
 					$timezone->Id,
@@ -151,7 +150,12 @@ class Api_measurements extends CI_Model {
 					$timezone->SupportsDaylightSavingsTime
 				));
 			}
-		}
+
+			return array( 'success' => 'Timezones successfully updated.' );
+
+		} else
+
+			return array( 'error' => 'Timezones could not be fetched.' );
 	}
 
 	// Retrieve list of available time zones in the NCCP API

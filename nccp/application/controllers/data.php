@@ -20,13 +20,18 @@ class Data extends CI_Controller {
 	// Update all available sensors since last updated date (or to specified period, whichever is longer)
 	// Params:
 	// period - how far back to update, specified in interval format (P6M, P2W, etc.)
-	public function update_all_sensors () {
+	// Note the preferred way to do this is to call update_sensor_data.php directly from php
+	public function update_all_sensors ( $period = null ) {
+
+		// Make sure we should be here
+		if ( ! ( $this->input->post('period') || $period ) ) die( 'Period must be specified' );
+		$period = $period ? $period : $this->input->post( 'period' );
 
 		// Get the sensors
 		$query = $this->db->query( "SELECT * FROM ci_logical_sensor" );
 
 		foreach ( $query->result() as $sensor ) {
-			$this->update_sensor_data( $sensor->logical_sensor_id, 'P1M' );
+			$this->update_sensor_data( $sensor->logical_sensor_id, $period );
 			set_time_limit( 300 );
 		}
 
@@ -60,13 +65,15 @@ class Data extends CI_Controller {
 
 		// Get the last dates the sensor was updated and see if that period is shorter than the specified one
 		$query = $this->db->query( sprintf(
-			"SELECT * FROM ci_logical_sensor WHERE logical_sensor_id = %d",
+			"SELECT * FROM ci_logical_sensor WHERE logical_sensor_id = %d AND last_timestamp IS NOT NULL",
 			$sensor_id
 		));
 
-		// If a last updated date exists, use that as the start insted of the period
-		//if ( $query->num_rows() > 0 )
-		//	$start = new DateTime( $query->row()->last_timestamp );		
+		// If a last updated date exists, use that as the start instead of the period
+		if ( $query->num_rows() > 0 ) {
+			$start = new DateTime( $query->row()->last_timestamp );	
+			$start->add( new DateInterval( 'PT8H' ) ); // Adjust for timezone difference
+		}				
 
 		// If start/end is cool, get the number of results from the API
 		// and perform the data update
@@ -74,7 +81,6 @@ class Data extends CI_Controller {
 
 			// Figure out how much data there is
 			$num_results = $this->Api_data->NumberOfResults( array( $sensor_id ), $start, $end );
-			//print_r( $num_results . "\n" );
 
 			$skip = 0;
 

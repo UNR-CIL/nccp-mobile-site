@@ -181,50 +181,69 @@ class Data extends CI_Controller {
 		// If only a single record exists, the NCCP API will return a single row instead of
 		// an array and screw all this up (IT MAKES PERFECT SENSE).
 		if ( is_array( $data ) ) {
-			
+
+			foreach ( $data as $index => $row ) {			
+				// If this is the first record, set the first updated record
+				if ( $index == 0 && $skip == 0 ) {
+					$date = new DateTime( $row->TimeStamp );
+					$this->db->query( sprintf(
+						"UPDATE ci_logical_sensor SET `first_timestamp` = '%s', `first_unix_timestamp` = %d WHERE `logical_sensor_id` = %d",
+						$row->TimeStamp,
+						$date->getTimestamp(),
+						$row->LogicalSensorId
+					));
+				}
+
+				// If the the last record, update the last updated record
+				if ( ( $skip + $num_to_process >= $num_results ) && ( $index == count( $data ) - 1 ) ) {
+					$date = new DateTime( $row->TimeStamp );
+					$this->db->query( sprintf(
+						"UPDATE ci_logical_sensor SET `last_timestamp` = '%s', `last_unix_timestamp` = %d WHERE `logical_sensor_id` = %d",
+						$row->TimeStamp,
+						$date->getTimestamp(),
+						$row->LogicalSensorId
+					));
+				}
+
+				// Create unix timestamp from data timestamp
+				$date = new DateTime( $row->TimeStamp );
+
+				if ( isset( $row->LogicalSensorId ) && $row->LogicalSensorId > 0 ) // This should never be 0.  EVER.  >=(
+					$sql .= sprintf(
+						"( %d, '%s', %d, %.18f )",
+						$row->LogicalSensorId,
+						$row->TimeStamp,
+						$date->getTimestamp(),
+						$row->Value				
+					);
+				else
+					echo json_encode( array( 'warning' => 'No data for sensor on index ' . $index, 'data' => $data ) );
+
+				if ( $index != ( count( $data ) - 1 ) )
+					$sql .= ',';
+			}
+
 		} else {
+			
+			$date = new DateTime( $data->TimeStamp );
 
-		}
-		foreach ( $data as $index => $row ) {			
-			// If this is the first record, set the first updated record
-			if ( $index == 0 && $skip == 0 ) {
-				$date = new DateTime( $row->TimeStamp );
-				$this->db->query( sprintf(
-					"UPDATE ci_logical_sensor SET `first_timestamp` = '%s', `first_unix_timestamp` = %d WHERE `logical_sensor_id` = %d",
-					$row->TimeStamp,
-					$date->getTimestamp(),
-					$row->LogicalSensorId
-				));
-			}
+			// This is a single record so it's last by default
+			$this->db->query( sprintf(
+				"UPDATE ci_logical_sensor SET `last_timestamp` = '%s', `last_unix_timestamp` = %d WHERE `logical_sensor_id` = %d",
+				$data->TimeStamp,
+				$date->getTimestamp(),
+				$data->LogicalSensorId
+			));
 
-			// If the the last record, update the last updated record
-			if ( ( $skip + $num_to_process >= $num_results ) && ( $index == count( $data ) - 1 ) ) {
-				$date = new DateTime( $row->TimeStamp );
-				$this->db->query( sprintf(
-					"UPDATE ci_logical_sensor SET `last_timestamp` = '%s', `last_unix_timestamp` = %d WHERE `logical_sensor_id` = %d",
-					$row->TimeStamp,
-					$date->getTimestamp(),
-					$row->LogicalSensorId
-				));
-			}
-
-			// Create unix timestamp from data timestamp
-			$date = new DateTime( $row->TimeStamp );
-
-			if ( isset( $row->LogicalSensorId ) && $row->LogicalSensorId > 0 ) // This should never be 0.  EVER.  >=(
-				$sql .= sprintf(
-					"( %d, '%s', %d, %.18f )",
-					$row->LogicalSensorId,
-					$row->TimeStamp,
-					$date->getTimestamp(),
-					$row->Value				
-				);
-			else
-				echo json_encode( array( 'warning' => 'No data for sensor on index ' . $index, 'data' => $data ) );
-
-			if ( $index != ( count( $data ) - 1 ) )
-				$sql .= ',';
-		}
+			$sql .= sprintf(
+				"( %d, '%s', %d, %.18f )",
+				$data->LogicalSensorId,
+				$data->TimeStamp,
+				$date->getTimestamp(),
+				$data->Value				
+			);
+				
+	 	}		
 
 		$this->db->query( $sql );
 

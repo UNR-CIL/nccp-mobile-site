@@ -178,6 +178,13 @@ class Data extends CI_Controller {
 		// Compound insert statements
 		$sql = "INSERT IGNORE INTO ci_logical_sensor_data VALUES ";	
 
+		// If only a single record exists, the NCCP API will return a single row instead of
+		// an array and screw all this up (IT MAKES PERFECT SENSE).
+		if ( is_array( $data ) ) {
+			
+		} else {
+
+		}
 		foreach ( $data as $index => $row ) {			
 			// If this is the first record, set the first updated record
 			if ( $index == 0 && $skip == 0 ) {
@@ -213,7 +220,7 @@ class Data extends CI_Controller {
 					$row->Value				
 				);
 			else
-				echo json_encode( array( 'warning' => 'No data for sensor on index ' . $index ) );
+				echo json_encode( array( 'warning' => 'No data for sensor on index ' . $index, 'data' => $data ) );
 
 			if ( $index != ( count( $data ) - 1 ) )
 				$sql .= ',';

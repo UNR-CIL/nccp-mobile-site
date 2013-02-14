@@ -1,0 +1,217 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'c:\\Program Files\\nodejs\\node.exe',
+1 verbose cli   'c:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install',
+1 verbose cli   'zlib' ]
+2 info using npm@1.2.0
+3 info using node@v0.8.17
+4 verbose read json e:\xampp\htdocs\nccp\node\package.json
+5 verbose read json e:\xampp\htdocs\nccp\node\node_modules\express\package.json
+6 verbose read json e:\xampp\htdocs\nccp\node\node_modules\mysql\package.json
+7 verbose read json e:\xampp\htdocs\nccp\node\node_modules\underscore\package.json
+8 verbose read json e:\xampp\htdocs\nccp\node\package.json
+9 verbose cache add [ 'zlib', null ]
+10 silly cache add name=undefined spec="zlib" args=["zlib",null]
+11 verbose parsed url { pathname: 'zlib', path: 'zlib', href: 'zlib' }
+12 silly lockFile 57968f12-zlib zlib
+13 verbose lock zlib C:\Users\Me\AppData\Roaming\npm-cache\57968f12-zlib.lock
+14 silly lockFile 57968f12-zlib zlib
+15 verbose addNamed [ 'zlib', '' ]
+16 verbose addNamed [ null, '' ]
+17 silly lockFile f86964f4-zlib zlib@
+18 verbose lock zlib@ C:\Users\Me\AppData\Roaming\npm-cache\f86964f4-zlib.lock
+19 silly addNameRange { name: 'zlib', range: '', hasData: false }
+20 verbose url raw zlib
+21 verbose url resolving [ 'https://registry.npmjs.org/', './zlib' ]
+22 verbose url resolved https://registry.npmjs.org/zlib
+23 info trying registry request attempt 1 at 00:06:16
+24 http GET https://registry.npmjs.org/zlib
+25 http 200 https://registry.npmjs.org/zlib
+26 silly registry.get cb [ 200,
+26 silly registry.get   { vary: 'Accept',
+26 silly registry.get     server: 'CouchDB/1.2.1 (Erlang OTP/R15B)',
+26 silly registry.get     etag: '"2NXKVDW47N9VLYCR6C0Q6SGIR"',
+26 silly registry.get     date: 'Wed, 13 Feb 2013 08:04:20 GMT',
+26 silly registry.get     'content-type': 'application/json',
+26 silly registry.get     'content-length': '7473' } ]
+27 silly addNameRange number 2 { name: 'zlib', range: '', hasData: true }
+28 silly addNameRange versions [ 'zlib',
+28 silly addNameRange   [ '1.0.0', '1.0.1', '1.0.2', '1.0.3', '1.0.4', '1.0.5' ] ]
+29 verbose addNamed [ 'zlib', '1.0.5' ]
+30 verbose addNamed [ '1.0.5', '1.0.5' ]
+31 silly lockFile 024ae364-zlib-1-0-5 zlib@1.0.5
+32 verbose lock zlib@1.0.5 C:\Users\Me\AppData\Roaming\npm-cache\024ae364-zlib-1-0-5.lock
+33 silly lockFile 53bbe3fb-ry-npmjs-org-zlib-zlib-1-0-5-tgz https://registry.npmjs.org/zlib/-/zlib-1.0.5.tgz
+34 verbose lock https://registry.npmjs.org/zlib/-/zlib-1.0.5.tgz C:\Users\Me\AppData\Roaming\npm-cache\53bbe3fb-ry-npmjs-org-zlib-zlib-1-0-5-tgz.lock
+35 verbose addRemoteTarball [ 'https://registry.npmjs.org/zlib/-/zlib-1.0.5.tgz',
+35 verbose addRemoteTarball   '6e7c972fc371c645a6afb03ab14769def114fcc0' ]
+36 info retry fetch attempt 1 at 00:06:20
+37 verbose fetch to= C:\Users\Me\AppData\Local\Temp\npm-10540\1360742780606-0.6646412948612124\tmp.tgz
+38 http GET https://registry.npmjs.org/zlib/-/zlib-1.0.5.tgz
+39 http 200 https://registry.npmjs.org/zlib/-/zlib-1.0.5.tgz
+40 silly shasum updated bytes 6606
+41 info shasum 6e7c972fc371c645a6afb03ab14769def114fcc0
+41 info shasum C:\Users\Me\AppData\Local\Temp\npm-10540\1360742780606-0.6646412948612124\tmp.tgz
+42 verbose tar unpack C:\Users\Me\AppData\Local\Temp\npm-10540\1360742780606-0.6646412948612124\tmp.tgz
+43 silly lockFile 82ac59f9-80606-0-6646412948612124-package C:\Users\Me\AppData\Local\Temp\npm-10540\1360742780606-0.6646412948612124\package
+44 verbose lock C:\Users\Me\AppData\Local\Temp\npm-10540\1360742780606-0.6646412948612124\package C:\Users\Me\AppData\Roaming\npm-cache\82ac59f9-80606-0-6646412948612124-package.lock
+45 silly gunzTarPerm modes [ '755', '644' ]
+46 silly gunzTarPerm extractEntry .gitignore
+47 silly gunzTarPerm extractEntry configure
+48 silly gunzTarPerm extractEntry index.js
+49 silly gunzTarPerm extractEntry LICENSE
+50 silly gunzTarPerm extractEntry Makefile
+51 silly gunzTarPerm extractEntry package.json
+52 silly gunzTarPerm extractEntry README.md
+53 silly gunzTarPerm extractEntry wscript
+54 silly gunzTarPerm extractEntry lib/zlib.js
+55 silly gunzTarPerm extractEntry src/node-zlib.cc
+56 silly gunzTarPerm extractEntry test/deflate.test.js
+57 silly gunzTarPerm extractEntry test/inflate.test.js
+58 verbose read json C:\Users\Me\AppData\Local\Temp\npm-10540\1360742780606-0.6646412948612124\package\package.json
+59 silly lockFile 82ac59f9-80606-0-6646412948612124-package C:\Users\Me\AppData\Local\Temp\npm-10540\1360742780606-0.6646412948612124\package
+60 verbose from cache C:\Users\Me\AppData\Local\Temp\npm-10540\1360742780606-0.6646412948612124\package\package.json
+61 verbose tar pack [ 'C:\\Users\\Me\\AppData\\Roaming\\npm-cache\\zlib\\1.0.5\\package.tgz',
+61 verbose tar pack   'C:\\Users\\Me\\AppData\\Local\\Temp\\npm-10540\\1360742780606-0.6646412948612124\\package' ]
+62 verbose tarball C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package.tgz
+63 verbose folder C:\Users\Me\AppData\Local\Temp\npm-10540\1360742780606-0.6646412948612124\package
+64 silly lockFile 8c094b19-npm-cache-zlib-1-0-5-package-tgz C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package.tgz
+65 verbose lock C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package.tgz C:\Users\Me\AppData\Roaming\npm-cache\8c094b19-npm-cache-zlib-1-0-5-package-tgz.lock
+66 silly lockFile 8c094b19-npm-cache-zlib-1-0-5-package-tgz C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package.tgz
+67 silly lockFile a6c710cc-ing-npm-cache-zlib-1-0-5-package C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package
+68 verbose lock C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package C:\Users\Me\AppData\Roaming\npm-cache\a6c710cc-ing-npm-cache-zlib-1-0-5-package.lock
+69 silly lockFile a6c710cc-ing-npm-cache-zlib-1-0-5-package C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package
+70 verbose tar unpack C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package.tgz
+71 silly lockFile a6c710cc-ing-npm-cache-zlib-1-0-5-package C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package
+72 verbose lock C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package C:\Users\Me\AppData\Roaming\npm-cache\a6c710cc-ing-npm-cache-zlib-1-0-5-package.lock
+73 silly gunzTarPerm modes [ '755', '644' ]
+74 silly gunzTarPerm extractEntry package.json
+75 silly gunzTarPerm modified mode [ 'package.json', 438, 420 ]
+76 silly gunzTarPerm extractEntry .npmignore
+77 silly gunzTarPerm modified mode [ '.npmignore', 438, 420 ]
+78 silly gunzTarPerm extractEntry README.md
+79 silly gunzTarPerm modified mode [ 'README.md', 438, 420 ]
+80 silly gunzTarPerm extractEntry LICENSE
+81 silly gunzTarPerm modified mode [ 'LICENSE', 438, 420 ]
+82 silly gunzTarPerm extractEntry index.js
+83 silly gunzTarPerm modified mode [ 'index.js', 438, 420 ]
+84 silly gunzTarPerm extractEntry configure
+85 silly gunzTarPerm modified mode [ 'configure', 438, 420 ]
+86 silly gunzTarPerm extractEntry lib/zlib.js
+87 silly gunzTarPerm modified mode [ 'lib/zlib.js', 438, 420 ]
+88 silly gunzTarPerm extractEntry wscript
+89 silly gunzTarPerm modified mode [ 'wscript', 438, 420 ]
+90 silly gunzTarPerm extractEntry src/node-zlib.cc
+91 silly gunzTarPerm modified mode [ 'src/node-zlib.cc', 438, 420 ]
+92 silly gunzTarPerm extractEntry test/deflate.test.js
+93 silly gunzTarPerm modified mode [ 'test/deflate.test.js', 438, 420 ]
+94 silly gunzTarPerm extractEntry test/inflate.test.js
+95 silly gunzTarPerm modified mode [ 'test/inflate.test.js', 438, 420 ]
+96 silly gunzTarPerm extractEntry Makefile
+97 silly gunzTarPerm modified mode [ 'Makefile', 438, 420 ]
+98 verbose read json C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package\package.json
+99 silly lockFile a6c710cc-ing-npm-cache-zlib-1-0-5-package C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package
+100 silly shasum updated bytes 6622
+101 info shasum 2fa1ad28fced749b415e1d045a48f58c85503faf
+101 info shasum C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package.tgz
+102 verbose from cache C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package\package.json
+103 verbose chmod C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package.tgz 644
+104 silly chown skipping for windows C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package.tgz
+105 silly lockFile 53bbe3fb-ry-npmjs-org-zlib-zlib-1-0-5-tgz https://registry.npmjs.org/zlib/-/zlib-1.0.5.tgz
+106 silly lockFile 024ae364-zlib-1-0-5 zlib@1.0.5
+107 silly lockFile f86964f4-zlib zlib@
+108 silly resolved [ { name: 'zlib',
+108 silly resolved     description: 'Simple, synchronous deflate/inflate for buffers',
+108 silly resolved     version: '1.0.5',
+108 silly resolved     homepage: 'https://github.com/kkaefer/node-zlib',
+108 silly resolved     author: { name: 'Konstantin Käfer', email: 'kkaefer@gmail.com' },
+108 silly resolved     repository: { type: 'git', url: 'git://github.com/kkaefer/node-zlib.git' },
+108 silly resolved     engines: { node: '>=0.2.0' },
+108 silly resolved     licenses: [ [Object] ],
+108 silly resolved     main: './lib/zlib',
+108 silly resolved     scripts: { install: 'node-waf clean ; node-waf configure build' },
+108 silly resolved     readme: '# NAME\n\nnode-zlib - Simple, synchronous deflate/inflate for node.js buffers.\n\n\n\n# USAGE\n\nInstall with `npm install zlib`.\n\n    var Buffer = require(\'buffer\').Buffer;\n    var zlib = require(\'zlib\');\n    \n    var input = new Buffer(\'lorem ipsum dolor sit amet\');\n    var compressed = zlib.deflate(input);\n    var output = zlib.inflate(compressed);\n\nNote that `node-zlib` is only intended for small (< 128 KB) data that you already have buffered. It is not meant for input/output streams.\n\n# BUILDING\n\nMake sure you have `zlib` installed. Mac OS X ships with it by default.\n\nTo obtain and build the bindings:\n\n    git clone git://github.com/kkaefer/node-zlib.git\n    cd node-zlib\n    ./configure\n    make\n\nYou can also use [`npm`](https://github.com/isaacs/npm) to download and install them:\n\n    npm install zlib\n\n\n\n# TESTS\n\n[expresso](https://github.com/visionmedia/expresso) is required to run unit tests.\n\n    npm install expresso\n    make test\n\n\n\n# CONTRIBUTORS\n\n* [Konstantin Käfer](https://github.com/kkaefer)\n\n\n\n# LICENSE\n\n`node-zlib` is [BSD licensed](https://github.com/kkaefer/node-zlib/raw/master/LICENSE).\n',
+108 silly resolved     readmeFilename: 'README.md',
+108 silly resolved     _id: 'zlib@1.0.5',
+108 silly resolved     dist: { shasum: '2fa1ad28fced749b415e1d045a48f58c85503faf' },
+108 silly resolved     _from: 'zlib' } ]
+109 info install zlib@1.0.5 into e:\xampp\htdocs\nccp\node
+110 info installOne zlib@1.0.5
+111 verbose from cache C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package\package.json
+112 info e:\xampp\htdocs\nccp\node\node_modules\zlib unbuild
+113 verbose read json e:\xampp\htdocs\nccp\node\node_modules\zlib\package.json
+114 verbose tar unpack C:\Users\Me\AppData\Roaming\npm-cache\zlib\1.0.5\package.tgz
+115 silly lockFile 68dbe6fe-docs-nccp-node-node-modules-zlib e:\xampp\htdocs\nccp\node\node_modules\zlib
+116 verbose lock e:\xampp\htdocs\nccp\node\node_modules\zlib C:\Users\Me\AppData\Roaming\npm-cache\68dbe6fe-docs-nccp-node-node-modules-zlib.lock
+117 silly gunzTarPerm modes [ '755', '644' ]
+118 silly gunzTarPerm extractEntry package.json
+119 silly gunzTarPerm modified mode [ 'package.json', 438, 420 ]
+120 silly gunzTarPerm extractEntry .npmignore
+121 silly gunzTarPerm modified mode [ '.npmignore', 438, 420 ]
+122 silly gunzTarPerm extractEntry README.md
+123 silly gunzTarPerm modified mode [ 'README.md', 438, 420 ]
+124 silly gunzTarPerm extractEntry LICENSE
+125 silly gunzTarPerm modified mode [ 'LICENSE', 438, 420 ]
+126 silly gunzTarPerm extractEntry index.js
+127 silly gunzTarPerm modified mode [ 'index.js', 438, 420 ]
+128 silly gunzTarPerm extractEntry configure
+129 silly gunzTarPerm modified mode [ 'configure', 438, 420 ]
+130 silly gunzTarPerm extractEntry lib/zlib.js
+131 silly gunzTarPerm modified mode [ 'lib/zlib.js', 438, 420 ]
+132 silly gunzTarPerm extractEntry wscript
+133 silly gunzTarPerm modified mode [ 'wscript', 438, 420 ]
+134 silly gunzTarPerm extractEntry src/node-zlib.cc
+135 silly gunzTarPerm modified mode [ 'src/node-zlib.cc', 438, 420 ]
+136 silly gunzTarPerm extractEntry test/deflate.test.js
+137 silly gunzTarPerm modified mode [ 'test/deflate.test.js', 438, 420 ]
+138 silly gunzTarPerm extractEntry test/inflate.test.js
+139 silly gunzTarPerm modified mode [ 'test/inflate.test.js', 438, 420 ]
+140 silly gunzTarPerm extractEntry Makefile
+141 silly gunzTarPerm modified mode [ 'Makefile', 438, 420 ]
+142 verbose read json e:\xampp\htdocs\nccp\node\node_modules\zlib\package.json
+143 silly lockFile 68dbe6fe-docs-nccp-node-node-modules-zlib e:\xampp\htdocs\nccp\node\node_modules\zlib
+144 info preinstall zlib@1.0.5
+145 verbose from cache e:\xampp\htdocs\nccp\node\node_modules\zlib\package.json
+146 verbose readDependencies using package.json deps
+147 verbose from cache e:\xampp\htdocs\nccp\node\node_modules\zlib\package.json
+148 verbose readDependencies using package.json deps
+149 silly resolved []
+150 verbose about to build e:\xampp\htdocs\nccp\node\node_modules\zlib
+151 info build e:\xampp\htdocs\nccp\node\node_modules\zlib
+152 verbose from cache e:\xampp\htdocs\nccp\node\node_modules\zlib\package.json
+153 verbose linkStuff [ false,
+153 verbose linkStuff   false,
+153 verbose linkStuff   false,
+153 verbose linkStuff   'e:\\xampp\\htdocs\\nccp\\node\\node_modules' ]
+154 info linkStuff zlib@1.0.5
+155 verbose linkBins zlib@1.0.5
+156 verbose linkMans zlib@1.0.5
+157 verbose rebuildBundles zlib@1.0.5
+158 info install zlib@1.0.5
+159 verbose unsafe-perm in lifecycle true
+160 silly exec cmd "/c" "node-waf clean ; node-waf configure build"
+161 silly cmd,/c,node-waf clean ; node-waf configure build,e:\xampp\htdocs\nccp\node\node_modules\zlib spawning
+162 info zlib@1.0.5 Failed to exec install script
+163 info e:\xampp\htdocs\nccp\node\node_modules\zlib unbuild
+164 verbose from cache e:\xampp\htdocs\nccp\node\node_modules\zlib\package.json
+165 info preuninstall zlib@1.0.5
+166 info uninstall zlib@1.0.5
+167 verbose true,e:\xampp\htdocs\nccp\node\node_modules,e:\xampp\htdocs\nccp\node\node_modules unbuild zlib@1.0.5
+168 info postuninstall zlib@1.0.5
+169 error zlib@1.0.5 install: `node-waf clean ; node-waf configure build`
+169 error `cmd "/c" "node-waf clean ; node-waf configure build"` failed with 1
+170 error Failed at the zlib@1.0.5 install script.
+170 error This is most likely a problem with the zlib package,
+170 error not with npm itself.
+170 error Tell the author that this fails on your system:
+170 error     node-waf clean ; node-waf configure build
+170 error You can get their info via:
+170 error     npm owner ls zlib
+170 error There is likely additional logging output above.
+171 error System Windows_NT 6.1.7600
+172 error command "c:\\Program Files\\nodejs\\node.exe" "c:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install" "zlib"
+173 error cwd e:\xampp\htdocs\nccp\node
+174 error node -v v0.8.17
+175 error npm -v 1.2.0
+176 error code ELIFECYCLE
+177 verbose exit [ 1, true ]

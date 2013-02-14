@@ -45,8 +45,6 @@ class Api_measurements extends CI_Model {
 
 			foreach ( $sensors as $sensor ) {
 
-				//print_r( $sensor );
-
 				// Format the sensor coordinates
 				preg_match( "/\((.+)\s(.+)\s(.+)\)/i", $sensor->LocationWkt, $coords );
 				
@@ -54,14 +52,14 @@ class Api_measurements extends CI_Model {
 				$now = new DateTime();
 
 				$this->db->query( sprintf(
-					"INSERT INTO ci_logical_sensor VALUES ( NULL, %d, '%s', '%s', '%s', '%s', %d, '%s', %s, %s, %s, %s )",
+					"INSERT INTO ci_logical_sensor VALUES ( NULL, %d, '%s', '%s', '%s', '%s', %d, %s, %s, %s, %s, %s )",
 					$sensor->Id,
 					$sensor->MeasurementInterval,
 					$coords[2],
 					$coords[1],
 					$coords[3],
 					$sensor->SurfaceAltitudeOffset,
-					$now->format( "Y-m-d H:i:s" ),
+					isset( $old_sensors[$sensor->Id] ) && ! empty( $old_sensors[$sensor->Id]->sensor_updated ) ? "'" . $old_sensors[$sensor->Id]->sensor_updated . "'" : 'NULL',
 					isset( $old_sensors[$sensor->Id] ) && ! empty( $old_sensors[$sensor->Id]->first_timestamp ) ? "'" . $old_sensors[$sensor->Id]->first_timestamp . "'" : 'NULL',
 					isset( $old_sensors[$sensor->Id] ) && ! empty( $old_sensors[$sensor->Id]->first_unix_timestamp ) ? $old_sensors[$sensor->Id]->first_unix_timestamp : 'NULL',
 					isset( $old_sensors[$sensor->Id] ) && ! empty( $old_sensors[$sensor->Id]->last_timestamp ) ? "'" . $old_sensors[$sensor->Id]->last_timestamp . "'" : 'NULL',
@@ -120,8 +118,14 @@ class Api_measurements extends CI_Model {
 					$sensor->Unit->Id
 				));
 
+				// Output success and update the time limit
+				echo json_encode( array( 'success' => 'Updated sensor ' . $sensor->Id ) );
 				set_time_limit( 300 );
 			}
+
+			// Update the sensor_updated field
+			$now = new DateTime();
+			$this->db->query( sprintf( "UPDATE ci_parameters SET value = '%s' WHERE parameter = 'sensor_list_updated'", $now->format( "Y-m-d H:i:s" ) ) );
 
 			return array( 'success' => 'Sensors successfully updated.' );
 

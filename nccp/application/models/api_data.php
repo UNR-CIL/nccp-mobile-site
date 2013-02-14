@@ -1,5 +1,5 @@
 
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if ( ! defined('BASEPATH') ) exit('No direct script access allowed');
 
 // Raw calls from the NCCP API - Data service
 // Note that most of these tend to be REALLY SLOW, so they generally

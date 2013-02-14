@@ -5,8 +5,10 @@
 // the list of sensors does not need to be updated as often
 
 // Set the URLs
-//define( 'UPDATE_SENSORS_URL', "http://nccp.local/nccp/index.php/measurements/update_sensors" ); // Local
-define( 'UPDATE_SENSORS_URL', "http://nccp.monterey-j.com/nccp/index.php/measurements/update_sensors" ); // Live
+define( 'BASE', 'http://nccp.local/nccp/index.php/' ); // Local
+//define( 'BASE', 'http://nccp.monterey-j.com/nccp/index.php/' ); // Live
+
+define( 'UPDATE_SENSORS_URL', BASE . "measurements/update_sensors" );
 
 $ch = curl_init(); 
 

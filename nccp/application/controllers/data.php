@@ -24,7 +24,7 @@ class Data extends CI_Controller {
 	// sensor_ids (single or comma-separated)*
 	// start (specified as Y-m-d H:i:s)*
 	// end (specified as Y-m-d H:i:s)*
-	// Example ajax request: 
+	// Example ajax request: $.post( '../nccp/index.php/data/get', { sensor_ids: 7, start: "2012-01-01", end: "2012-02-01" }, function ( response ) { console.log( response ) } )
 	public function get () {
 
 		// Make sure we should be here
@@ -33,7 +33,7 @@ class Data extends CI_Controller {
 		if ( ! $this->input->post('end') ) die( 'End date and/or time must be specified.' );
 
 		// Set up sensors
-		$sensors = explode( ',', $this->input->post('sensor_ids') );
+		$sensors = explode( ',', str_ireplace( ' ', '', $this->input->post('sensor_ids') ) );
 
 		// Start with blank data array.  This will be added to 1000 rows at a time until
 		// the entire dataset is present
@@ -93,6 +93,35 @@ class Data extends CI_Controller {
 
 	}
 
+	// IN PROGRESS ///////////////////////////////////////////////////////////
+	// This does what update_sensor_data does, but multiple sensors at a time
+	// (not all of them at a time, no bueno, keep it <= 1000).  This is quicker 
+	// but potentially less reliable
+	// Params (in post):
+	// sensor_ids (comma-separated)*
+	// start (specified as Y-m-d H:i:s)*
+	// end (specified as Y-m-d H:i:s)*
+	public function update_sensor_data_bulk () {
+
+		// Make sure we should be here
+		if ( ! $this->input->post('sensor_ids') ) die( 'Sensor IDs must be sent as comma-separated list.' );
+		if ( ! $this->input->post('start') ) die( 'Start must be specified.' );
+		if ( ! $this->input->post('end') ) die( 'End must be specified.' );
+
+		// Get the list of sensors
+		$query = $this->db->query( "SELECT * FROM ci_logical_sensor" );
+
+		
+
+		/*foreach ( $query->result() as $index => $row ) {
+			echo $row->logical_sensor_id;
+
+			if ( $index != ( $query->num_rows() - 1 ) )
+				echo ",";
+		}*/
+			
+	}
+
 	// Update sensor data of specific logical sensor
 	// Params:
 	// sensor_ids - single or comma-separated list
@@ -111,12 +140,13 @@ class Data extends CI_Controller {
 		$sensor_id = $sensor ? $sensor : $this->input->post('sensor_id');
 		$period = $period ? $period : $this->input->post( 'period' );
 
-		// Set up timekeeping - note that the END is always now, the START is at the end - <specified period>
+		// Set up timekeeping - note that the END is always now, the START is at the end minus <specified period>
 		$end = new DateTime();
+		$end->add( new DateInterval( 'PT8H' ) ); // Adjust for timezone difference
 		$start = clone $end;
 		$start->sub( new DateInterval( $period ) );
 
-		// Get the last dates the sensor was updated and see if that period is shorter than the specified one
+		// Get the last date the sensor was updated and see if that period is shorter than the specified one
 		$query = $this->db->query( sprintf(
 			"SELECT * FROM ci_logical_sensor WHERE logical_sensor_id = %d AND last_timestamp IS NOT NULL",
 			$sensor_id
@@ -164,12 +194,44 @@ class Data extends CI_Controller {
 
 			$difference = $start_time->diff( $end_time );
 
+			// Update the sensor_updated field
+			$this->db->query( sprintf( 
+				"UPDATE ci_logical_sensor SET sensor_updated = '%s' WHERE logical_sensor_id = %d", 
+				$end_time->format( "Y-m-d H:i:s" ), 
+				$sensor_id
+			));
+
 			echo json_encode( array(
 				'sensor' => $sensor_id,
 				'success' => $num_results . " entries entered successfully.",
 				'time_elapsed' => $difference->format( '%h:%i:%s' )
 			));		
 		}
+	}
+
+	// Get the number of results for a sensor(s) and a specified period
+	// Params:
+	// sensor_ids - single or comma-separated list*
+	// start (specified as Y-m-d H:i:s)*
+	// end (specified as Y-m-d H:i:s)*
+	// Sample ajax query: $.post( '../nccp/index.php/data/num_results', { sensor_ids: "1734, 2", start: "2012-01-01", end: "2012-02-01" }, function ( response ) { console.log( response ) } )
+	public function num_results () {
+
+		// Make sure we should be here
+		if ( ! $this->input->post('sensor_ids') ) die( 'At least one sensor_id must be supplied.' );
+		if ( ! $this->input->post('start') ) die( 'Start date and/or time must be specified.' );
+		if ( ! $this->input->post('end') ) die( 'End date and/or time must be specified.' );
+
+		// Set up sensors
+		$sensors = explode( ',', str_ireplace( ' ', '', $this->input->post('sensor_ids') ) );
+
+		// Set up timekeeping - note that the END is always now, the START is at the end - <specified period>
+		$start = new DateTime( $this->input->post('start') );
+		$end = new DateTime( $this->input->post('end') );
+
+		// Get the number of results
+		echo json_encode( array( 'num_results' => $this->Api_data->NumberOfResults( $sensors, $start, $end ) ) );
+
 	}
 
 	// Enter the provided data into the database
@@ -182,31 +244,33 @@ class Data extends CI_Controller {
 		// an array and screw all this up (IT MAKES PERFECT SENSE).
 		if ( is_array( $data ) ) {
 
+			// Create unix timestamp from data timestamp
+			$date = new DateTime( $row->TimeStamp );
+
 			foreach ( $data as $index => $row ) {			
-				// If this is the first record, set the first updated record
+				// If this is the first record and no first timestamp exists, set the first timestamp
 				if ( $index == 0 && $skip == 0 ) {
-					$date = new DateTime( $row->TimeStamp );
-					$this->db->query( sprintf(
-						"UPDATE ci_logical_sensor SET `first_timestamp` = '%s', `first_unix_timestamp` = %d WHERE `logical_sensor_id` = %d",
-						$row->TimeStamp,
-						$date->getTimestamp(),
+					$query = $this->db->query( sprintf( 
+						"SELECT * FROM ci_logical_sensor WHERE logical_sensor_id = %d AND first_timestamp IS NOT NULL",
 						$row->LogicalSensorId
-					));
+					));	
+					if ( $query->num_rows() == 0 )
+						$this->db->query( sprintf(
+							"UPDATE ci_logical_sensor SET `first_timestamp` = '%s', `first_unix_timestamp` = %d WHERE `logical_sensor_id` = %d",
+							$row->TimeStamp,
+							$date->getTimestamp(),
+							$row->LogicalSensorId
+						));			
 				}
 
 				// If the the last record, update the last updated record
-				if ( ( $skip + $num_to_process >= $num_results ) && ( $index == count( $data ) - 1 ) ) {
-					$date = new DateTime( $row->TimeStamp );
+				if ( ( $skip + $num_to_process >= $num_results ) && ( $index == count( $data ) - 1 ) )
 					$this->db->query( sprintf(
 						"UPDATE ci_logical_sensor SET `last_timestamp` = '%s', `last_unix_timestamp` = %d WHERE `logical_sensor_id` = %d",
 						$row->TimeStamp,
 						$date->getTimestamp(),
 						$row->LogicalSensorId
 					));
-				}
-
-				// Create unix timestamp from data timestamp
-				$date = new DateTime( $row->TimeStamp );
 
 				if ( isset( $row->LogicalSensorId ) && $row->LogicalSensorId > 0 ) // This should never be 0.  EVER.  >=(
 					$sql .= sprintf(
@@ -246,6 +310,37 @@ class Data extends CI_Controller {
 	 	}		
 
 		$this->db->query( $sql );
+
+	}
+
+	// Return database parameters, like when the last time sensor list was updated
+	// or the last time the data was updated
+	public function get_parameters () {
+
+		$params = array(); // Empty to start
+
+		$query = $this->db->query( "SELECT * FROM ci_parameters" );
+
+		// Remove the fluff
+		array_map( function ( $p ) use ( &$params ) { $params[$p->parameter] = $p->value; }, $query->result() );
+
+		// Output params or appropriate error
+		echo json_encode( ! empty( $params ) ? $params : array( 'error' => 'Database parameters could not be fetched.' ) );
+
+	}
+
+	// Set a database parameter (if it exists)
+	public function set_parameter ( $parameter = null, $value = null ) {
+
+		// Make sure we should be here
+		if ( ! ( $this->input->post('parameter') || $parameter ) ) die( 'Must send parameter name.' );
+		if ( ! ( $this->input->post('value') || $value ) ) die( 'Must send value.' );
+
+		// Set up the parameters
+		$parameter = $parameter ? $parameter : $this->input->post('parameter');
+		$value = $value ? $value : $this->input->post('value');
+
+		return $this->db->query( sprintf( "UPDATE ci_parameters SET value = '%s' WHERE parameter = '%s'", $value, $parameter ) );
 
 	}
 

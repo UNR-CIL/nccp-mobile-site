@@ -6,7 +6,7 @@
 */
 
 // Example query
-// $.ajax( 'http://nccp.local:6227/nccp/get?callback=?', { dataType: 'json', data: { sensor_id: 7, count: 10 }, success: function ( response, status, xhr ) { console.log( response, status, xhr ) }, error: function ( one, two, three ) { console.log( two, three ) } } )
+// $.ajax( 'http://nccp.local:6227/api/get?callback=?', { dataType: 'json', data: { sensor_id: 7, count: 10 }, success: function ( response, status, xhr ) { console.log( response, status, xhr ) }, error: function ( one, two, three ) { console.log( two, three ) } } )
 
 // Get the mysql driver and express for building the RESTful-ness
 var db = require( 'mysql' );
@@ -29,10 +29,15 @@ var port = 6227, // No, that's not random
 // Make the app
 var api = e();
 
+// Configure said app
+api.configure( function () {
+	api.use( e.compress() );
+});
+
 // Define the API routes
 
 // Request data points from the database
-api.get( '/nccp/get', function ( request, response ) {
+api.get( '/api/get', function ( request, response ) {
 
 	if ( request.query.sensor_id ) {
 
@@ -82,7 +87,7 @@ api.get( '/nccp/get', function ( request, response ) {
 
 // Check main NCCP portal status
 
-api.get( '/nccp/status', function ( request, response ) {
+api.get( '/api/status', function ( request, response ) {
 	var params = {
 		host: 'sensor.nevada.edu',
 		port: 80,

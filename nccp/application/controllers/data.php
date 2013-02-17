@@ -244,10 +244,11 @@ class Data extends CI_Controller {
 		// an array and screw all this up (IT MAKES PERFECT SENSE).
 		if ( is_array( $data ) ) {
 
-			// Create unix timestamp from data timestamp
-			$date = new DateTime( $row->TimeStamp );
-
-			foreach ( $data as $index => $row ) {			
+			foreach ( $data as $index => $row ) {
+				
+				// Create timestamp from row timestamp
+				$date = new DateTime( $row->TimeStamp );
+			
 				// If this is the first record and no first timestamp exists, set the first timestamp
 				if ( $index == 0 && $skip == 0 ) {
 					$query = $this->db->query( sprintf( 

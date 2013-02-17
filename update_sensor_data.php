@@ -1,3 +1,5 @@
+#!/usr/local/bin/php -q
+
 <?php
 
 // Standalone script for updating logical sensor data - simply issues
@@ -5,8 +7,8 @@
 // The list of sensors is updated separately with update_sensors.php
 
 // Set the URLs
-define( 'BASE', 'http://nccp.local/nccp/index.php/' ); // Local
-//define( 'BASE', 'http://nccp.monterey-j.com/nccp/index.php/' ); // Live
+//define( 'BASE', 'http://nccp.local/nccp/index.php/' ); // Local
+define( 'BASE', 'http://nccp.monterey-j.com/nccp/index.php/' ); // Live
 
 define( 'GET_SENSORS_URL', BASE . "measurements/get_sensors" );
 define( 'UPDATE_SENSOR_DATA_URL', BASE . "data/update_sensor_data" );
@@ -15,7 +17,6 @@ define( 'SET_PARAMETER_URL', BASE . "data/set_parameter" );
 $ch = curl_init(); 
 
 // Set curl params
-curl_setopt( $ch, CURLOPT_URL, GET_SENSORS_URL ); 
 curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
 
 // Extend these a bit just in case 
@@ -23,11 +24,12 @@ curl_setopt( $ch, CURLOPT_TIMEOUT, 300 );
 set_time_limit( 300 );
 
 // Update the sensor_updated field
-	$now = new DateTime();
-	echo set_parameter( $ch, 'sensor_data_updated', $now->format( "Y-m-d H:i:s" ) );
-	exit();
+$now = new DateTime();
+set_parameter( $ch, 'sensor_data_updated', $now->format( "Y-m-d H:i:s" ) );
 
 // Get the list of sensors
+curl_setopt( $ch, CURLOPT_URL, GET_SENSORS_URL );
+
 $output = curl_exec( $ch );
 $sensors = json_decode( $output );
 
@@ -51,7 +53,7 @@ if ( ! empty( $sensors ) ) {
 curl_close( $ch );
 
 function set_parameter ( $ch, $parameter, $value ) {
-
+	
 	curl_setopt( $ch, CURLOPT_URL, SET_PARAMETER_URL );
 
 	$fields = array(

@@ -1,3 +1,5 @@
+#!/usr/local/bin/php -q
+
 <?php
 
 // Standalone script for updating the list of logical sensors
@@ -5,8 +7,8 @@
 // the list of sensors does not need to be updated as often
 
 // Set the URLs
-define( 'BASE', 'http://nccp.local/nccp/index.php/' ); // Local
-//define( 'BASE', 'http://nccp.monterey-j.com/nccp/index.php/' ); // Live
+//define( 'BASE', 'http://nccp.local/nccp/index.php/' ); // Local
+define( 'BASE', 'http://nccp.monterey-j.com/nccp/index.php/' ); // Live
 
 define( 'UPDATE_SENSORS_URL', BASE . "measurements/update_sensors" );
 

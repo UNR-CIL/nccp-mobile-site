@@ -92,7 +92,13 @@ api.get( '/api/status', function ( request, response ) {
 
 	// Blank objects for containing success or error messages for each
 	// server we're checking
-	var status = {}, error = {};
+	var status = {
+		nccp: {},
+		data: {},
+		measurement: {}
+	};
+
+	// First check the main NCCP portal
 
 	// Set up parameters
 	var params = {
@@ -104,11 +110,91 @@ api.get( '/api/status', function ( request, response ) {
 	// First check the main site - no point checking the other stuff if the
 	// main server isn't up
 	http.get( params, function( res ) {
-		console.log( res.statusCode );
-		response.send( 'Request successful' );
+
+		if ( res.statusCode != 200 ) {
+			status.nccp = {
+				success: "The NCCP portal is up."
+			};
+		} else {
+			status.nccp = {
+				error: "The NCCP portal is currently experiences difficulties.",
+				code: res.statusCode
+			};
+		}
+		
 	}).on( 'error', function ( error ) {
-		response.send("Error: " + error );
+
+		status.nccp = {
+			error: "The NCCP portal could not be reached."
+		};	
+
 	});
+
+	// Then check the Measurement svc
+
+	// Set up parameters
+	var params = {
+		host: 'http://134.197.44.50',
+		port: 80,
+		path: '/Services/Measurements/Measurement.svc'
+	}
+
+	// First check the main site - no point checking the other stuff if the
+	// main server isn't up
+	http.get( params, function( res ) {
+
+		if ( res.statusCode != 200 ) {
+			status.measurement = {
+				success: "The NCCP Measurement service is up."
+			};
+		} else {
+			status.measurement = {
+				error: "The NCCP Measurement service is currently experiences difficulties.",
+				code: res.statusCode
+			};
+		}
+		
+	}).on( 'error', function ( error ) {
+
+		status.measurement = {
+			error: "The NCCP Measurement service could not be reached."
+		};	
+
+	});
+
+	// Then check the Data svc
+
+	// Set up parameters
+	var params = {
+		host: 'http://134.197.44.50',
+		port: 80,
+		path: '/Services/DataRetrieval/DataRetrieval.svc'
+	}
+
+	// First check the main site - no point checking the other stuff if the
+	// main server isn't up
+	http.get( params, function( res ) {
+
+		if ( res.statusCode != 200 ) {
+			status.data = {
+				success: "The NCCP Data service is up."
+			};
+		} else {
+			status.data = {
+				error: "The NCCP Data service is currently experiences difficulties.",
+				code: res.statusCode
+			};
+		}
+		
+	}).on( 'error', function ( error ) {
+
+		status.data = {
+			error: "The NCCP Data service could not be reached."
+		};	
+
+	});
+
+	response.jsonp( status );
 
 });
 

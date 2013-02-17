@@ -15,7 +15,7 @@ var _ = require( 'underscore' );
 var http = require( 'http' );
 
 // Parameters
-var port = 6227, // No, that's not random
+var port = 6227, // No, this isn't random
 	periods = { // Period plus the record offset corresponding to it
 		yearly: 525600,
 		monthly: 43200, 
@@ -75,7 +75,7 @@ api.get( '/api/get', function ( request, response ) {
 
 				response.jsonp( request.query.format ? format_data( rows, request.query.format ) : rows );
 
-				// Request
+				// Example request
 				//$.ajax( 'http://nccp.local:6227/nccp/get?callback=?', { crossDomain: true, dataType: 'json', data: { sensor_id: 7, count: 10 }, success: function ( response, status, xhr ) { console.log( response, status, xhr ) }, error: function ( one, two, three ) { console.log( two, three ) } } )
 		});		
 
@@ -86,20 +86,30 @@ api.get( '/api/get', function ( request, response ) {
 });
 
 // Check main NCCP portal status
-
+// This includes the site itself along with the Web Services
+// (Measurement and Data)
 api.get( '/api/status', function ( request, response ) {
+
+	// Blank objects for containing success or error messages for each
+	// server we're checking
+	var status = {}, error = {};
+
+	// Set up parameters
 	var params = {
 		host: 'sensor.nevada.edu',
 		port: 80,
 		path: '/NCCP/Default.aspx'
 	}
 
+	// First check the main site - no point checking the other stuff if the
+	// main server isn't up
 	http.get( params, function( res ) {
 		console.log( res.statusCode );
 		response.send( 'Request successful' );
 	}).on( 'error', function ( error ) {
 		response.send("Error: " + error );
 	});
+
 });
 
 // Start the music ///////////////////////////////////////

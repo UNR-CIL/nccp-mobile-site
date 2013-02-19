@@ -24,7 +24,7 @@ var port = 6227, // No, this isn't random
 		hourly: 60,
 		minutely: null // Probably a word
 	},
-	limit = 1000000000; // ONE BEEELION ROWS
+	limit = 1000000000; // ONE BEEELION ROWS.  This is seriously the best way to default 'all rows' in mysql. /shrug
 
 // Make the app
 var api = e();
@@ -37,68 +37,67 @@ api.configure( function () {
 // Define the API routes
 
 // Request data points from the database
+// Params:
+// sensor_id*
+// start*
+// end*
+// period: time format - P1M, PT6H are examples
+// count: limit results
+// format: 'raw' will return array of ONLY data values, no timestamps
 api.get( '/api/get', function ( request, response ) {
 
-	if ( request.query.sensor_id ) {
+	var q = request.query;
 
-		console.log( 'Request received for sensor ' + request.query.sensor_id );
+	// Make sure this is a valid request
+	if ( ! q.sensor_id ) {
+		response.jsonp( { error: 'Must send valid sensor ID.' } );
+	} else if ( ! q.start || ! q.end ) {
+		response.jsonp( { error: 'Must send valid start and end' } );
+	}	
 
-		// Set parameters up
+	console.log( 'Request received for sensor ' + request.query.sensor_id );
 
-		// Set the period up if the parameter was passed
-		var skip = 1;
+	// Set parameters up
 
-		if ( request.query.period && _.has( periods, request.query.period ) )
-			skip = periods[request.query.period];
+	// Set the period up if the parameter was passed
+	var skip = 1;
 
-		if ( request.query.count )
-			limit = request.query.count;
+	if ( request.query.period && _.has( periods, request.query.period ) )
+		skip = periods[request.query.period];
 
-		// Set up the database connection
-		var conn = db.createConnection({
-			host: 'dev.monterey-j.com',
-			user: 'nccp_admin',
-			password: 'd7yt$7s2Ol9!5~742ee',
-			database: 'nccp'
-		});
+	if ( request.query.count )
+		limit = request.query.count;
 
-		conn.connect();
+	// Set up the database connection
+	var conn = db.createConnection({
+		host: 'dev.monterey-j.com',
+		user: 'nccp_admin',
+		password: 'd7yt$7s2Ol9!5~742ee',
+		database: 'nccp'
+	});
 
-		// Send the query
-		conn.query( "SELECT timestamp, value " + 
-			"FROM ( SELECT @row := @row +1 AS rownum, logical_sensor_id, timestamp, value " +
-			"FROM ( SELECT @row :=0) r, ci_logical_sensor_data ) ranked " +
-			"WHERE rownum % ? = 0 AND logical_sensor_id = ? LIMIT ?",
-			[skip, request.query.sensor_id, parseInt( limit )], 
-			function ( err, rows, fields ) {
-				console.log( 'Sending response...' );
+	conn.connect();
 
-				response.jsonp( request.query.format ? format_data( rows, request.query.format ) : rows );
+	// Send the query
+	conn.query( "SELECT timestamp, value " + 
+		"FROM ( SELECT @row := @row +1 AS rownum, logical_sensor_id, timestamp, value " +
+		"FROM ( SELECT @row :=0) r, ci_logical_sensor_data ) ranked " +
+		"WHERE rownum % ? = 0 AND logical_sensor_id = ? LIMIT ?",
+		[skip, request.query.sensor_id, parseInt( limit )], 
+		function ( err, rows, fields ) {
+			console.log( 'Sending response...' );
 
-				// Example request
-				//$.ajax( 'http://nccp.local:6227/nccp/get?callback=?', { crossDomain: true, dataType: 'json', data: { sensor_id: 7, count: 10 }, success: function ( response, status, xhr ) { console.log( response, status, xhr ) }, error: function ( one, two, three ) { console.log( two, three ) } } )
-		});		
+			response.jsonp( request.query.format ? format_data( rows, request.query.format ) : rows );
 
-	} else
+			// Example request
+			//$.ajax( 'http://nccp.local:6227/nccp/get?callback=?', { crossDomain: true, dataType: 'json', data: { sensor_id: 7, count: 10 }, success: function ( response, status, xhr ) { console.log( response, status, xhr ) }, error: function ( one, two, three ) { console.log( two, three ) } } )
+	});		
 
-		response.send( { error : 'Must send at least one logical sensor ID.' } );	
 
 });
 
 // Check main NCCP portal status
-// This includes the site itself along with the Web Services
-// (Measurement and Data)
-api.get( '/api/status', function ( request, response ) {
-
-	// Blank objects for containing success or error messages for each
-	// server we're checking
-	var status = {
-		nccp: {},
-		data: {},
-		measurement: {}
-	};
-
-	// First check the main NCCP portal
+api.get( '/api/status/website', function ( request, response ) {
 
 	// Set up parameters
 	var params = {
@@ -107,94 +106,56 @@ api.get( '/api/status', function ( request, response ) {
 		path: '/NCCP/Default.aspx'
 	}
 
-	// First check the main site - no point checking the other stuff if the
-	// main server isn't up
-	http.get( params, function( res ) {
-
-		if ( res.statusCode != 200 ) {
-			status.nccp = {
-				success: "The NCCP portal is up."
-			};
+	// Check the main site
+	check_url( params, function ( result ) {
+		if ( result.up ) {
+			response.jsonp({ success: 'The NCCP portal is up.' });
 		} else {
-			status.nccp = {
-				error: "The NCCP portal is currently experiences difficulties.",
-				code: res.statusCode
-			};
-		}
-		
-	}).on( 'error', function ( error ) {
+			response.jsonp({ error: 'The NCCP portal is currently down.' });
+		}	
+	});	
 
-		status.nccp = {
-			error: "The NCCP portal could not be reached."
-		};	
+});
 
-	});
-
-	// Then check the Measurement svc
+// Check NCCP Measurement service status
+api.get( '/api/status/services/measurement', function ( request, response ) {
 
 	// Set up parameters
 	var params = {
-		host: 'http://134.197.44.50',
+		host: 'sensor.nevada.edu',
 		port: 80,
 		path: '/Services/Measurements/Measurement.svc'
-	}
+	};
 
-	// First check the main site - no point checking the other stuff if the
-	// main server isn't up
-	http.get( params, function( res ) {
-
-		if ( res.statusCode != 200 ) {
-			status.measurement = {
-				success: "The NCCP Measurement service is up."
-			};
+	// Check the Measurement service
+	check_url( params, function ( result ) {
+		if ( result.up ) {
+			response.jsonp({ success: 'The measurement service is up.' });
 		} else {
-			status.measurement = {
-				error: "The NCCP Measurement service is currently experiences difficulties.",
-				code: res.statusCode
-			};
-		}
-		
-	}).on( 'error', function ( error ) {
+			response.jsonp({ error: 'The measurement service is currently down.' });
+		}	
+	});	
 
-		status.measurement = {
-			error: "The NCCP Measurement service could not be reached."
-		};	
+});
 
-	});
-
-	// Then check the Data svc
+// Check NCCP Data service status
+api.get( '/api/status/services/data', function ( request, response ) {
 
 	// Set up parameters
 	var params = {
-		host: 'http://134.197.44.50',
+		host: 'sensor.nevada.edu',
 		port: 80,
 		path: '/Services/DataRetrieval/DataRetrieval.svc'
-	}
+	};
 
-	// First check the main site - no point checking the other stuff if the
-	// main server isn't up
-	http.get( params, function( res ) {
-
-		if ( res.statusCode != 200 ) {
-			status.data = {
-				success: "The NCCP Data service is up."
-			};
+	// Check the Data service
+	check_url( params, function ( result ) {
+		if ( result.up ) {
+			response.jsonp({ success: 'The data service is up.' });
 		} else {
-			status.data = {
-				error: "The NCCP Data service is currently experiences difficulties.",
-				code: res.statusCode
-			};
-		}
-		
-	}).on( 'error', function ( error ) {
-
-		status.data = {
-			error: "The NCCP Data service could not be reached."
-		};	
-
-	});
-
-	response.jsonp( status );
+			response.jsonp({ error: 'The data service is currently down.' });
+		}	
+	});	
 
 });
 
@@ -205,6 +166,24 @@ api.listen( port );
 console.log( 'Data API is active on port ' + port );
 
 // Useful functions //////////////////////////////////////
+
+// Check url and return appropriate success/error to callback
+function check_url ( params, callback ) {
+
+	// Send the request
+	http.get( params, function( res ) {
+
+		// Respond with the status depending on how it went
+		callback( res.statusCode == 200 ? { up: true } : { up: false, code: res.statusCode } );
+		
+	}).on( 'error', function ( error ) {
+
+		// If we couldn't connect, don't even send status code
+		callback( { up: false } );
+
+	});
+
+}
 
 function format_data ( data, format ) {
 	var final = [];

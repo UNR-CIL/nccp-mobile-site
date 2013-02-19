@@ -3,24 +3,24 @@
  * The template for displaying all pages.
  *
  * @package WordPress
- * 
  * Template Name: Page
  */
+?>
 
-get_header(); ?>
+<?php get_header(); ?>	
 
-		<div id="primary">
-			<div id="content" role="main">
+		<?php if ( have_posts() ) : ?>
 
-				<?php while ( have_posts() ) : the_post(); ?>
+			<?php while ( have_posts() ) : the_post(); ?>
 
-					<?php get_template_part( 'content', 'page' ); ?>
+				<?php get_template_part( 'content', 'page' ); ?>
 
-					<?php comments_template( '', true ); ?>
+			<?php endwhile; ?>
 
-				<?php endwhile; // end of the loop. ?>
+		<?php else : ?>
 
-			</div><!-- #content -->
-		</div><!-- #primary -->
+			<div class="error">Page content not found.</div>
+
+		<?php endif; ?>
 
 <?php get_footer(); ?>

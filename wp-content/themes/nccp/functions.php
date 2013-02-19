@@ -37,8 +37,7 @@ function main_menus () {
 // Global styles
 function theme_styles () {
 
-	wp_enqueue_style( 'jquery-mobile-styles', 'http://code.jquery.com/mobile/1.2.0/jquery.mobile.structure-1.2.0.min.css' );	
-	wp_enqueue_style( 'jquery-mobile-styles-custom', get_stylesheet_directory_uri() . '/css/mobile-themes/nccp.css' );	
+	wp_enqueue_style( 'jquery-mobile-styles', 'http://code.jquery.com/mobile/1.2.0/jquery.mobile.structure-1.2.0.min.css' );
 	wp_enqueue_style( 'style-main', get_stylesheet_directory_uri() . '/style.css' );
 
 }
@@ -138,5 +137,57 @@ function detect_mobile ( $return_info = false ) { // Pass true if more specific 
 	return $return_info ? ( $is_mobile ? $mobile_info : false ) : $is_mobile;
 
 }
+
+// Custom menu building class
+class menu_walker extends Walker_Nav_Menu {						
+					private $prev = null;
+					private $next = null;
+
+					function __construct () {
+						global $post; // Current content
+						$post_url = get_permalink( $post->ID );
+
+						$current = null;
+
+						// Get all the menu items so we can tell if a page has a previous/next for prefetching purposes
+						$menu_items = wp_get_nav_menu_items( 'Main Navigation' );						
+
+						// Strip the item IDs out into their own array of linear menu item IDs
+						array_walk( $menu_items, function ( $item, $index ) use ( $post_url, &$current ) {
+							if ( $item->url == $post_url ) // This is the current menu item
+								$current = $index;
+						});
+
+						if ( $current > 0 ) $this->prev = $menu_items[ $current - 1 ];
+						if ( $current < count( $menu_items ) - 1 ) $this->next = $menu_items[ $current + 1 ];
+					}
+
+					function start_el (  &$output, $item ) {
+						// Basic menu template:
+						//<li id="menu-item-78" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-21 current_page_item menu-item-78">
+						//<a href="http://nccp.local/contact/">Contact</a>
+
+						// Deal with the previous/next items of the current page if they exist
+						if ( $this->prev && $item->ID == $this->prev->ID )
+							$prev = true;
+
+						if ( $this->next && $item->ID == $this->next->ID )
+							$next = true;		
+
+						$output .= sprintf( 
+							'<li id="menu-item-%d" class="menu-item menu-item-%d page-item page-item-%d %s">
+								<a href="%s" data-transition="%s" class="%s" %s>%s</a>',
+							$item->ID,
+							$item->ID,
+							$item->ID,
+							$item->current ? 'current-page-item' : '',
+							$item->url,
+							'slidefade',
+							isset( $prev ) ? 'page-prev' : ( isset( $next ) ? 'page-next' : '' ),
+							isset( $prev ) || isset( $next ) ? 'data-prefetch' : '',
+							$item->title
+						); 
+					}
+				}
 
 ?>

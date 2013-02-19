@@ -7,25 +7,18 @@
 
 <?php get_header(); ?>
 
-		<div id="primary">
-			<div id="content" role="main">
+		<?php if ( have_posts() ) : ?>
 
-			<?php if ( have_posts() ) : ?>
+			<?php while ( have_posts() ) : the_post(); ?>
 
-				<?php /* Start the Loop */ ?>
-				<?php while ( have_posts() ) : the_post(); ?>
+				<?php get_template_part( 'content', 'home' ); ?>
 
-					<?php get_template_part( 'content', 'home' ); ?>
+			<?php endwhile; ?>
 
-				<?php endwhile; ?>
+		<?php else : ?>
 
-			<?php else : ?>
+			<div class="error">Page content not found.</div>
 
-				<div class="error">Page content not found.</div>
-
-			<?php endif; ?>
-
-			</div>
-		</div>
+		<?php endif; ?>
 
 <?php get_footer(); ?>

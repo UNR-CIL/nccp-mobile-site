@@ -41,19 +41,17 @@ $(document).bind( 'pageinit', function () {
     // time pageinit fires.  All parent selectors should be namespaced by this (i.e. page.find( blah ) 
     // instead of $( blah ))
     var page = ( $('#page[data-external-page="true"]').length ) ? $('#page[data-external-page="true"]') : $('#page');
-
-
     
     // Menu
 
-    page.find('#main-navigation').on( 'mouseover', '#menu-main-navigation > li > a', function () {       
+    /*page.find('#main-navigation').on( 'mouseover', '#menu-main-navigation > li > a', function () {       
         var parent = $(this).parent('li');
         var siblings = parent.siblings('li');
             
         siblings.find('ul.sub-menu').hide();
         parent.find('ul.sub-menu').stop().fadeTo( 500, 1 );
         parent.siblings('li').removeClass('active');
-    });
+    });*/
     
     // Flots
     

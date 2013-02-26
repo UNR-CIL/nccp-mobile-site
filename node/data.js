@@ -81,11 +81,11 @@ api.get( '/api/get', function ( request, response ) {
 	conn.connect();
 
 	// Send the query
-	conn.query( "SELECT timestamp, value " + 
-		"FROM ( SELECT @row := @row +1 AS rownum, logical_sensor_id, timestamp, value " +
-		"FROM ( SELECT @row :=0) r, ci_logical_sensor_data ) ranked " +
-		"WHERE rownum % ? = 0 AND logical_sensor_id = ? LIMIT ?",
-		[skip, request.query.sensor_id, parseInt( limit )], 
+	conn.query( "SELECT timestamp, value" + 
+		"FROM ci_logical_sensor_data" + 
+		"WHERE logical_sensor_id = ? AND timestamp" + 
+		"BETWEEN '?' AND '?' LIMIT ?",
+		[q.sensor_id, q.start, q.end, parseInt( limit )], 
 		function ( err, rows, fields ) {
 			console.log( 'Sending response...' );
 

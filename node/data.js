@@ -16,7 +16,7 @@ var http = require( 'http' );
 
 // Parameters
 var port = 6227, // No, this isn't random
-	periods = { // Period plus the record offset corresponding to it
+	intervals = { // Period plus the record offset corresponding to it
 		yearly: 525600,
 		monthly: 43200, 
 		weekly: 10080,
@@ -44,6 +44,8 @@ api.configure( function () {
 // period: time format - P1M, PT6H are examples
 // count: limit results
 // format: 'raw' will return array of ONLY data values, no timestamps
+// Example AJAX request:
+//$.ajax( 'http://nccp.local:6227/nccp/get?callback=?', { crossDomain: true, dataType: 'json', data: { sensor_id: 7, count: 10 }, success: function ( response, status, xhr ) { console.log( response, status, xhr ) }, error: function ( one, two, three ) { console.log( two, three ) } } )
 api.get( '/api/get', function ( request, response ) {
 
 	var q = request.query;
@@ -62,8 +64,8 @@ api.get( '/api/get', function ( request, response ) {
 	// Set the period up if the parameter was passed
 	var skip = 1;
 
-	if ( request.query.period && _.has( periods, request.query.period ) )
-		skip = periods[request.query.period];
+	if ( request.query.interval && _.has( intervals, request.query.interval ) )
+		skip = intervals[request.query.interval];
 
 	if ( request.query.count )
 		limit = request.query.count;
@@ -89,10 +91,7 @@ api.get( '/api/get', function ( request, response ) {
 
 			response.jsonp( request.query.format ? format_data( rows, request.query.format ) : rows );
 
-			// Example request
-			//$.ajax( 'http://nccp.local:6227/nccp/get?callback=?', { crossDomain: true, dataType: 'json', data: { sensor_id: 7, count: 10 }, success: function ( response, status, xhr ) { console.log( response, status, xhr ) }, error: function ( one, two, three ) { console.log( two, three ) } } )
-	});		
-
+	});
 
 });
 

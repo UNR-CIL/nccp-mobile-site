@@ -61,14 +61,12 @@ api.get( '/api/get', function ( request, response ) {
 
 	// Set parameters up
 
-	// Set the period up if the parameter was passed
-	var skip = 1;
-
-	if ( request.query.interval && _.has( intervals, request.query.interval ) )
-		skip = intervals[request.query.interval];
-
-	if ( request.query.count )
-		limit = request.query.count;
+	if ( q.interval && _.has( intervals, q.interval) )
+		var skip = intervals[request.query.interval]; 
+	
+	// If interval is set, multiply the limit by the skip because
+	// the interval is processed server-side, not in the DB (quicker)
+	if ( q.count ) limit = skip ? q.count * skip : q.count;
 
 	// Set up the database connection
 	var conn = db.createConnection({
@@ -81,15 +79,32 @@ api.get( '/api/get', function ( request, response ) {
 	conn.connect();
 
 	// Send the query
-	conn.query( "SELECT timestamp, value" + 
-		"FROM ci_logical_sensor_data" + 
-		"WHERE logical_sensor_id = ? AND timestamp" + 
-		"BETWEEN '?' AND '?' LIMIT ?",
-		[q.sensor_id, q.start, q.end, parseInt( limit )], 
+	conn.query( "SELECT timestamp, value " + 
+		"FROM ci_logical_sensor_data " + 
+		"WHERE logical_sensor_id = ? AND timestamp " + 
+		"BETWEEN ? AND ? LIMIT ?",
+		[ parseInt( q.sensor_id ), q.start, q.end, parseInt( limit ) ], 
 		function ( err, rows, fields ) {
 			console.log( 'Sending response...' );
 
-			response.jsonp( request.query.format ? format_data( rows, request.query.format ) : rows );
+			if ( err ) 
+				console.log( err );
+			else {
+				if ( rows.length > 0 ) {
+					// Process interval if passed, otherwise send results straight through
+					if ( skip ) {
+						var final_results = [];
+						
+						for ( var i = 0; i < rows.length; i += skip )
+							final_results.push( rows[i] );
+
+						response.jsonp( q.format ? format_data( final_results, q.format ) : final_results );
+						
+					} else
+						response.jsonp( request.query.format ? format_data( rows, request.query.format ) : rows );
+				} else
+					response.jsonp( { msg: 'No results found.' } );
+			}
 
 	});
 

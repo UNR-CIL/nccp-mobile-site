@@ -45,68 +45,78 @@ api.configure( function () {
 // count: limit results
 // format: 'raw' will return array of ONLY data values, no timestamps
 // Example AJAX request:
-//$.ajax( 'http://nccp.local:6227/nccp/get?callback=?', { crossDomain: true, dataType: 'json', data: { sensor_id: 7, count: 10 }, success: function ( response, status, xhr ) { console.log( response, status, xhr ) }, error: function ( one, two, three ) { console.log( two, three ) } } )
+// $.getJSON( 'http://nccp.local:6227/api/get/?callback=?', { sensor_id: 7, count: 10, start: '2013-02-08', end: '2013-02-10' }, function ( response ) { console.log( response ) } )
 api.get( '/api/get', function ( request, response ) {
 
 	var q = request.query;
 
 	// Make sure this is a valid request
-	if ( ! q.sensor_id ) {
+	if ( ! q.sensor_id )
 		response.jsonp( { error: 'Must send valid sensor ID.' } );
-	} else if ( ! q.start || ! q.end ) {
+	else if ( ! q.start || ! q.end )
 		response.jsonp( { error: 'Must send valid start and end' } );
-	}	
+	else {
+		console.log( 'Request received for sensor ' + q.sensor_id );
 
-	console.log( 'Request received for sensor ' + request.query.sensor_id );
+		// Set parameters up
 
-	// Set parameters up
+		if ( q.interval && _.has( intervals, q.interval) )
+			var skip = intervals[request.query.interval]; 
+		
+		// If interval is set, multiply the limit by the skip because
+		// the interval is processed server-side, not in the DB (quicker)
+		if ( q.count ) limit = skip ? q.count * skip : q.count;
 
-	if ( q.interval && _.has( intervals, q.interval) )
-		var skip = intervals[request.query.interval]; 
-	
-	// If interval is set, multiply the limit by the skip because
-	// the interval is processed server-side, not in the DB (quicker)
-	if ( q.count ) limit = skip ? q.count * skip : q.count;
+		// Set up the database connection
+		var conn = db.createConnection({
+			host: 'dev.monterey-j.com',
+			user: 'nccp_admin',
+			password: 'd7yt$7s2Ol9!5~742ee',
+			database: 'nccp'
+		});
 
-	// Set up the database connection
-	var conn = db.createConnection({
-		host: 'dev.monterey-j.com',
-		user: 'nccp_admin',
-		password: 'd7yt$7s2Ol9!5~742ee',
-		database: 'nccp'
-	});
+		conn.connect();
 
-	conn.connect();
+		// Send the query
+		conn.query( "SELECT timestamp, value " + 
+			"FROM ci_logical_sensor_data " + 
+			"WHERE logical_sensor_id = ? AND timestamp " + 
+			"BETWEEN ? AND ? LIMIT ?",
+			[ parseInt( q.sensor_id ), q.start, q.end, parseInt( limit ) ], 
+			function ( err, rows, fields ) {
+				console.log( 'Sending response...' );
 
-	// Send the query
-	conn.query( "SELECT timestamp, value " + 
-		"FROM ci_logical_sensor_data " + 
-		"WHERE logical_sensor_id = ? AND timestamp " + 
-		"BETWEEN ? AND ? LIMIT ?",
-		[ parseInt( q.sensor_id ), q.start, q.end, parseInt( limit ) ], 
-		function ( err, rows, fields ) {
-			console.log( 'Sending response...' );
+				// Process errors first
+				if ( err ) {
 
-			if ( err ) 
-				console.log( err );
-			else {
-				if ( rows.length > 0 ) {
-					// Process interval if passed, otherwise send results straight through
-					if ( skip ) {
-						var final_results = [];
-						
-						for ( var i = 0; i < rows.length; i += skip )
-							final_results.push( rows[i] );
+					console.log( err );
+					response.jsonp( { error: 'An error occurred. =(' } );
 
-						response.jsonp( q.format ? format_data( final_results, q.format ) : final_results );
-						
+				// Otherwise process the results
+				} else {
+
+					if ( rows.length > 0 ) {
+						// Process interval if passed, otherwise send results straight through
+						if ( skip ) {
+
+							var final_results = [];
+							
+							for ( var i = 0; i < rows.length; i += skip )
+								final_results.push( rows[i] );
+
+							response.jsonp( q.format ? format_data( final_results, q.format ) : final_results );
+							
+						} else
+
+							response.jsonp( request.query.format ? format_data( rows, request.query.format ) : rows );
+
 					} else
-						response.jsonp( request.query.format ? format_data( rows, request.query.format ) : rows );
-				} else
-					response.jsonp( { msg: 'No results found.' } );
-			}
 
-	});
+						response.jsonp( { msg: 'No results found.' } );
+				}
+
+		});	
+	}	
 
 });
 

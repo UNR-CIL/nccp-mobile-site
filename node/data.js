@@ -13,6 +13,9 @@ var e = require( 'express' );
 var _ = require( 'underscore' );
 var http = require( 'http' );
 
+// Get ze config info
+var config = require( 'config' );
+
 // Parameters
 var port = 6227, // No, this isn't random
 	intervals = { // Period plus the record offset corresponding to it
@@ -68,10 +71,10 @@ api.get( '/api/get', function ( request, response ) {
 
 		// Set up the database connection
 		var conn = db.createConnection({
-			host: 'dev.monterey-j.com',
-			user: 'nccp_admin',
-			password: 'd7yt$7s2Ol9!5~742ee',
-			database: 'nccp'
+			host: config.db.host,
+			user: config.db.user,
+			password: config.db.pass,
+			database: config.db.name
 		});
 
 		conn.connect();

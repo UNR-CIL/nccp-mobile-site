@@ -6,7 +6,6 @@
 */
 
 // Example query
-// $.ajax( 'http://nccp.local:6227/api/get?callback=?', { dataType: 'json', data: { sensor_id: 7, count: 10 }, success: function ( response, status, xhr ) { console.log( response, status, xhr ) }, error: function ( one, two, three ) { console.log( two, three ) } } )
 
 // Get the mysql driver and express for building the RESTful-ness
 var db = require( 'mysql' );
@@ -121,6 +120,8 @@ api.get( '/api/get', function ( request, response ) {
 });
 
 // Check main NCCP portal status
+// Example AJAX call
+// $.getJSON( 'http://nccp.local:6227/api/status/website?callback=?', function ( response ) { console.log( response ) } )
 api.get( '/api/status/website', function ( request, response ) {
 
 	// Set up parameters

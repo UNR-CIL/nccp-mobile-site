@@ -35,30 +35,30 @@
 
 </head>
 
-<body <?php body_class(); ?>>
-
-	<header id="header" data-role="header" class="container">
-
-		<div id="main-navigation" class="container">				
-			<?php wp_nav_menu( array( 'menu' => 'Main Navigation', 'walker' => new menu_walker, 'depth' => 2 ) ); ?>
-			<div id="ribbon">
-				<a href="../status">
-					<img class="status-ribbon" border="0" src="<?php echo get_template_directory_uri(); ?>/img/icons/status.png" border="0" />
-				</a>	
-			</div>						
-		</div>	
-
-		<div id="logo">
-			<a href="<?php echo home_url(); ?>/" data-transition="slidefade"><img src="<?php echo get_template_directory_uri(); ?>/img/logo.png" border="0" /></a>
-		</div>
-		
-	</header>
-
-	<div id="split" class="container">
-		<img class="split-bg" src="<?php echo get_template_directory_uri(); ?>/img/split-bg.png" border="0" />
-		<div class="split-content"><?php echo get_the_title( $ID ); ?></div>
-	</div>
+<body <?php body_class(); ?>>	
 
 	<div id="page" data-role="page" class="container">
+
+		<header id="header" data-role="header" class="">
+
+			<div id="main-navigation" class="container">				
+				<?php wp_nav_menu( array( 'menu' => 'Main Navigation', 'walker' => new menu_walker, 'depth' => 2 ) ); ?>
+				<div id="ribbon">
+					<a href="../status">
+						<img class="status-ribbon" border="0" src="<?php echo get_template_directory_uri(); ?>/img/icons/status.png" border="0" />
+					</a>	
+				</div>						
+			</div>	
+
+			<div id="logo">
+				<a href="<?php echo home_url(); ?>/" data-transition="slidefade"><img src="<?php echo get_template_directory_uri(); ?>/img/logo.png" border="0" /></a>
+			</div>
+			
+		</header>
+
+		<div id="split" class="">
+			<img class="split-bg" src="<?php echo get_template_directory_uri(); ?>/img/split-bg.png" border="0" />
+			<div class="split-content"><?php echo get_the_title( $ID ); ?></div>
+		</div>	
 
 		<div id="main" data-role="content">

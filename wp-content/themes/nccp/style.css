@@ -121,7 +121,7 @@ background-size: 100%; }
 #footer-logo img { width: 100%; }
 .footer-text { color: white; font-size: 1.3em; line-height: 2.2em; top: -32px; left: -2%;}
 #footer-text img {}
-#copyright { font-size: 1em; color: #efc48d; padding-right: 1%; position: absolute; width: 100%; margin-top: -15%; left: -0.5%; background-image: url('img/footer-copyright-bg.png'); background-repeat: no-repeat; background-position: center; background-size: contain; }
+#copyright { font-size: 1em; color: #efc48d; padding-right: 1%; position: absolute; width: 100%; left: -0.5%; background-image: url('img/footer-copyright-bg.png'); background-repeat: no-repeat; background-position: center; background-size: contain; bottom: -25%;}
 #copyright .date { font-size: 0.75em; }
 
 /* Page content *******************************************************/
@@ -165,11 +165,7 @@ background-size: 100%; }
         
     body { font-size: 1.1em; }
     .split-content { top: 20px; }
-    .footer-text { top: -4px; font-size: 1.1em;}
-    #copyright {
-    margin-top: -2%;
-  }
-
+    .footer-text { top: -4px; font-size: 1.1em; }
 }
 
 @media ( min-width: 600px ) {
@@ -177,9 +173,6 @@ background-size: 100%; }
     body { font-size: 1.4em; }
     .split-content { top: 32px; }
     .footer-text { top: -12px; }
-    #copyright {
-    margin-top: -10%;
-  }
     
 }
 
@@ -187,9 +180,6 @@ background-size: 100%; }
         
     body { font-size: 1.9em; }
     .footer-text { top: -22px; }
-    #copyright {
-    margin-top: -16%;
-  }
 
 }
 
@@ -197,9 +187,6 @@ background-size: 100%; }
         
     body { font-size: 2em; }
     .footer-text { top: -35px; }
-    #copyright {
-    margin-top: -18%;
-  }
 
 }
 
@@ -208,9 +195,6 @@ background-size: 100%; }
     body { font-size: 2.7em; }
     .split-content { top: 50px; }
     .footer-text { top: -40px; }
-    #copyright {
-    margin-top: -16%;
-  }
 
 }
 

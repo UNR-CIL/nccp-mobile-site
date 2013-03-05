@@ -107,7 +107,10 @@ $(document).bind( 'pageinit', function () {
 function get_server_status ( service, callback ) {
      
      // Build the request URL
-     var url = 'http://' + window.location.host + ':6227';
+     // First works in general
+     // ... but the AWS version is best most of the time
+     //var url = 'http://' + window.location.host + ':6227'; 
+     var url = 'http://' + 'ec2-54-241-223-209.us-west-1.compute.amazonaws.com' + ':6227'; 
      
      switch ( service ) {
          case 'website': url += '/api/status/website?callback=?'; break;

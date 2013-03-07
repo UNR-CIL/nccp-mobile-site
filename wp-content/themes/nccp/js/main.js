@@ -53,79 +53,49 @@ $(document).bind( 'pageinit', function () {
         parent.siblings('li').removeClass('active');
     });*/
     
-    // Flots
+    // Get server status - the status starts as Unknown so there's no
+    // need to set that status explicitly
     
-    /*if ( $('.flot').length ) {
-        get_sensor_data( 7, 'day', true, function ( response ) { 
-            var options = {
-                xaxis : {
-                    mode: "time", 
-                    minTickSize: [ 1, "day" ]    
-                },
-                zoom : {
-                    interactive: true    
-                },
-                pan : {
-                    interactive: true    
-                },
-                crosshair : {
-                    mode: "x"    
-                },
-                series: {
-                    color: '#DB5C1F'    
-                }        
-            }
+    if ( $('#status').length ) {
+        
+        // Check the main server status
+        get_server_status( 'website', function ( status ) {           
+            if ( status.error )
+                $('#nccp-status').removeClass( 'unknown' ).addClass( 'bad' ).find( '.status-text' ).html( "The NCCP Portal is <b>down</b>" );
+            else if ( status.success )
+                $('#nccp-status').removeClass( 'unknown' ).addClass( 'good' ).find( '.status-text' ).html( "The NCCP Portal is <b>up</b>" );
+
             
-            $.plot( $("#flot-1"), [$.parseJSON(response)], options );     
+            // Set the timestamp
+            var now = new Date();
+            $('#nccp-status').find( '.status-date' ).text( 'As of: ' + now.getHours() + ':' + now.getMinutes() );
         });
         
-        get_sensor_data( 5, 'hour', true, function ( response ) { 
-            var options = {
-                xaxis : {
-                    mode: "time", 
-                    minTickSize: [ 1, "hour" ]                    
-                },
-                zoom : {
-                    interactive: true    
-                },
-                pan : {
-                    interactive: true    
-                },
-                crosshair : {
-                    mode: "x"    
-                },
-                series : {
-                    color: '#297fd0',
-                    bars: { show: true }    
-                }        
-            }
+        // Then the API status
+        get_server_status( 'data', function ( status ) {           
+            if ( status.error )
+                $('#data-status').removeClass( 'unknown' ).addClass( 'bad' ).find( '.status-text' ).html( "The Data API is <b>down</b>" );
+            else if ( status.success )
+                $('#data-status').removeClass( 'unknown' ).addClass( 'good' ).find( '.status-text' ).html( "The Data API is <b>up</b>" );
+
             
-            $.plot( $("#flot-2"), [$.parseJSON(response)], options );     
-        }); 
+            // Set the timestamp
+            var now = new Date();
+            $('#data-status').find( '.status-date' ).text( 'As of: ' + now.getHours() + ':' + now.getMinutes() );
+        });
         
-        get_sensor_data( 4, 'minute', true, function ( response ) { 
-            var options = {
-                xaxis : {
-                    mode: "time", 
-                    minTickSize: [ 1, "minute" ]    
-                },
-                zoom : {
-                    interactive: true    
-                },
-                pan : {
-                    interactive: true    
-                },
-                crosshair : {
-                    mode: "x"    
-                },
-                series : {
-                    color: '#5ab71c'    
-                }        
-            }
-            
-            $.plot( $("#flot-3"), [$.parseJSON(response)], options );     
-        });    
-    }*/    
+        get_server_status( 'measurement', function ( status ) {           
+            if ( status.error )
+                $('#measurement-status').removeClass( 'unknown' ).addClass( 'bad' ).find( '.status-text' ).html( "The Measurement API is <b>down</b>" );
+            else if ( status.success )
+                $('#measurement-status').removeClass( 'unknown' ).addClass( 'good' ).find( '.status-text' ).html( "The Measurement API is <b>up</b>" );
+    
+            // Set the timestamp
+            var now = new Date();
+            $('#measurement-status').find( '.status-date' ).text( 'As of: ' + now.getHours() + ':' + now.getMinutes() );
+        });
+        
+    }   
       
 });
 
@@ -133,6 +103,25 @@ $(document).bind( 'pageinit', function () {
 ////////////////////////////////////////////////////////////////////
 // Functions ///////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
+
+function get_server_status ( service, callback ) {
+     
+     // Build the request URL
+     // First works in general
+     // ... but the AWS version is best most of the time
+     //var url = 'http://' + window.location.host + ':6227'; 
+     var url = 'http://' + 'ec2-54-241-223-209.us-west-1.compute.amazonaws.com' + ':6227'; 
+     
+     switch ( service ) {
+         case 'website': url += '/api/status/website?callback=?'; break;
+         case 'data': url += '/api/status/services/data?callback=?'; break;
+         case 'measurement': url += '/api/status/services/measurement?callback=?'; break;   
+     }
+     
+     // Make the request
+     $.getJSON( url, callback );
+        
+}
 
 function get_sensor_data ( sensor_id, period, flot, callback ) {
     var options = { 'sensor_id' : sensor_id };

@@ -48,10 +48,18 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-$db['default']['hostname'] = 'dev.monterey-j.com';
-$db['default']['username'] = 'nccp_admin';
-$db['default']['password'] = 'd7yt$7s2Ol9!5~742ee';
-$db['default']['database'] = 'nccp';
+// Dev server
+//$db['default']['hostname'] = 'dev.monterey-j.com';
+//$db['default']['username'] = 'nccp_admin';
+//$db['default']['password'] = 'd7yt$7s2Ol9!5~742ee';
+//$db['default']['database'] = 'nccp';
+
+// AZAMON
+$db['default']['hostname'] = 'digglesby-db.cym5zdi8lqcs.us-west-1.rds.amazonaws.com';
+$db['default']['username'] = 'dev_admin';
+$db['default']['password'] = 'qaz102938';
+$db['default']['database'] = 'digglesby_db';
+
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = TRUE;

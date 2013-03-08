@@ -37,17 +37,6 @@ class Api extends CI_Controller {
 		)));
 	}
 
-	// Returns all current sensors in database
-	// Note that this is probably a bad idea because there
-	// are over 2000 sensors on average
-	public function get_all_sensors () {
-
-		$sensors = $this->db->query( sprintf(
-			"SELECT * FROM ci_logical_sensor"
-		));
-
-	}
-
 	// Return the current list sensor physical locations
 	public function get_sensor_locations () {
 

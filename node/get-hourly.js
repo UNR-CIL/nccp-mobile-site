@@ -1,7 +1,8 @@
 var mysql = require( 'mysql' ),
 	_ = require( 'underscore' ),
 	http = require( 'http' ),
-	qs = require( 'querystring' );
+	qs = require( 'querystring' ),
+	request = require( 'request' );
 
 // Get ze config info
 var config = require( 'config' );
@@ -17,13 +18,15 @@ var pool = mysql.createPool({
 	database: config.db.name
 });
 
+MakeSensorRequest( 10 );
+
 // Start polling
-var interval = setInterval( function () {
+/*var interval = setInterval( function () {
 
 	CheckSensors( pool, sensorPool );
 	console.log( "Current sensors: ", sensorPool );
 
-}, 2000 );
+}, 2000 );*/
 
 // Functions
 
@@ -70,15 +73,24 @@ function GetSensor ( pool, sensorPool ) {
 
 function MakeSensorRequest ( sensorId ) {
 
+	request.post( 'http://nccp.local/nccp/index.php/data/update_sensor_data_hourly',
+	    { form: { sensor_id: 10, period: 'P1M' } },
+	    function ( error, response, body ) {
+	        if ( ! error && response.statusCode == 200 ) {
+	            console.log( body );
+	        }
+	    }
+	);
+
 	// Build the post string from an object
-	var post_data = qs.stringify({
+	/*var post_data = qs.stringify({
 	    'sensor_id' : sensorId,
-	    'period': 'P5Y',
+	    'period': 'P1M',
 	});
 
 	// An object of options to indicate where to post to
 	var post_options = {
-	    host: 'http://nccp.local',
+	    host: 'nccp.local',
 	    port: '80',
 	    path: '/nccp/index.php/data/update_sensor_data_hourly',
 	    method: 'POST',
@@ -91,14 +103,14 @@ function MakeSensorRequest ( sensorId ) {
 	// Set up the request
 	var post_req = http.request( post_options, function( res ) {
 	    res.setEncoding( 'utf8' );
-	    /*res.on( 'data', function ( chunk ) {
+	    res.on( 'data', function ( chunk ) {
 	        console.log('Response: ' + chunk);
-	    });*/
+	    });
 	});
 
 	// post the data
 	post_req.write( post_data );
-	post_req.end();
+	post_req.end();*/
 
 }
 

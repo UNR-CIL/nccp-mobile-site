@@ -140,6 +140,26 @@ class Data extends CI_Controller {
 		$sensor_id = $sensor ? $sensor : $this->input->post('sensor_id');
 		$period = $period ? $period : $this->input->post( 'period' );
 
+		// This is a special period that just means all data from the last available
+		// data point
+		if ( $period == 'update' ) {
+			$query = $this->db->query( sprintf(
+				"SELECT * FROM ci_logical_sensor_data_hourly
+				WHERE logical_sensor_id = %d ORDER BY `timestamp` DESC
+				LIMIT 1",
+				$sensor_id
+			));
+
+			if ( $query->num_rows() > 0 ) {
+				$last = new DateTime( $query->row()->timestamp );
+				$now = new DateTime();
+				$difference = $now->diff( $last->sub( new DateInterval( 'P1D' ) ) ); // A day's overlap
+				$period = $difference->format( 'P%yY%mM%dD' );
+			} else { // If there's nothing, there's no data for that sensor, so grab everything
+				$period = 'P5Y';
+			}
+		}
+
 		// Set up timekeeping - note that the END is always now, the START is at the end minus <specified period>
 		$end = new DateTime();
 		$end->add( new DateInterval( 'PT8H' ) ); // Adjust for timezone difference

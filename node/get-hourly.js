@@ -18,15 +18,14 @@ var pool = mysql.createPool({
 	database: config.db.name
 });
 
-MakeSensorRequest( 10 );
-
 // Start polling
-/*var interval = setInterval( function () {
+var interval = setInterval( function () {
 
+	// Check the current sensor pool and remove old sensors/add new ones as needed
 	CheckSensors( pool, sensorPool );
 	console.log( "Current sensors: ", sensorPool );
 
-}, 2000 );*/
+}, 10000 );
 
 // Functions
 
@@ -37,10 +36,14 @@ function CheckSensors ( pool, sensorPool ) {
 		_.each( sensorPool, function ( sensor ) {
 			pool.getConnection( function ( err, connection ) {
 				connection.query( "SELECT * FROM ci_logical_sensor_hourly WHERE logical_sensor_id = ?", [ sensor ], function ( err, rows ) {
-					if ( rows[0].pending == 0 ) {
-						sensorPool.splice( sensorPool.indexOf( sensor ), 1 );
-						console.log( "Removing sensor: ", sensor );
-					}
+					if ( rows ) {
+						if ( rows[0].pending == 0 ) {
+							sensorPool.splice( sensorPool.indexOf( sensor ), 1 );
+							console.log( "Removing sensor: ", sensor );
+						}	
+					} else {
+						pool.end();
+					}					
 
 					connection.end();
 				});
@@ -50,7 +53,9 @@ function CheckSensors ( pool, sensorPool ) {
 			
 	if ( sensorPool.length < MAX_SENSORS ) {
 		GetSensor( pool, sensorPool );
-	}		
+	} else {
+		console.log( "Idling..." );
+	}	
 	
 }
 
@@ -58,14 +63,32 @@ function CheckSensors ( pool, sensorPool ) {
 function GetSensor ( pool, sensorPool ) {
 
 	pool.getConnection( function ( err, connection ) {
-		connection.query( "SELECT * FROM ci_logical_sensor_hourly WHERE sensor_updated IS NULL AND pending = 0 LIMIT 1", function ( err, rows ) {
-			//console.log( err );
-			var sensorId = rows[0].logical_sensor_id;
-			//MakeSensorRequest( sensorId );
-			sensorPool.push( sensorId );
-			console.log( "Adding sensor: ", sensorId );
 
-			connection.end();
+		// First get a sensor that needs to be updated (is out of date by > 1 day)
+		// along with the last timestamp for that sensor
+		// If timestamp is empty this means there's no data for that sensor
+		connection.query( "SELECT list.logical_sensor_id FROM ci_logical_sensor_hourly AS list " +
+			"WHERE pending = 0 AND list.logical_sensor_id NOT IN " +
+			"( SELECT DISTINCT logical_sensor_id " +
+			"FROM ci_logical_sensor_data_hourly " +
+			"WHERE `timestamp` > ( NOW() - INTERVAL 1 DAY ) " +
+			"ORDER BY logical_sensor_id ) LIMIT 1",
+			function ( err, rows ) {
+				if ( rows ) {
+					var sensorId = rows[0].logical_sensor_id;
+					if ( sensorPool.indexOf( sensorId ) == -1 ) {
+						MakeSensorRequest( sensorId );
+						sensorPool.push( sensorId );
+						console.log( "Adding sensor: ", sensorId );
+					} else {
+						console.log( "Sensor " + sensorId " already in pool." );
+					}
+					
+				} else {
+					pool.end(); // Guess we're done, so end it
+				}			
+
+				connection.end();
 		});
 	});
 
@@ -74,43 +97,13 @@ function GetSensor ( pool, sensorPool ) {
 function MakeSensorRequest ( sensorId ) {
 
 	request.post( 'http://nccp.local/nccp/index.php/data/update_sensor_data_hourly',
-	    { form: { sensor_id: 10, period: 'P1M' } },
+	    { form: { sensor_id: sensorId, period: 'update' } },
 	    function ( error, response, body ) {
 	        if ( ! error && response.statusCode == 200 ) {
 	            console.log( body );
 	        }
 	    }
 	);
-
-	// Build the post string from an object
-	/*var post_data = qs.stringify({
-	    'sensor_id' : sensorId,
-	    'period': 'P1M',
-	});
-
-	// An object of options to indicate where to post to
-	var post_options = {
-	    host: 'nccp.local',
-	    port: '80',
-	    path: '/nccp/index.php/data/update_sensor_data_hourly',
-	    method: 'POST',
-	    headers: {
-	        'Content-Type': 'text/plain',
-	        'Content-Length': post_data.length
-	    }
-	};
-
-	// Set up the request
-	var post_req = http.request( post_options, function( res ) {
-	    res.setEncoding( 'utf8' );
-	    res.on( 'data', function ( chunk ) {
-	        console.log('Response: ' + chunk);
-	    });
-	});
-
-	// post the data
-	post_req.write( post_data );
-	post_req.end();*/
 
 }
 

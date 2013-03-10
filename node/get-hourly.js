@@ -81,7 +81,7 @@ function GetSensor ( pool, sensorPool ) {
 						sensorPool.push( sensorId );
 						console.log( "Adding sensor: ", sensorId );
 					} else {
-						console.log( "Sensor " + sensorId " already in pool." );
+						console.log( "Sensor " + sensorId + " already in pool." );
 					}
 					
 				} else {

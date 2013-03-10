@@ -31,10 +31,11 @@ class Api_data extends CI_Model {
 	public function search ( $sensor_ids = null, $start = null, $end = null, $skip = 0, $take = 1000 ) {
 
 		// Build new specification is sensor_ids was passed
-		if ( $sensor_ids  )
+		if ( $sensor_ids ) {
 			$this->specification = $this->build_sensor_specification( $sensor_ids, $start, $end );
-		elseif ( ! $this->specification ) // Otherwise check if specification was built already
+		} elseif ( ! $this->specification ) { // Otherwise check if specification was built already
 			return false;
+		}
 
 		// Send the query to the data API
 		$results = $this->data_client->Search( array( "search" => $this->specification, "skip" => $skip, "take" => $take ) );
@@ -46,10 +47,11 @@ class Api_data extends CI_Model {
 	public function NumberOfResults ( $sensor_ids, $start, $end ) {
 
 		// Build new specification is sensor_ids was passed
-		if ( $sensor_ids  )
+		if ( $sensor_ids  ) {
 			$this->specification = $this->build_sensor_specification( $sensor_ids, $start, $end );
-		elseif ( ! $this->specification ) // Otherwise check if specification was built already
+		} elseif ( ! $this->specification ) { // Otherwise check if specification was built already
 			return false;
+		}
 
 		// Send the query to the data API
 		$results = $this->data_client->NumberOfResults( array( "search" => $this->specification ) );		
@@ -66,8 +68,9 @@ class Api_data extends CI_Model {
 	// Sensor IDs is an array of sensor IDs (can be a single value)
 	public function build_sensor_specification ( $sensor_ids, $start, $end ) {
 
-		if ( ! is_array( $sensor_ids ) )
+		if ( ! is_array( $sensor_ids ) ) { 
 			$sensor_ids = array( $sensor_ids );
+		}			
 		
 		// Retrieve the logical sensor information
 		$sensors = $this->get_sensors( $sensor_ids );
@@ -116,7 +119,7 @@ class Api_data extends CI_Model {
 				"SELECT `unit_id` FROM ci_logical_sensor_relationships WHERE "
 			);
 
-			if ( count( $sensor_ids ) > 1 )
+			if ( count( $sensor_ids ) > 1 ) {
 				foreach ( $sensor_ids as $index => $id ) {
 					$sql .= sprintf(  
 						"`logical_sensor_id` = %d",
@@ -126,11 +129,12 @@ class Api_data extends CI_Model {
 					if ( $index != ( count( $sensor_ids ) - 1 ) )
 						$sql .= ' OR ';
 				}
-			else
+			} else {
 				$sql .= sprintf(  
 					"`logical_sensor_id` = %d",
 					$sensor_ids[0]
-				);	
+				);
+			}					
 		}
 
 		return $this->return_results( $this->db->query( $sql ));

@@ -189,8 +189,7 @@ class Data extends CI_Controller {
 					} else {
 						$offset = 0;
 						$divider = 1;
-					}
-					
+					}					
 
 					for ( $i = $offset; $i < count( $data ); $i += $divider ) {
 						$final_data[] = $data[$i];
@@ -351,30 +350,6 @@ class Data extends CI_Controller {
 				
 				// Create timestamp from row timestamp
 				$date = new DateTime( $row->TimeStamp );
-			
-				// If this is the first record and no first timestamp exists, set the first timestamp
-				/*if ( $index == 0 && $skip == 0 ) {
-					$query = $this->db->query( sprintf( 
-						"SELECT * FROM ci_logical_sensor WHERE logical_sensor_id = %d AND first_timestamp IS NOT NULL",
-						$row->LogicalSensorId
-					));	
-					if ( $query->num_rows() == 0 )
-						$this->db->query( sprintf(
-							"UPDATE ci_logical_sensor SET `first_timestamp` = '%s', `first_unix_timestamp` = %d WHERE `logical_sensor_id` = %d",
-							$row->TimeStamp,
-							$date->getTimestamp(),
-							$row->LogicalSensorId
-						));			
-				}
-
-				// If the the last record, update the last updated record
-				if ( ( $skip + $num_to_process >= $num_results ) && ( $index == count( $data ) - 1 ) )
-					$this->db->query( sprintf(
-						"UPDATE ci_logical_sensor SET `last_timestamp` = '%s', `last_unix_timestamp` = %d WHERE `logical_sensor_id` = %d",
-						$row->TimeStamp,
-						$date->getTimestamp(),
-						$row->LogicalSensorId
-					));*/
 
 				if ( isset( $row->LogicalSensorId ) && $row->LogicalSensorId > 0 ) // This should never be 0.  EVER.  >=(
 					$sql .= sprintf(

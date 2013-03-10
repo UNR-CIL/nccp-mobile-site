@@ -96,7 +96,7 @@ function GetSensor ( pool, sensorPool ) {
 
 function MakeSensorRequest ( sensorId ) {
 
-	request.post( 'http://nccp.local/nccp/index.php/data/update_sensor_data_hourly',
+	request.post( config.paths.base + 'nccp/index.php/data/update_sensor_data_hourly',
 	    { form: { sensor_id: sensorId, period: 'update' } },
 	    function ( error, response, body ) {
 	        if ( ! error && response.statusCode == 200 ) {

@@ -93,35 +93,6 @@ class Data extends CI_Controller {
 
 	}
 
-	// IN PROGRESS ///////////////////////////////////////////////////////////
-	// This does what update_sensor_data does, but multiple sensors at a time
-	// (not all of them at a time, no bueno, keep it <= 1000).  This is quicker 
-	// but potentially less reliable
-	// Params (in post):
-	// sensor_ids (comma-separated)*
-	// start (specified as Y-m-d H:i:s)*
-	// end (specified as Y-m-d H:i:s)*
-	public function update_sensor_data_bulk () {
-
-		// Make sure we should be here
-		if ( ! $this->input->post('sensor_ids') ) die( 'Sensor IDs must be sent as comma-separated list.' );
-		if ( ! $this->input->post('start') ) die( 'Start must be specified.' );
-		if ( ! $this->input->post('end') ) die( 'End must be specified.' );
-
-		// Get the list of sensors
-		$query = $this->db->query( "SELECT * FROM ci_logical_sensor" );
-
-		
-
-		/*foreach ( $query->result() as $index => $row ) {
-			echo $row->logical_sensor_id;
-
-			if ( $index != ( $query->num_rows() - 1 ) )
-				echo ",";
-		}*/
-			
-	}
-
 	// Update sensor data of specific logical sensor - hourly table
 	// Params:
 	// sensor_id - single sensor ID

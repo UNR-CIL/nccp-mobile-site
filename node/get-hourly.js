@@ -18,7 +18,7 @@ var pool = mysql.createPool({
 	database: config.db.name
 });
 
-// Start polling
+// Start polling every ten seconds
 var interval = setInterval( function () {
 
 	// Check the current sensor pool and remove old sensors/add new ones as needed
@@ -35,7 +35,11 @@ function CheckSensors ( pool, sensorPool ) {
 	if ( sensorPool.length ) {
 		_.each( sensorPool, function ( sensor ) {
 			pool.getConnection( function ( err, connection ) {
+				if ( err ) console.log( err );
+
 				connection.query( "SELECT * FROM ci_logical_sensor_hourly WHERE logical_sensor_id = ?", [ sensor ], function ( err, rows ) {
+					if ( err ) console.log( err );
+
 					if ( rows ) {
 						if ( rows[0].pending == 0 ) {
 							sensorPool.splice( sensorPool.indexOf( sensor ), 1 );
@@ -63,6 +67,7 @@ function CheckSensors ( pool, sensorPool ) {
 function GetSensor ( pool, sensorPool ) {
 
 	pool.getConnection( function ( err, connection ) {
+		if ( err ) console.log( err );
 
 		// First get a sensor that needs to be updated (is out of date by > 1 day)
 		// along with the last timestamp for that sensor
@@ -74,6 +79,8 @@ function GetSensor ( pool, sensorPool ) {
 			"WHERE `timestamp` > ( NOW() - INTERVAL 1 DAY ) " +
 			"ORDER BY logical_sensor_id ) LIMIT 1",
 			function ( err, rows ) {
+				if ( err ) console.log( err );
+
 				if ( rows ) {
 					var sensorId = rows[0].logical_sensor_id;
 					if ( sensorPool.indexOf( sensorId ) == -1 ) {
@@ -99,6 +106,8 @@ function MakeSensorRequest ( sensorId ) {
 	request.post( config.paths.base + 'nccp/index.php/data/update_sensor_data_hourly',
 	    { form: { sensor_id: sensorId, period: 'update' } },
 	    function ( error, response, body ) {
+	    	if ( error ) console.log( err );
+
 	        if ( ! error && response.statusCode == 200 ) {
 	            console.log( body );
 	        }

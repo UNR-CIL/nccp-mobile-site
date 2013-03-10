@@ -77,7 +77,6 @@ class Api_data extends CI_Model {
 
 		// Get timezone information
 		$timezone = $this->get_timezone( $this->default_timezone );
-		//print_r( $timezone );
 
 		// Build the sensor specification
 		$specification = new stdClass();

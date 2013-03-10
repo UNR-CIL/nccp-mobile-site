@@ -52,7 +52,7 @@ class Api_measurements extends CI_Model {
 				$now = new DateTime();
 
 				$this->db->query( sprintf(
-					"INSERT INTO ci_logical_sensor VALUES ( NULL, %d, '%s', '%s', '%s', '%s', %d, %s, %s, %s, %s, %s )",
+					"INSERT INTO ci_logical_sensor VALUES ( NULL, %d, '%s', '%s', '%s', '%s', %d, %s, %s, %s, %s, %s, %d )",
 					$sensor->Id,
 					$sensor->MeasurementInterval,
 					$coords[2],
@@ -63,7 +63,9 @@ class Api_measurements extends CI_Model {
 					isset( $old_sensors[$sensor->Id] ) && ! empty( $old_sensors[$sensor->Id]->first_timestamp ) ? "'" . $old_sensors[$sensor->Id]->first_timestamp . "'" : 'NULL',
 					isset( $old_sensors[$sensor->Id] ) && ! empty( $old_sensors[$sensor->Id]->first_unix_timestamp ) ? $old_sensors[$sensor->Id]->first_unix_timestamp : 'NULL',
 					isset( $old_sensors[$sensor->Id] ) && ! empty( $old_sensors[$sensor->Id]->last_timestamp ) ? "'" . $old_sensors[$sensor->Id]->last_timestamp . "'" : 'NULL',
-					isset( $old_sensors[$sensor->Id] ) && ! empty( $old_sensors[$sensor->Id]->last_unix_timestamp ) ? $old_sensors[$sensor->Id]->last_unix_timestamp : 'NULL'
+					isset( $old_sensors[$sensor->Id] ) && ! empty( $old_sensors[$sensor->Id]->last_unix_timestamp ) ? $old_sensors[$sensor->Id]->last_unix_timestamp : 'NULL',
+					isset( $old_sensors[$sensor->Id] ) && ! empty( $old_sensors[$sensor->Id]->pending ) ? $old_sensors[$sensor->Id]->pending : 0
+
 				));
 
 				// Insert Deployment info

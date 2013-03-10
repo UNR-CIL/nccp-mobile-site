@@ -150,6 +150,13 @@ class Data extends CI_Controller {
 			// Start time of processing
 			$start_time = new DateTime();
 
+			// Grab information on the sensor
+			$sensor_info = $this->db->query( sprintf(
+				"SELECT * FROM ci_logical_sensor_hourly WHERE `logical_sensor_id` = %d",
+				$sensor_id
+			));
+			$sensor_info = $sensor_info->row();
+
 			// Set the pending flag
 			$this->db->query( sprintf(
 				"UPDATE ci_logical_sensor_hourly SET `pending` = 1 WHERE `logical_sensor_id` = %d",
@@ -167,11 +174,25 @@ class Data extends CI_Controller {
 				if ( ! empty( $data ) ) {
 					$final_data = array();
 
-					// Align on the nearest hour
-					$align = new DateTime( $data[0]->TimeStamp );
-					$offset = 60 - (int)$align->format( 'i' );
+					// Calculate divider based on sensor interval
+					// (Only applies to sensors with interval < 1 hour)
+					switch ( $sensor_info->interval ) {
+						case 'PT1M': $divider = 60; break;
+						case 'PT10M': $divider = 6; break;
+						case 'PT30M': $divider = 2; break;
+					}
 
-					for ( $i = $offset; $i < count( $data ); $i += 60 ) {
+					// Align on the top of the hour if necessary
+					if ( $sensor_info->interval != 'PT1H' ) {
+						$align = new DateTime( $data[0]->TimeStamp );
+						$offset = $divider - ( (int)$align->format( 'i' ) / ( 60 / $divider ) );	
+					} else {
+						$offset = 0;
+						$divider = 1;
+					}
+					
+
+					for ( $i = $offset; $i < count( $data ); $i += $divider ) {
 						$final_data[] = $data[$i];
 					}
 

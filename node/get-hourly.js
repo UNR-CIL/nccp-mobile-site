@@ -1,3 +1,6 @@
+// TODO: check if # of data rows has changed since last interval, restart all
+// sensors in queue if not, or send email alert, or some'n.
+
 var mysql = require( 'mysql' ),
 	_ = require( 'underscore' ),
 	http = require( 'http' ),
@@ -8,7 +11,8 @@ var mysql = require( 'mysql' ),
 var config = require( 'config' );
 
 var MAX_SENSORS = 5,
-	sensorPool = [];
+	sensorPool = [],
+	rowCount = 0;
 
 // Set up the connection pool
 var pool = mysql.createPool({
@@ -18,14 +22,28 @@ var pool = mysql.createPool({
 	database: config.db.name
 });
 
+
+
 // Start polling every ten seconds
 var interval = setInterval( function () {
 
 	// Check the current sensor pool and remove old sensors/add new ones as needed
 	CheckSensors( pool, sensorPool );
+
+	// And make sure we're actually still moving
+	CheckRowCount( pool, sensorPool );
+
 	console.log( "Current sensors: ", sensorPool );
 
-}, 10000 );
+}, 15000 );
+
+// Events
+
+process.on( 'SIGINT', function() {
+    console.log("\nShutting down...");
+
+    pool.end();
+});
 
 // Functions
 
@@ -113,6 +131,45 @@ function MakeSensorRequest ( sensorId ) {
 	        }
 	    }
 	);
+
+}
+
+function CheckRowCount ( pool, sensorPool ) {
+	pool.getConnection( function ( err, connection ) {
+		if ( err ) console.log( err );
+
+		connection.query( "SELECT COUNT(*) AS rows FROM ci_logical_sensor_data_hourly",	function ( err, rows ) {
+			if ( err ) console.log( err );		
+
+			// This means something is wrong and we need to start over
+			if ( rows[0].rows == rowCount ) {
+				ResetSensors( pool, sensorPool );
+			}
+
+			rowCount = rows[0].rows;
+			console.log( "Total rows: ", rowCount );
+			connection.end();
+		});
+	});
+}
+
+// Release all the current sensors in the pool (set pending status to 0)
+// This will force the get request to be made again
+function ResetSensors ( pool, sensorPool ) {
+
+	if ( sensorPool.length ) {
+		_.each( sensorPool, function ( sensor ) {
+			pool.getConnection( function ( err, connection ) {
+				if ( err ) console.log( err );
+
+				connection.query( "UPDATE ci_logical_sensor_hourly SET pending = 0 WHERE logical_sensor_id = ?", [ sensor ], function ( err, rows ) {
+					if ( err ) console.log( err );					
+
+					connection.end();
+				});
+			});
+		});	
+	}
 
 }
 

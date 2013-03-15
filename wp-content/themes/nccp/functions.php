@@ -37,7 +37,7 @@ function main_menus () {
 // Global styles
 function theme_styles () {
 
-	wp_enqueue_style( 'jquery-mobile-styles', 'http://code.jquery.com/mobile/1.2.0/jquery.mobile.structure-1.2.0.min.css' );
+	wp_enqueue_style( 'jquery-mobile-styles', get_template_directory_uri() . '/css/jquery.mobile.structure-1.2.0.min.css' );
 	wp_enqueue_style( 'style-main', get_stylesheet_directory_uri() . '/style.css' );
 
 }

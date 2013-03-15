@@ -1,5 +1,5 @@
-// TODO: check if # of data rows has changed since last interval, restart all
-// sensors in queue if not, or send email alert, or some'n.
+// TODO: Change sensor pull query to also check if sensor was updated recently so it doesn't keep trying
+// on the same sensor over and over
 
 var mysql = require( 'mysql' ),
 	_ = require( 'underscore' ),
@@ -22,8 +22,6 @@ var pool = mysql.createPool({
 	database: config.db.name
 });
 
-
-
 // Start polling every ten seconds
 var interval = setInterval( function () {
 
@@ -43,6 +41,7 @@ process.on( 'SIGINT', function() {
     console.log("\nShutting down...");
 
     pool.end();
+    process.exit( 0 );
 });
 
 // Functions
@@ -91,7 +90,9 @@ function GetSensor ( pool, sensorPool ) {
 		// along with the last timestamp for that sensor
 		// If timestamp is empty this means there's no data for that sensor
 		connection.query( "SELECT list.logical_sensor_id FROM ci_logical_sensor_hourly AS list " +
-			"WHERE pending = 0 AND list.logical_sensor_id NOT IN " +
+			"WHERE pending = 0 " + 
+			"AND ( ( ( sensor_updated + INTERVAL 8 HOUR ) < NOW() ) OR sensor_updated IS NULL ) " +
+			"AND list.logical_sensor_id NOT IN " +
 			"( SELECT DISTINCT logical_sensor_id " +
 			"FROM ci_logical_sensor_data_hourly " +
 			"WHERE `timestamp` > ( NOW() - INTERVAL 1 DAY ) " +
@@ -124,7 +125,7 @@ function MakeSensorRequest ( sensorId ) {
 	request.post( config.paths.base + 'nccp/index.php/data/update_sensor_data_hourly',
 	    { form: { sensor_id: sensorId, period: 'update' } },
 	    function ( error, response, body ) {
-	    	if ( error ) console.log( err );
+	    	if ( error ) console.log( error );
 
 	        if ( ! error && response.statusCode == 200 ) {
 	            console.log( body );
@@ -144,6 +145,7 @@ function CheckRowCount ( pool, sensorPool ) {
 			// This means something is wrong and we need to start over
 			if ( rows[0].rows == rowCount ) {
 				ResetSensors( pool, sensorPool );
+				console.log( "Data count hasn't changed.  Resetting sensors..." );
 			}
 
 			rowCount = rows[0].rows;
@@ -153,8 +155,8 @@ function CheckRowCount ( pool, sensorPool ) {
 	});
 }
 
-// Release all the current sensors in the pool (set pending status to 0)
-// This will force the get request to be made again
+// Release all the current sensors back into the wild (set pending status to 0)
+// This will force the get request to the API to be made again
 function ResetSensors ( pool, sensorPool ) {
 
 	if ( sensorPool.length ) {

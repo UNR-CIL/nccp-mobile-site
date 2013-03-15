@@ -91,11 +91,11 @@ function GetSensor ( pool, sensorPool ) {
 		// If timestamp is empty this means there's no data for that sensor
 		connection.query( "SELECT list.logical_sensor_id FROM ci_logical_sensor_hourly AS list " +
 			"WHERE pending = 0 " + 
-			"AND ( ( ( sensor_updated + INTERVAL 8 HOUR ) < NOW() ) OR sensor_updated IS NULL ) " +
+			"AND ( ( ( sensor_updated + INTERVAL 2 DAY ) < NOW() ) OR sensor_updated IS NULL ) " +
 			"AND list.logical_sensor_id NOT IN " +
 			"( SELECT DISTINCT logical_sensor_id " +
 			"FROM ci_logical_sensor_data_hourly " +
-			"WHERE `timestamp` > ( NOW() - INTERVAL 1 DAY ) " +
+			"WHERE `timestamp` > ( NOW() - INTERVAL 2 DAY ) " +
 			"ORDER BY logical_sensor_id ) LIMIT 1",
 			function ( err, rows ) {
 				if ( err ) console.log( err );

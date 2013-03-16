@@ -1,5 +1,8 @@
-// TODO: Change sensor pull query to also check if sensor was updated recently so it doesn't keep trying
-// on the same sensor over and over
+// This is a process that continuously updates the hourly data of up to 5 logical sensors 
+// at a time.  That means it makes API calls for the sensors then checks on them (getting the
+// the hourly data for a single sensor can take > 4 hours).  It also makes sure data is actually
+// moving and will reset itself if not.  It's also capable of threading (you can run several of
+// these on different servers at the time same and they won't interfere with each other).
 
 var mysql = require( 'mysql' ),
 	_ = require( 'underscore' ),
@@ -22,7 +25,7 @@ var pool = mysql.createPool({
 	database: config.db.name
 });
 
-// Start polling every ten seconds
+// Start polling every 15 seconds
 var interval = setInterval( function () {
 
 	// Check the current sensor pool and remove old sensors/add new ones as needed
@@ -86,7 +89,7 @@ function GetSensor ( pool, sensorPool ) {
 	pool.getConnection( function ( err, connection ) {
 		if ( err ) console.log( err );
 
-		// First get a sensor that needs to be updated (is out of date by > 1 day)
+		// First get a sensor that needs to be updated (is out of date by > 2 day)
 		// along with the last timestamp for that sensor
 		// If timestamp is empty this means there's no data for that sensor
 		connection.query( "SELECT list.logical_sensor_id FROM ci_logical_sensor_hourly AS list " +

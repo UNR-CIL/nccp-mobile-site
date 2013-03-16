@@ -14,7 +14,6 @@ class Api_measurements extends CI_Model {
 		$this->load->database();
 
 		$path = $this->config->item('wsdl_path') . '/Measurement.svc'; // Local
-		//$path = 'http://sensor.nevada.edu/Services/Measurements/Measurement.svc?wsdl'; // Live
 
 		$this->measurements_client = new SoapClient( $path );
 
@@ -28,8 +27,9 @@ class Api_measurements extends CI_Model {
 		$old_sensors = array();
 
 		// Key the old sensors by sensor ID instead of db ID
-		foreach ( $query->result() as $row )
-			$old_sensors[$row->logical_sensor_id] = $row;		
+		foreach ( $query->result() as $row ) {
+			$old_sensors[$row->logical_sensor_id] = $row;
+		}					
 
 		// Blow out old sensor data before continuing
 		$this->db->query( 'TRUNCATE TABLE ci_logical_sensor' ); 

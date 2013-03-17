@@ -14,8 +14,12 @@ var mysql = require( 'mysql' ),
 var config = require( 'config' );
 
 var MAX_SENSORS = 5,
+	INTERVAL = 15,
+	TIMEOUT = 300, // 5 min
 	sensorPool = [],
-	rowCount = 0;
+	rowCount = 0,
+	connCount = 0,
+	timer = 0;
 
 // Set up the connection pool
 var pool = mysql.createPool({
@@ -34,9 +38,18 @@ var interval = setInterval( function () {
 	// And make sure we're actually still moving
 	CheckRowCount( pool, sensorPool );
 
-	console.log( "Current sensors: ", sensorPool );
+	// Keep track of time so we can restart if necessary (data count hasn't changed in a while)
+	timer += INTERVAL;
+	if ( timer > TIMEOUT ) ResetSensors( pool, sensorPool );
 
-}, 15000 );
+	// Clear out any stale connections still sitting around
+	ClearConnections( pool );	
+
+	console.log( "Current sensors: ", sensorPool );
+	console.log( "Connection count: ", connCount );
+	console.log( "Time: ", timer );
+
+}, INTERVAL * 1000 );
 
 // Events
 
@@ -57,6 +70,9 @@ function CheckSensors ( pool, sensorPool ) {
 			pool.getConnection( function ( err, connection ) {
 				if ( err ) console.log( err );
 
+				console.log( 'CheckSensors connection added.' );
+				connCount++;
+
 				connection.query( "SELECT * FROM ci_logical_sensor_hourly WHERE logical_sensor_id = ?", [ sensor ], function ( err, rows ) {
 					if ( err ) console.log( err );
 
@@ -67,9 +83,11 @@ function CheckSensors ( pool, sensorPool ) {
 						}	
 					} else {
 						pool.end();
-					}					
+					}
 
 					connection.end();
+					console.log( 'CheckSensors connection removed.' );
+					connCount--;
 				});
 			});
 		});	
@@ -88,6 +106,9 @@ function GetSensor ( pool, sensorPool ) {
 
 	pool.getConnection( function ( err, connection ) {
 		if ( err ) console.log( err );
+
+		console.log( 'GetSensor connection added.' );
+		connCount++;
 
 		// First get a sensor that needs to be updated (is out of date by > 2 day)
 		// along with the last timestamp for that sensor
@@ -118,6 +139,9 @@ function GetSensor ( pool, sensorPool ) {
 				}			
 
 				connection.end();
+
+				console.log( 'GetSensor connection removed.' );
+				connCount--;
 		});
 	});
 
@@ -142,18 +166,21 @@ function CheckRowCount ( pool, sensorPool ) {
 	pool.getConnection( function ( err, connection ) {
 		if ( err ) console.log( err );
 
+		console.log( 'CheckRowCount connection added.' );
+		connCount++;
+
 		connection.query( "SELECT COUNT(*) AS rows FROM ci_logical_sensor_data_hourly",	function ( err, rows ) {
 			if ( err ) console.log( err );		
 
-			// This means something is wrong and we need to start over
-			if ( rows[0].rows == rowCount ) {
-				ResetSensors( pool, sensorPool );
-				console.log( "Data count hasn't changed.  Resetting sensors..." );
-			}
+			// This means we're still good, reset the timer
+			if ( rows[0].rows > rowCount ) timer = 0;
 
 			rowCount = rows[0].rows;
 			console.log( "Total rows: ", rowCount );
+
 			connection.end();
+			console.log( 'CheckRowCount connection removed.' );
+			connCount--;
 		});
 	});
 }
@@ -164,18 +191,66 @@ function ResetSensors ( pool, sensorPool ) {
 
 	if ( sensorPool.length ) {
 		_.each( sensorPool, function ( sensor ) {
-			pool.getConnection( function ( err, connection ) {
-				if ( err ) console.log( err );
-
-				connection.query( "UPDATE ci_logical_sensor_hourly SET pending = 0 WHERE logical_sensor_id = ?", [ sensor ], function ( err, rows ) {
-					if ( err ) console.log( err );					
-
-					connection.end();
-				});
-			});
+			SetPending( pool, sensor, 0 );
 		});	
 	}
 
+}
+
+// Set pending status on a single sensor to 1 or 0
+function SetPending ( pool, sensor, one_or_zero ) {
+	pool.getConnection( function ( err, connection ) {
+		if ( err ) console.log( err );
+
+		console.log( 'SetPending connection added.' );
+		connCount++;
+
+		connection.query( "UPDATE ci_logical_sensor_hourly SET pending = ? WHERE logical_sensor_id = ?", [ one_or_zero, sensor ], function ( err, rows ) {
+			if ( err ) console.log( err );
+			connection.end();
+			console.log( 'SetPending connection removed.' );
+			connCount--;
+		});
+	});
+}
+
+function ClearConnections ( pool ) {
+	pool.getConnection( function ( err, connection ) {
+		if ( err ) console.log( err );
+
+		console.log( 'ClearConnections connection added.' );
+		connCount++;
+
+		connection.query( "SHOW PROCESSLIST", function ( err, rows ) {
+			if ( err ) console.log( err );
+
+			_.each( rows, function ( process ) {
+				if ( process.Time > 600 ) {
+					KillConnection( pool, process.Id );
+				}
+			});
+
+			connection.end();
+			console.log( 'ClearConnections connection removed.' );
+			connCount--;
+		});
+	});
+}
+
+function KillConnection ( pool, pid ) {
+	pool.getConnection( function ( err, connection ) {
+		if ( err ) console.log( err );
+
+		console.log( 'KillConnection connection added.' );
+		connCount++;
+
+		connection.query( "KILL ?", [ pid ], function ( err, rows ) {
+			if ( err ) console.log( err );
+			connection.end();
+			console.log( 'KillConnection connection removed.' );
+			connCount--;
+		});
+	});
 }
 
 // Update the sensor completion info and whatnot
@@ -188,8 +263,15 @@ function UpdateSensorInfo ( pool, sensorId ) {
 		+ now.getUTCSeconds();
 
 	pool.getConnection( function ( err, connection ) {
+		if ( err ) console.log( err );
+
+		console.log( 'UpdateSensorInfo connection added.' );
+		connCount++;
+
 		connection.query( "UPDATE ci_logical_sensor_hourly SET sensor_updated = ?, pending = 0 WHERE logical_sensor_id = ?", [ timestamp, sensorId ], function ( err, rows ) {
 			connection.end();
+			console.log( 'UpdateSensorInfo connection removed.' );
+			connCount--;
 		});
 	});
 

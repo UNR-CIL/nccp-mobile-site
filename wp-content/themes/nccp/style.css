@@ -53,9 +53,9 @@ li { list-style: disc; margin-left: 6%; margin-bottom: 2%; font-style: italic; f
 /* Header */
 
 #header { z-index: 2; }
-#split { font-size: 1.4em; color: white; font-weight: 400; text-transform: uppercase; vertical-align: middle; z-index: 3; width: 121%; left: -11%; margin-bottom: 6%; margin-top: -9%;}
+#split { font-size: 1em; color: white; font-weight: 400; text-transform: uppercase; vertical-align: middle; z-index: 3; width: 121%; left: -11%; margin-bottom: 6%; margin-top: -9%;}
 .split-bg { width: 100%; position: absolute; top: 0px; }
-.split-content { margin-left: 16%; top: 33px;}
+.split-content { margin-left: 14%; top: 33px;}
 
 /* Logo */
 
@@ -64,11 +64,12 @@ li { list-style: disc; margin-left: 6%; margin-bottom: 2%; font-style: italic; f
 
 /* Main navigation */
 
-#main-navigation {  text-transform: lowercase; margin-top: 3%; background-image: url('img/nav-bg-combined.png'); background-size: 100%;   padding: 1% 4% 4% 4%; background-repeat: no-repeat;   width: 76%;}
+#main-navigation {  text-transform: lowercase;  width: 85%;}
 #main-navigation a { color: white;  font-size: 1em; text-shadow: 2px 2px 2px #000; filter: dropshadow(color=#000, offx=2, offy=2); }
-#menu-main-navigation { margin-bottom: 0; }
-#main-navigation li { display: inline-block; padding-right: 10%; font-size: 1em; font-style: normal; margin: 0;}
-#main-navigation li:last-child { display: inline-block; padding-right: 0%;}
+#menu-main-navigation { margin-bottom: 0; text-align: center;}
+#main-navigation li { display: inline-block; padding: 0% 5%; font-size: 1em; font-style: normal; margin: 0; border-right: 0.15em solid white;}
+#main-navigation li:first-child { display: inline-block; padding-left: 0%;}
+#main-navigation li:last-child { display: inline-block; padding-right: 0%; border: none; }
 #main-navigation .sub-menu { display: none; }
 
 /* Link ribbon */

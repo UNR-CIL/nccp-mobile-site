@@ -4,6 +4,7 @@
 // moving and will reset itself if not.  It's also capable of threading (you can run several of
 // these on different servers at the time same and they won't interfere with each other).
 
+// Libraries
 var mysql = require( 'mysql' ),
 	_ = require( 'underscore' ),
 	http = require( 'http' ),
@@ -13,6 +14,7 @@ var mysql = require( 'mysql' ),
 // Get ze config info
 var config = require( 'config' );
 
+// Constants and bookkeeping
 var MAX_SENSORS = 5,
 	INTERVAL = 15,
 	TIMEOUT = 300, // 5 min
@@ -21,7 +23,7 @@ var MAX_SENSORS = 5,
 	connCount = 0,
 	timer = 0;
 
-// Set up the connection pool
+// Set up the connection pool - this is not the same as the sensor pool
 var pool = mysql.createPool({
 	host: config.db.host,
 	user: config.db.user,
@@ -29,7 +31,12 @@ var pool = mysql.createPool({
 	database: config.db.name
 });
 
-// Start polling every 15 seconds
+// Initial startup /////////////////////////////////////////
+
+Startup( pool );
+
+// Start polling every 15 seconds //////////////////////////
+
 var interval = setInterval( function () {
 
 	// Check the current sensor pool and remove old sensors/add new ones as needed
@@ -51,6 +58,8 @@ var interval = setInterval( function () {
 
 }, INTERVAL * 1000 );
 
+// END //////////////////////////////////////////////////////
+
 // Events
 
 process.on( 'SIGINT', function() {
@@ -61,6 +70,49 @@ process.on( 'SIGINT', function() {
 });
 
 // Functions
+
+// Remove all current connections to the database and remove old pending statuses
+function Startup ( pool ) {
+
+	// Clear any old pending states
+	pool.getConnection( function ( err, connection ) {
+		if ( err ) console.log( err );
+
+		console.log( 'Startup connection added.' );
+		connCount++;
+
+		connection.query( "UPDATE ci_logical_sensor_hourly SET pending = 0 WHERE sensor_updated IS NULL", function ( err, rows ) {
+			if ( err ) console.log( err );
+
+			connection.end();
+			console.log( 'Startup connection removed.' );
+			connCount--;
+		});
+	});
+
+	// Then clear any sleeping host threads
+	pool.getConnection( function ( err, connection ) {
+		if ( err ) console.log( err );
+
+		console.log( 'Startup connection added.' );
+		connCount++;
+
+		connection.query( "SHOW PROCESSLIST", function ( err, rows ) {
+			if ( err ) console.log( err );
+
+			_.each( rows, function ( process ) {
+				if ( process.db == config.db.name && process.command == 'Sleep' ) {
+					KillConnection( pool, process.Id );
+				}
+			});
+
+			connection.end();
+			console.log( 'Startup connection removed.' );
+			connCount--;
+		});
+	});
+
+}
 
 // Check current sensors in pool and update appropriately
 function CheckSensors ( pool, sensorPool ) {
@@ -189,11 +241,15 @@ function CheckRowCount ( pool, sensorPool ) {
 // This will force the get request to the API to be made again
 function ResetSensors ( pool, sensorPool ) {
 
+	// Flip all the current sensors in the pool back to not pending
 	if ( sensorPool.length ) {
 		_.each( sensorPool, function ( sensor ) {
 			SetPending( pool, sensor, 0 );
 		});	
 	}
+
+	// Then go back to the startup state
+	Startup( pool );
 
 }
 

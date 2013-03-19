@@ -8,22 +8,29 @@
 // Example query
 
 // Get the mysql driver and express for building the RESTful-ness
-var db = require( 'mysql' );
-var e = require( 'express' );
-var _ = require( 'underscore' );
-var http = require( 'http' );
+var db = require( 'mysql' ),
+	e = require( 'express' ),
+	_ = require( 'underscore' ),
+	http = require( 'http' );
 
 // Get ze config info
 var config = require( 'config' );
 
 // Parameters
-var port = 6227, // No, this isn't random
+var table = 'ci_logical_sensor_data',
+	port = 6227, // No, this isn't random
 	intervals = { // Period plus the record offset corresponding to it
+		year: 525600,
 		yearly: 525600,
+		month: 43200,
 		monthly: 43200, 
+		week: 10080,
 		weekly: 10080,
+		day: 1440,
 		daily: 1440,
+		hour: 60,
 		hourly: 60,
+		minute: null,
 		minutely: null // Probably a word
 	},
 	limit = 1000000000; // ONE BEEELION ROWS.  This is seriously the best way to default 'all rows' in mysql. /shrug
@@ -53,17 +60,24 @@ api.get( '/api/get', function ( request, response ) {
 	var q = request.query;
 
 	// Make sure this is a valid request
-	if ( ! q.sensor_id )
+	if ( ! q.sensor_id ) {
 		response.jsonp( { error: 'Must send valid sensor ID.' } );
-	else if ( ! q.start || ! q.end )
+	} else if ( ! q.start || ! q.end ) {
 		response.jsonp( { error: 'Must send valid start and end' } );
-	else {
+	} else {
 		console.log( 'Request received for sensor ' + q.sensor_id );
 
 		// Set parameters up
 
-		if ( q.interval && _.has( intervals, q.interval) )
+		if ( q.interval && _.has( intervals, q.interval) ) {
 			var skip = intervals[request.query.interval]; 
+		}
+
+		// If interval is >= hourly, use the hourly table
+		if ( q.interval && q.interval != 'minute' ) {
+			table = "ci_logical_sensor_data_hourly";
+			skip /= 60;
+		}		
 		
 		// If interval is set, multiply the limit by the skip because
 		// the interval is processed server-side, not in the DB (quicker)
@@ -81,7 +95,7 @@ api.get( '/api/get', function ( request, response ) {
 
 		// Send the query
 		conn.query( "SELECT timestamp, value " + 
-			"FROM ci_logical_sensor_data " + 
+			"FROM " + table + " " + 
 			"WHERE logical_sensor_id = ? AND timestamp " + 
 			"BETWEEN ? AND ? LIMIT ?",
 			[ parseInt( q.sensor_id ), q.start, q.end, parseInt( limit ) ], 
@@ -103,8 +117,9 @@ api.get( '/api/get', function ( request, response ) {
 
 							var final_results = [];
 							
-							for ( var i = 0; i < rows.length; i += skip )
+							for ( var i = 0; i < rows.length; i += skip ) {
 								final_results.push( rows[i] );
+							}								
 
 							response.jsonp( q.format ? format_data( final_results, q.format ) : final_results );
 							

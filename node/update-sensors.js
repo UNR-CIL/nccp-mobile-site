@@ -14,14 +14,12 @@ var mysql = require( 'mysql' ),
 var config = require( 'config' );
 
 // Constants and bookkeeping
-var MAX_SENSORS = 5,
-	INTERVAL = 15,
-	TIMEOUT = 300, // 5 min
+var DATA_THRESHOLD = 3, // Months - any data past this age will be deleted
+	MAX_CONNECTIONS = 5,
+	INTERVAL = 480, // minutes
+	TIMEOUT = 5,
 	sensorPool = [], // Currently working on
-	removedPool = [], // Useful for telling if there's a problem
-	rowCount = 0,
-	connCount = 0,
-	timer = 0;
+	connCount = 0;
 
 // Set up the connection pool - this is not the same as the sensor pool
 var pool = mysql.createPool({
@@ -33,24 +31,22 @@ var pool = mysql.createPool({
 
 // Initial startup /////////////////////////////////////////
 
-Startup( pool );
+Startup();
 
 // Start polling every 15 seconds //////////////////////////
 
 var interval = setInterval( function () {
 
 	// Check the current sensor pool and remove old sensors/add new ones as needed
-	CheckSensors( pool, sensorPool );
+	if ( sensorPool.length < MAX_CONNECTIONS ) {
+		UpdateSensors();
+	}
 
-	// And make sure we're actually still moving
-	CheckRowCount( pool, sensorPool );
-
-	// Keep track of time so we can restart if necessary (data count hasn't changed in a while)
-	timer += INTERVAL;
-	if ( timer > TIMEOUT ) ResetSensors( pool, sensorPool );
+	// Delete any data points older than the threshold
+	ThresholdData();		
 
 	// Clear out any stale connections still sitting around
-	ClearConnections( pool );	
+	ClearConnections();	
 
 	console.log( "Current sensors: ", sensorPool );
 	console.log( "Connection count: ", connCount );
@@ -72,7 +68,7 @@ process.on( 'SIGINT', function() {
 // Functions
 
 // Remove all current connections to the database and remove old pending statuses
-function Startup ( pool ) {
+function Startup () {
 
 	// Clear any old pending states
 	pool.getConnection( function ( err, connection ) {
@@ -81,7 +77,7 @@ function Startup ( pool ) {
 		console.log( 'Startup connection added.' );
 		connCount++;
 
-		connection.query( "UPDATE ci_logical_sensor_hourly SET pending = 0 WHERE sensor_updated IS NULL", function ( err, rows ) {
+		connection.query( "UPDATE ci_logical_sensor SET pending = 0", function ( err, rows ) {
 			if ( err ) console.log( err );
 
 			connection.end();
@@ -89,31 +85,6 @@ function Startup ( pool ) {
 			connCount--;
 		});
 	});
-
-	// Then clear any sleeping host threads
-	pool.getConnection( function ( err, connection ) {
-		if ( err ) console.log( err );
-
-		console.log( 'Startup connection added.' );
-		connCount++;
-
-		connection.query( "SHOW PROCESSLIST", function ( err, rows ) {
-			if ( err ) console.log( err );
-
-			_.each( rows, function ( process ) {
-				if ( process.db == config.db.name && process.command == 'Sleep' ) {
-					KillConnection( pool, process.Id );
-				}
-			});
-
-			connection.end();
-			console.log( 'Startup connection removed.' );
-			connCount--;
-		});
-	});
-
-	// Clear the removed sensors pool
-	removedPool = [];
 
 }
 

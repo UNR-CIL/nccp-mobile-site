@@ -85,9 +85,9 @@ function update_sensor ( $ch, $id, $period ) {
 	curl_setopt( $ch, CURLOPT_URL, UPDATE_SENSOR_DATA_URL );
 
 	$fields = array(
-	            'sensor_id' => urlencode( $id ),
-	            'period' => urlencode( $period )
-	        );
+        'sensor_id' => urlencode( $id ),
+        'period' => urlencode( $period )
+    );
 
 	// Format POST variables
 	$fields_string = '';

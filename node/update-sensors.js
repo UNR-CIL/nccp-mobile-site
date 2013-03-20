@@ -15,8 +15,8 @@ var config = require( 'config' );
 
 // Constants and bookkeeping
 var DATA_THRESHOLD = 3, // Months - any data past this age will be deleted
+	UPDATE_INTERVAL, = 8, // Hours, how often it should check for updates
 	MAX_CONNECTIONS = 5,
-	INTERVAL = 480, // minutes
 	TIMEOUT = 5,
 	sensorPool = [], // Currently working on
 	connCount = 0;
@@ -52,7 +52,7 @@ var interval = setInterval( function () {
 	console.log( "Connection count: ", connCount );
 	console.log( "Time: ", timer );
 
-}, INTERVAL * 1000 );
+}, UPDATE_INTERVAL * 1000 * 60 );
 
 // END //////////////////////////////////////////////////////
 

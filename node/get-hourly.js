@@ -101,7 +101,7 @@ function Startup ( pool ) {
 			if ( err ) console.log( err );
 
 			_.each( rows, function ( process ) {
-				if ( process.db == config.db.name && process.command != 'Query' ) {
+				if ( process.db == config.db.name && process.Command == 'Sleep' ) {
 					KillConnection( pool, process.Id );
 				}
 			});

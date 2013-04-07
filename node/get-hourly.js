@@ -35,7 +35,7 @@ var pool = mysql.createPool({
 
 // Initial startup /////////////////////////////////////////
 
-Startup( pool );
+//Startup( pool );
 
 // Start polling every 15 seconds //////////////////////////
 

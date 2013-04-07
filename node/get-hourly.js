@@ -17,11 +17,13 @@ var config = require( 'config' );
 var MAX_SENSORS = 5,
 	INTERVAL = 15,
 	TIMEOUT = 300, // 5 min
+	RESET_TIMEOUT = 28800, // 8 hours
 	sensorPool = [], // Currently working on
 	removedPool = [], // Useful for telling if there's a problem
 	rowCount = 0,
 	connCount = 0,
-	timer = 0;
+	timer = 0,
+	resetTimer = 0;
 
 // Set up the connection pool - this is not the same as the sensor pool
 var pool = mysql.createPool({
@@ -46,8 +48,16 @@ var interval = setInterval( function () {
 	CheckRowCount( pool, sensorPool );
 
 	// Keep track of time so we can restart if necessary (data count hasn't changed in a while)
+	// or when the reset timer is hit (experience has shown it's just a good idea to clear things
+	// out every once and awhile)
 	timer += INTERVAL;
+	resetTimer += INTERVAL;
+
 	if ( timer > TIMEOUT ) ResetSensors( pool, sensorPool );
+	if ( resetTimer > RESET_TIMEOUT ) {
+		Startup( pool );
+		resetTimer = 0;
+	}
 
 	// Clear out any stale connections still sitting around
 	ClearConnections( pool );	
@@ -55,6 +65,7 @@ var interval = setInterval( function () {
 	console.log( "Current sensors: ", sensorPool );
 	console.log( "Connection count: ", connCount );
 	console.log( "Time: ", timer );
+	console.log( "Reset time: ", resetTimer );	
 
 }, INTERVAL * 1000 );
 

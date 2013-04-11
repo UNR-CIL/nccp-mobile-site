@@ -20,18 +20,11 @@ var config = require( 'config' );
 var table = 'ci_logical_sensor_data',
 	port = 6227, // No, this isn't random
 	intervals = { // Period plus the record offset corresponding to it
-		year: 525600,
-		yearly: 525600,
-		month: 43200,
-		monthly: 43200, 
-		week: 10080,
-		weekly: 10080,
-		day: 1440,
-		daily: 1440,
-		hour: 60,
-		hourly: 60,
-		minute: null,
-		minutely: null // Probably a word
+		yearly: 8760,
+		monthly: 720, 
+		weekly: 168,
+		daily: 24,
+		hourly: null
 	},
 	limit = 1000000000; // ONE BEEELION ROWS.  This is seriously the best way to default 'all rows' in mysql. /shrug
 
@@ -47,7 +40,7 @@ api.configure( function () {
 
 // Request data points from the database
 // Params:
-// sensor_id*
+// sensor_ids*
 // start*
 // end*
 // period: time format - P1M, PT6H are examples
@@ -60,23 +53,21 @@ api.get( '/api/get', function ( request, response ) {
 	var q = request.query;
 
 	// Make sure this is a valid request
-	if ( ! q.sensor_id ) {
+	if ( ! q.sensor_ids ) {
 		response.jsonp( { error: 'Must send valid sensor ID.' } );
 	} else if ( ! q.start || ! q.end ) {
 		response.jsonp( { error: 'Must send valid start and end' } );
 	} else {
-		console.log( 'Request received for sensor ' + q.sensor_id );
+		console.log( 'Request received for sensor(s) ' + q.sensor_ids );
 
 		// Set parameters up
 
+		// Set skip if interval was passed.  This assumes interval 
 		if ( q.interval && _.has( intervals, q.interval) ) {
-			var skip = intervals[request.query.interval]; 
-		}
+			var skip = intervals[request.query.interval];
 
-		// If interval is >= hourly, use the hourly table
-		if ( q.interval && q.interval != 'minute' ) {
+			// Switch to the hourly table for anything above minute data
 			table = "ci_logical_sensor_data_hourly";
-			skip /= 60;
 		}		
 		
 		// If interval is set, multiply the limit by the skip because
@@ -93,12 +84,17 @@ api.get( '/api/get', function ( request, response ) {
 
 		conn.connect();
 
+		// Format the sensor list
+		sensor_ids = _.map( q.sensor_ids, function ( v ) { return 'logical_sensor_id = ' + v } ).join( " OR " );
+
 		// Send the query
-		conn.query( "SELECT timestamp, value " + 
+		conn.query( "SELECT logical_sensor_id, timestamp, value " + 
 			"FROM " + table + " " + 
-			"WHERE logical_sensor_id = ? AND timestamp " + 
-			"BETWEEN ? AND ? LIMIT ?",
-			[ parseInt( q.sensor_id ), q.start, q.end, parseInt( limit ) ], 
+			"WHERE (" + sensor_ids + ") AND timestamp " +
+			"BETWEEN ? AND ? " +
+			"ORDER BY timestamp " +
+			"LIMIT ?",
+			[ q.start, q.end, parseInt( limit ) ], 
 			function ( err, rows, fields ) {
 				console.log( 'Sending response...' );
 
@@ -112,20 +108,33 @@ api.get( '/api/get', function ( request, response ) {
 				} else {
 
 					if ( rows.length > 0 ) {
-						// Process interval if passed, otherwise send results straight through
+						var final_results = {
+							num_results: rows.length
+						};
+
+						// Group results by sensor_id
+						final_results.sensor_data = _.groupBy( rows, 'logical_sensor_id' );
+
+						// Filter data by interval if it was passed
 						if ( skip ) {
+							var final_num_results = 0;
 
-							var final_results = [];
-							
-							for ( var i = 0; i < rows.length; i += skip ) {
-								final_results.push( rows[i] );
-							}								
+							_.each( final_results.sensor_data, function ( sensor, index ) {
+								var final_rows = [];
 
-							response.jsonp( q.format ? format_data( final_results, q.format ) : final_results );
-							
-						} else
+								for ( var i = 0; i < sensor.length; i += skip ) {
+									final_rows.push( sensor[i] );
+								}
 
-							response.jsonp( request.query.format ? format_data( rows, request.query.format ) : rows );
+								final_results.sensor_data[index] = final_rows;
+								final_num_results += final_rows.length;
+							});	
+
+							final_results.num_results = final_num_results;
+						}				
+
+						// Kick results back
+						response.jsonp( final_results );
 
 					} else
 
@@ -134,6 +143,76 @@ api.get( '/api/get', function ( request, response ) {
 
 		});	
 	}	
+
+});
+
+// This returns a list of sensors based on query parameters which should
+// be arrays of the following:
+// properties - sensor property ID(s) (for temperature, wind speed, etc.)
+// sites - data site ID(s)
+// types - type of measurement ID(s) (maximum, average, etc.)
+api.get( '/api/get/search', function ( request, response ) {
+
+	var q = request.query;
+
+	if ( ! q.properties && ! q.sites && ! q.types ) {
+		response.jsonp( { error: 'Must send at least one of: sensor properties, sites or types.' } );
+	} else {
+
+		// Set up the database connection
+		var conn = db.createConnection({
+			host: config.db.host,
+			user: config.db.user,
+			password: config.db.pass,
+			database: config.db.name
+		});
+
+		conn.connect();
+
+		// Build the query from passed parameters
+		var sql = "SELECT r.*, d.site_id, d.name FROM ci_logical_sensor_relationships AS r " +
+			"JOIN ci_logical_sensor_deployment AS d ON d.deployment_id = r.deployment_id " +
+			"WHERE 1 ";
+
+		if ( q.properties ) {
+			sql += "AND ( " + _.map( q.properties, function ( v ) { return 'property_id = ' + v } ).join( " OR " ) + " ) ";
+		}
+
+		if ( q.sites ) {
+			sql += "AND ( " + _.map( q.sites, function ( v ) { return 'site_id = ' + v } ).join( " OR " ) + " ) ";
+		}
+
+		if ( q.types ) {
+			sql += "AND ( " + _.map( q.types, function ( v ) { return 'type_id = ' + v } ).join( " OR " ) + " ) ";
+		}
+
+		sql += "GROUP BY r.logical_sensor_id";
+
+		// Send the query
+		conn.query( sql, function ( err, rows, fields ) {
+			console.log( 'Sending response...' );
+
+			// Process errors first
+			if ( err ) {
+
+				console.log( err );
+				response.jsonp( { error: 'An error occurred. =(' } );
+
+			// Otherwise process the results
+			} else {
+
+				if ( rows.length > 0 ) {					
+					response.jsonp( rows );
+				} else
+					response.jsonp( { msg: 'No results found.' } );
+
+			}
+
+			conn.end();
+
+		});	
+
+	}
 
 });
 
@@ -228,6 +307,7 @@ function check_url ( params, callback ) {
 
 }
 
+// Cuts data down to just values
 function format_data ( data, format ) {
 	var final = [];
 

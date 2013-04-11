@@ -35,7 +35,7 @@
 
 </head>
 
-<body <?php body_class(); ?>>	
+<body <?php body_class(); ?> data-role="none">	
 
 	<div id="page" data-role="page" class="container">
 
@@ -56,7 +56,7 @@
 		<div id="split" class="">
 			<img class="split-bg" src="<?php echo get_template_directory_uri(); ?>/img/split-bg.png" border="0" />
 			<div class="split-content">
-				<div id="main-navigation">				
+				<div id="main-navigation" class="fittext">				
 					<?php wp_nav_menu( array( 'menu' => 'Main Navigation', 'walker' => new menu_walker, 'depth' => 2 ) ); ?>											
 				</div>
 			</div>

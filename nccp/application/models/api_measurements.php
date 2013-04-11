@@ -65,7 +65,6 @@ class Api_measurements extends CI_Model {
 					isset( $old_sensors[$sensor->Id] ) && ! empty( $old_sensors[$sensor->Id]->last_timestamp ) ? "'" . $old_sensors[$sensor->Id]->last_timestamp . "'" : 'NULL',
 					isset( $old_sensors[$sensor->Id] ) && ! empty( $old_sensors[$sensor->Id]->last_unix_timestamp ) ? $old_sensors[$sensor->Id]->last_unix_timestamp : 'NULL',
 					isset( $old_sensors[$sensor->Id] ) && ! empty( $old_sensors[$sensor->Id]->pending ) ? $old_sensors[$sensor->Id]->pending : 0
-
 				));
 
 				// Insert Deployment info
@@ -111,13 +110,22 @@ class Api_measurements extends CI_Model {
 				));
 
 				// Insert relationships info (how deployment, property, unit and type relate to each sensor)
+				switch ( $sensor->MeasurementInterval ) {
+					case 'PT1M': 	$interval = 1; break;
+					case 'PT10M': 	$interval = 10; break;
+					case 'PT30M':	$interval = 30; break;
+					case 'PT1H':	$interval = 60; break;
+				}
+
 				$this->db->query( sprintf(
-					"INSERT INTO ci_logical_sensor_relationships VALUES ( NULL, %d, %d, %d, %d, %d )",
+					"INSERT INTO ci_logical_sensor_relationships VALUES ( NULL, %d, %d, %d, %d, %d, %d, %d )",
 					$sensor->Id,
 					$sensor->Deployment->Id,
 					$sensor->MonitoredProperty->Id,
+					$sensor->MonitoredProperty->System->Id,
 					$sensor->Type->Id,
-					$sensor->Unit->Id
+					$sensor->Unit->Id,
+					$interval
 				));
 
 				// Output success and update the time limit

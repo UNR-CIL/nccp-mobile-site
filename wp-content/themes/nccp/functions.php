@@ -37,7 +37,8 @@ function main_menus () {
 // Global styles
 function theme_styles () {
 
-	wp_enqueue_style( 'jquery-mobile-styles', get_template_directory_uri() . '/css/jquery.mobile.structure-1.2.0.min.css' );
+	wp_enqueue_style( 'jquery-mobile-theme', get_stylesheet_directory_uri() . '/css/mobile-themes/nccp.min.css' );
+	wp_enqueue_style( 'jquery-mobile-styles', 'http://code.jquery.com/mobile/1.3.0/jquery.mobile.structure-1.3.0.min.css', 'jquery-mobile-theme' );
 	wp_enqueue_style( 'style-main', get_stylesheet_directory_uri() . '/style.css' );
 
 }
@@ -50,15 +51,14 @@ function admin_styles () {
 // Global scripts
 function theme_scripts () {
 
-	wp_enqueue_script( 'jquery-cdn', 'http://code.jquery.com/jquery-1.8.2.min.js' );
-	wp_enqueue_script( 'jquery-mobile-cdn', 'http://code.jquery.com/mobile/1.2.0/jquery.mobile-1.2.0.min.js', array( 'jquery-cdn' ) );
-	//wp_enqueue_script( 'jquery-draggable', get_template_directory_uri() . '/js/jquery-ui-1.9.0.draggable.min.js', array( 'jquery-cdn', 'jquery-migrate-cdn' ) );
+	wp_enqueue_script( 'jquery-cdn', 'http://code.jquery.com/jquery-1.9.1.min.js' );
+	wp_enqueue_script( 'jquery-mobile-cdn', 'http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js', array( 'jquery-cdn' ) );
+	wp_enqueue_script( 'fittext', get_template_directory_uri() . '/js/jquery.fittext.js', array( 'jquery-cdn' ) );
 	wp_enqueue_script( 'google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBxK-OTkhR7AXxyzaRCbuFhzmVBTHhmOrs&sensor=false' );
 	wp_enqueue_script( 'google-maps', get_template_directory_uri() . '/js/gmaps.js', array( 'google-maps-api', 'jquery-cdn' ) );
 	wp_enqueue_script( 'infobox', get_template_directory_uri() . '/js/infobox.js', array( 'google-maps' ) );
 	wp_enqueue_script( 'd3', 'http://d3js.org/d3.v3.min.js' );
 	wp_enqueue_script( 'js-main', get_template_directory_uri() . '/js/main.js', array( 'jquery-cdn', 'jquery-mobile-cdn', 'd3' ) );	
-
 
 }
 

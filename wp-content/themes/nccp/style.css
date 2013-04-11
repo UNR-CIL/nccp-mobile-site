@@ -32,15 +32,15 @@ li { list-style: none; }
 /* Tag-level styles */
 
 div, img, span { position: relative; }
-body { font-family: 'Oswald', sans-serif; font-weight: 300; color: #3f4e57; width: 100%; height: 100%; line-height: 1.5em; background-image: url('img/bg-mirrored.jpg'); background-size: contain; background-repeat: repeat; font-size: 1.7em;}
+body, body.ui-body-c, body.ui-overlay-c { font-family: 'Oswald', sans-serif; font-weight: 300; color: #3f4e57; width: 100%; height: 100%; line-height: 1.8em; background-image: url('img/bg-mirrored.jpg'); background-size: contain; background-repeat: repeat; font-size: 1.7em;}
 h1, h2, h3, h4 { line-height: 1.8em; font-weight: 400; margin-bottom: 2%;}
 h1 { font-size: 1.6em; }
 h2 { padding: 1% 1% 1% 0; font-size: 1.4em; }
 /*h2 { padding: 1% 4%; color: white; font-size: 1.2em;  vertical-align: top; -webkit-box-shadow: inset 0px 0px -7px 4px #2073b9; box-shadow: inset 0px 0px -8px 3px #2073b9; outline: 1px solid #b8d6ff; outline-offset: -8px; -webkit-border-radius: 8px; border-radius: 8px; background: #34a8fc; background: -moz-linear-gradient(top,  #34a8fc 0%, #2681cd 100%); background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#34a8fc), color-stop(100%,#2681cd)); background: -webkit-linear-gradient(top,  #34a8fc 0%,#2681cd 100%); background: -o-linear-gradient(top,  #34a8fc 0%,#2681cd 100%); background: -ms-linear-gradient(top,  #34a8fc 0%,#2681cd 100%); background: linear-gradient(to bottom,  #34a8fc 0%,#2681cd 100%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#34a8fc', endColorstr='#2681cd',GradientType=0 ); margin-bottom: 2%; }*/
 p { margin-bottom: 3%; }
 p:last-child { margin-bottom: 0; }
-a { color: #1e80d5; text-decoration: none; }
-a:hover { color: #74bdfc; }
+a { color: rgb(76, 131, 168); text-decoration: none; }
+a:hover { color: rgb(86, 141, 178); }
 ul, ol { margin-bottom: 4%; }
 li { list-style: disc; margin-left: 6%; margin-bottom: 2%; font-style: italic; font-size: 0.7em; }
 
@@ -52,7 +52,7 @@ li { list-style: disc; margin-left: 6%; margin-bottom: 2%; font-style: italic; f
 
 /* Header */
 
-#header { z-index: 2; }
+#header { z-index: 2; background: transparent;}
 #split { font-size: 1em; color: white; font-weight: 400; text-transform: uppercase; vertical-align: middle; z-index: 3; width: 121%; left: -11%; margin-bottom: 6%; margin-top: -9%;}
 .split-bg { width: 100%; position: absolute; top: 0px; }
 .split-content { margin-left: 14%; top: 33px;}
@@ -64,10 +64,10 @@ li { list-style: disc; margin-left: 6%; margin-bottom: 2%; font-style: italic; f
 
 /* Main navigation */
 
-#main-navigation {  text-transform: lowercase;  width: 85%;}
-#main-navigation a { color: white;  font-size: 1em; text-shadow: 2px 2px 2px #000; filter: dropshadow(color=#000, offx=2, offy=2); }
+#main-navigation {  text-transform: lowercase;  width: 45%;  top: 0.1em;  white-space: nowrap;}
+#main-navigation a { color: white;  /*font-size: 1em;*/ text-shadow: 2px 2px 2px #000; filter: dropshadow(color=#000, offx=2, offy=2); font-weight: normal;}
 #menu-main-navigation { margin-bottom: 0; text-align: center;}
-#main-navigation li { display: inline-block; padding: 0% 5%; font-size: 1em; font-style: normal; margin: 0; border-right: 0.15em solid white;}
+#main-navigation li { display: inline-block; padding: 0% 5%; font-size: 1em; font-style: normal; margin: 0; border-right: 0.1em solid white;}
 #main-navigation li:first-child { display: inline-block; padding-left: 0%;}
 #main-navigation li:last-child { display: inline-block; padding-right: 0%; border: none; }
 #main-navigation .sub-menu { display: none; }
@@ -75,8 +75,8 @@ li { list-style: disc; margin-left: 6%; margin-bottom: 2%; font-style: italic; f
 /* Link ribbon */
 
 #ribbon {  
-    top: -33%;
-    right: -19%;
+    top: -1%;
+    right: 7%;
     width: 16%;
     position: absolute;
     z-index: 999;
@@ -91,27 +91,27 @@ img.status-ribbon {
 
 /* Main content */
 
-#page { position: relative; z-index: 1; width: 88%; padding-bottom: 12%;}
-#main { padding: 5% 10% 2% 10%; overflow-x: visible; background-image: url('img/content-bg.png');
+#page { position: relative; z-index: 1; width: 88%; padding-bottom: 12%; background: transparent;}
+#main { padding: 5% 10% 4% 10%; overflow-x: visible; background-image: url('img/content-bg.png');
 background-size: 100%; }
 #main-content { font-size: 1.2em; color: #505B63; padding-bottom: 5%;}
 
 /* Footer */
 
-#footer { text-align: center; width: 98%; z-index: 3; position: relative; clear: both; top: -0.4em;}
-#footer-bg { position: absolute; width: 100%; left: 0px;}
-#footer-logo { width: 13%; margin-top: 2%;}
-#footer-logo img { width: 100%; }
-.footer-text { color: white; font-size: 1.3em; line-height: 2.2em; top: -32px; left: -2%;}
+#footer { text-align: center; width: 98%; z-index: 3; position: relative; clear: both; top: 0em; background: none; border: none;}
+#footer-bg { position: absolute; width: 100%; left: 0px; top: -20%;}
+#footer-logo { width: 13%; margin-right: 2%; position: relative; top: -4em;}
+#footer-logo img { width: 10%; }
+.footer-text { color: white; line-height: 2.2em; left: 18%; font-weight: normal; text-shadow: none; width: 50%; display: block; white-space: nowrap; top: -0.5em;}
 #footer-text img {}
-#copyright { font-size: 1em; color: #efc48d; padding-right: 1%; position: absolute; width: 100%; left: -0.5%; background-image: url('img/footer-copyright-bg.png'); background-repeat: no-repeat; background-position: center; background-size: contain; bottom: -25%;}
+#copyright { font-size: 1em; color: #efc48d; padding-right: 1%; position: absolute; width: 100%; left: -0.5%; background-image: url('img/footer-copyright-bg.png'); background-repeat: no-repeat; background-position: center; background-size: contain; bottom: -25%; text-shadow: none; font-weight: normal;}
 #copyright .date { font-size: 0.75em; }
 
 /* Page content *******************************************************/
 
 /* Status page */
 
-.status-block { clear: both; padding-bottom: 6%; }
+.status-block { clear: both; padding-bottom: 8%; }
 .status-icon { width: 20%; float: left; margin-right: 3%; margin-bottom: 1%; height: 5em;}
 .status-content { padding-top: 3%; }
 .status-text { font-size: 1.2em }
@@ -120,7 +120,7 @@ background-size: 100%; }
 .status-block.unknown .status-icon { background-image: url('img/icons/unknown.png'); background-repeat: no-repeat; background-size: 100%;}
 .status-block.unknown .status-text { color: #7c7b7b; }
 
-.status-block.good .status-icon { background-image: url('img/icons/good.png'); background-repeat: no-repeat; background-size: 100%;}
+.status-block.good .status-icon { background-image: url('img/icons/good.png'); background-repeat: no-repeat; background-size: contain;}
 .status-block.good .status-text { color: #2999f6; }
 
 .status-block.bad .status-icon { background-image: url('img/icons/bad.png'); background-repeat: no-repeat; background-size: 100%;}
@@ -130,10 +130,11 @@ background-size: 100%; }
 
 .data-form h2 { background: #505B63; -webkit-border-radius: 5px; border-radius: 5px; }
 .data-form .ui-collapsible-inset .ui-collapsible-heading { margin-bottom: 1em; }
-.data-form .ui-collapsible-heading .ui-btn-inner { padding-left: 0.8em; font-size: 1.8em; }
+.data-form .ui-collapsible-heading .ui-btn-inner { font-size: 1.5em; }
 .data-form h2 a { color: #F2F5EE; }
-.data-form .ui-controlgroup-label { font-size: 0.8em; }
+.data-form .ui-controlgroup-label { }
 .data-form .ui-checkbox { font-size: 0.9em; }
+.data-button { background-repeat: no-repeat; background-size: contain; background-position: 0% 0%;}
 
 /* Post content */
 
@@ -149,7 +150,7 @@ article { margin-bottom: 4%; }
 
 @media ( max-width: 400px ) {
         
-    body { font-size: 0.7em; }
+    /*body { font-size: 0.7em; }*/
     .split-content { top: 14px; }
     h2 { padding: 2% 4%; }
     .footer-text { top: -7px; }
@@ -158,43 +159,37 @@ article { margin-bottom: 4%; }
 
 @media ( min-width: 400px ) {
         
-    body { font-size: 1.1em; }
+    /*body { font-size: 1.1em; }*/
     .split-content { top: 20px; }
-    .footer-text { top: -4px; font-size: 1.1em; }
+    .footer-text { }
 }
 
 @media ( min-width: 600px ) {
         
-    body { font-size: 1.4em; }
+    /*body { font-size: 1.4em; }*/
     .split-content { top: 32px; }
-    .footer-text { top: -12px; }
+    .footer-text { }
     
 }
 
 @media ( min-width: 800px ) {
         
-    body { font-size: 1.9em; }
+    /*body { font-size: 1.9em; }*/
     .footer-text { top: -22px; }
 
 }
 
 @media ( min-width: 1000px ) {
         
-    body { font-size: 2em; }
+    /*body { font-size: 2em; }*/
     .footer-text { top: -35px; }
 
 }
 
 @media ( min-width: 1200px ) {
         
-    body { font-size: 2.7em; }
+    /*body { font-size: 2.7em; }*/
     .split-content { top: 50px; }
     .footer-text { top: -40px; }
 
 }
-
-
-/* IE8 - everything should be namespaced with #ie8.
- TODO: move to separate file.  */ 
- 
-#ie8 {} 

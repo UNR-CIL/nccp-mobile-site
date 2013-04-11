@@ -15,7 +15,7 @@ var config = require( 'config' );
 
 // Constants and bookkeeping
 var MAX_SENSORS = 5,
-	INTERVAL = 15,
+	INTERVAL = 10,
 	TIMEOUT = 300, // 5 min
 	RESET_TIMEOUT = 28800, // 8 hours
 	sensorPool = [], // Currently working on
@@ -35,7 +35,7 @@ var pool = mysql.createPool({
 
 // Initial startup /////////////////////////////////////////
 
-//Startup( pool );
+Startup( pool );
 
 // Start polling every 15 seconds //////////////////////////
 
@@ -92,7 +92,7 @@ function Startup ( pool ) {
 		console.log( 'Startup connection added.' );
 		connCount++;
 
-		connection.query( "UPDATE ci_logical_sensor_hourly SET pending = 0 WHERE sensor_updated IS NULL", function ( err, rows ) {
+		connection.query( "UPDATE ci_logical_sensor_hourly SET pending = 0", function ( err, rows ) {
 			if ( err ) console.log( err );
 
 			connection.end();
@@ -112,7 +112,7 @@ function Startup ( pool ) {
 			if ( err ) console.log( err );
 
 			_.each( rows, function ( process ) {
-				if ( process.db == config.db.name && process.Command == 'Sleep' ) {
+				if ( process.db == config.db.name && process.Command == 'Sleep' && process.Info != 'SHOW PROCESSLIST' && process.Time > 5 ) {
 					KillConnection( pool, process.Id );
 				}
 			});
@@ -161,7 +161,7 @@ function CheckSensors ( pool, sensorPool ) {
 	} 
 			
 	if ( sensorPool.length < MAX_SENSORS ) {
-		GetSensor( pool, sensorPool );
+		GetSensor( pool, sensorPool );	
 	} else {
 		console.log( "Idling..." );
 	}	

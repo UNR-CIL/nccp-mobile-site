@@ -36,10 +36,11 @@ $sensors = json_decode( $output );
 // Update the sensor data
 if ( ! empty( $sensors ) ) {
 
-	foreach ( $sensors as $sensor )
+	foreach ( $sensors as $sensor ) {
 		// Update sensor for at least the specific period.  Note that if a last_timestamp is present
 		// in the sensor table, it will just update since that date instead of a whole month
 		echo update_sensor( $ch, $sensor->Id, 'P1M' );
+	}		
 
 	// Update the sensor_updated field
 	$now = new DateTime();

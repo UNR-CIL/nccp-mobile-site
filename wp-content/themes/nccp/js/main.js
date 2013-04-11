@@ -9,19 +9,19 @@ $( function () {
 
     $(window).swiperight( function () {
         if ( $('.ui-page-active .page-prev').length )
-            $.mobile.changePage( $('.ui-page-active .page-prev').attr( 'href' ), {
-                transition: 'slide',
-                reverse: true
-            });
+        $.mobile.changePage( $('.ui-page-active .page-prev').attr( 'href' ), {
+            transition: 'slide',
+            reverse: true
+        });
     });
 
     // Go to next page on left swipe
 
     $(window).swipeleft( function () {
         if ( $('.ui-page-active .page-next').length )
-            $.mobile.changePage( $('.ui-page-active .page-next').attr( 'href' ), {
-                transition: 'slide'
-            });
+        $.mobile.changePage( $('.ui-page-active .page-next').attr( 'href' ), {
+            transition: 'slide'
+        });
     });  
 
     // Data events
@@ -29,6 +29,33 @@ $( function () {
     $(".data-form input[type='checkbox']").on( "change", function(event, ui) {
         // Last bit with removeClass is necessary due to a bug with JQM on button refresh
         $(this).parent().children('label').buttonMarkup({theme: $(this).prop('checked') ? 'a' : 'b' }).removeClass('ui-btn-hover-b');
+    });
+
+    // Data page
+
+    $('#main-content').on( 'click', '#data-view-graph', function () {
+        
+        // Build data query based on checked properties
+        var query = {
+            properties: [],
+            sites: [],
+            types: []
+        };
+        
+        $('#data-selectors:visible .data-properties input:checked').each( function () {
+            query.properties.push( $(this).val() ); 
+        });
+        
+        $('#data-selectors:visible .data-sites input:checked').each( function () {
+            query.sites.push( $(this).val() ); 
+        });
+        
+        $('#data-selectors:visible .data-measurements-types input:checked').each( function () {
+            query.types.push( $(this).val() );
+        });
+        
+        $.mobile.changePage( '/data-graphing', { data: { query: query }, type: 'GET' } );
+        
     });
 
 });
@@ -41,17 +68,9 @@ $(document).bind( 'pageinit', function () {
     // time pageinit fires.  All parent selectors should be namespaced by this (i.e. page.find( blah ) 
     // instead of $( blah ))
     var page = ( $('#page[data-external-page="true"]').length ) ? $('#page[data-external-page="true"]') : $('#page');
-    
-    // Menu
 
-    /*page.find('#main-navigation').on( 'mouseover', '#menu-main-navigation > li > a', function () {       
-        var parent = $(this).parent('li');
-        var siblings = parent.siblings('li');
-            
-        siblings.find('ul.sub-menu').hide();
-        parent.find('ul.sub-menu').stop().fadeTo( 500, 1 );
-        parent.siblings('li').removeClass('active');
-    });*/
+    // Make sure big text fits correctly
+    $('.fittext').fitText();
     
     // Get server status - the status starts as Unknown so there's no
     // need to set that status explicitly

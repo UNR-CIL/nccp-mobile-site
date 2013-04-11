@@ -151,7 +151,7 @@ api.get( '/api/get', function ( request, response ) {
 // properties - sensor property ID(s) (for temperature, wind speed, etc.)
 // sites - data site ID(s)
 // types - type of measurement ID(s) (maximum, average, etc.)
-api.get( '/api/get/search', function ( request, response ) {
+api.get( '/api/search', function ( request, response ) {
 
 	var q = request.query;
 
@@ -213,6 +213,126 @@ api.get( '/api/get/search', function ( request, response ) {
 		});	
 
 	}
+
+});
+
+// Retrieve the current list of properties.  Searching said properties uses search
+// defined above.
+api.get( '/api/get/sensor-info/properties', function ( request, response ) {
+
+	// Set up the database connection
+	var conn = db.createConnection({
+		host: config.db.host,
+		user: config.db.user,
+		password: config.db.pass,
+		database: config.db.name
+	});
+
+	conn.connect();
+
+	// Send the query
+	conn.query( "SELECT property_id, description, name FROM ci_logical_sensor_property ORDER BY name", function ( err, rows, fields ) {
+		console.log( 'Sending response...' );
+
+		// Process errors first
+		if ( err ) {
+
+			console.log( err );
+			response.jsonp( { error: 'An error occurred. =(' } );
+
+		// Otherwise process the results
+		} else {
+
+			if ( rows.length > 0 ) {					
+				response.jsonp( rows );
+			} else
+				response.jsonp( { msg: 'Nothing found.' } );
+
+		}
+
+		conn.end();
+
+	});
+
+});
+
+// Retrieve the current list of data sites.  Searching said sites uses search
+// defined above.
+api.get( '/api/get/sensor-info/sites', function ( request, response ) {
+
+	// Set up the database connection
+	var conn = db.createConnection({
+		host: config.db.host,
+		user: config.db.user,
+		password: config.db.pass,
+		database: config.db.name
+	});
+
+	conn.connect();
+
+	// Send the query
+	conn.query( "SELECT lat, lng, site_id, site_name FROM ci_logical_sensor_deployment GROUP BY site_name ORDER BY site_name", function ( err, rows, fields ) {
+		console.log( 'Sending response...' );
+
+		// Process errors first
+		if ( err ) {
+
+			console.log( err );
+			response.jsonp( { error: 'An error occurred. =(' } );
+
+		// Otherwise process the results
+		} else {
+
+			if ( rows.length > 0 ) {					
+				response.jsonp( rows );
+			} else
+				response.jsonp( { msg: 'Nothing found.' } );
+
+		}
+
+		conn.end();
+
+	});
+
+});
+
+// Retrieve the current list of property types (avg, min, max, etc.).  Searching said types uses search
+// defined above.
+api.get( '/api/get/sensor-info/types', function ( request, response ) {
+
+	// Set up the database connection
+	var conn = db.createConnection({
+		host: config.db.host,
+		user: config.db.user,
+		password: config.db.pass,
+		database: config.db.name
+	});
+
+	conn.connect();
+
+	// Send the query
+	conn.query( "SELECT * FROM ci_logical_sensor_types ORDER BY name", function ( err, rows, fields ) {
+		console.log( 'Sending response...' );
+
+		// Process errors first
+		if ( err ) {
+
+			console.log( err );
+			response.jsonp( { error: 'An error occurred. =(' } );
+
+		// Otherwise process the results
+		} else {
+
+			if ( rows.length > 0 ) {					
+				response.jsonp( rows );
+			} else
+				response.jsonp( { msg: 'Nothing found.' } );
+
+		}
+
+		conn.end();
+
+	});
 
 });
 

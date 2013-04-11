@@ -25,14 +25,14 @@ get_header(); ?>
 
 					// Get lists we need to build the data interface
 
-					// Get the current list of properties
-					$properties = $wpdb->get_results( "SELECT property_id, description, name FROM ci_logical_sensor_property ORDER BY name" );
+					// Get the current list of properties				
+					$properties = json_decode( file_get_contents( get_option( 'data_api_base' ) . "get/sensor-info/properties" ) );
 
 					// Get the current data sites
-					$sites = $wpdb->get_results( "SELECT lat, lng, site_id, site_name FROM ci_logical_sensor_deployment GROUP BY site_name ORDER BY site_name" );
+					$sites = json_decode( file_get_contents( get_option( 'data_api_base' ) . "get/sensor-info/sites" ) );
 
 					// Get measurement types
-					$types = $wpdb->get_results( "SELECT * FROM ci_logical_sensor_types ORDER BY name" );
+					$types = json_decode( file_get_contents( get_option( 'data_api_base' ) . "get/sensor-info/types" ) );
 					?>
 
 					<div id="main-content">

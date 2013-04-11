@@ -186,7 +186,9 @@ api.get( '/api/search', function ( request, response ) {
 			sql += "AND ( " + _.map( q.types, function ( v ) { return 'type_id = ' + v } ).join( " OR " ) + " ) ";
 		}
 
-		sql += "GROUP BY r.logical_sensor_id";
+		var limit = q.count ? q.count : 1000;
+
+		sql += "GROUP BY r.logical_sensor_id LIMIT " + limit;
 
 		// Send the query
 		conn.query( sql, function ( err, rows, fields ) {

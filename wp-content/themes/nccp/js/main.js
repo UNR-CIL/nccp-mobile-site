@@ -4,6 +4,13 @@
 // This means control events should be bound here because they're bound in pageinit they'll be
 // bound with EVERY pageload instead of only once
 $( function () {
+
+	// Make sure big text fits correctly
+    $('.fittext').fitText();
+    $(window).trigger( 'resize' );
+    setTimeout( function () {
+    	$(window).trigger( 'resize' );
+    }, 250 );
     
     // Go to previous on right swipe
 
@@ -33,7 +40,8 @@ $( function () {
 
     // Data page
 
-    $('#main-content').on( 'click', '#data-view-graph', function () {
+    // Search sensor list for various properties
+    $('#main-content').on( 'click', '#data-sensor-search', function () {
         
         // Build data query based on checked properties
         var query = {
@@ -54,9 +62,51 @@ $( function () {
             query.types.push( $(this).val() );
         });
         
-        $.mobile.changePage( '/data-graphing', { data: { query: query }, type: 'GET' } );
+        // Send request to get applicable sensors
+        $.getJSON( 'http://ec2-54-241-223-209.us-west-1.compute.amazonaws.com:6227/api/search?callback=?', { 
+        	properties: query.properties, 
+        	sites: query.sites,
+        	types: query.types,
+        	count: 20 
+        }, function ( sensors ) { 
+        	if ( sensors.length ) {
+        		// Construct sensor list
+        		var sensor_list = build_sensor_list( sensors );
+        		$('.data-sensor-search-results').append( sensor_list );
+
+        		// Add get data button
+        		$('.data-sensor-search-results').append( $( '<input/>', {
+        			type: 'button',
+        			'class': 'data-button',
+        			name: 'data-get-sensor-data',
+        			id: 'data-get-sensor-data',
+        			value: 'Get Sensor Data',
+        			'data-theme': 'a'
+        		}));
+
+        		$('.data-sensor-search').fadeOut( 250, function () {
+        			$('.sensor-search-results').trigger( 'create' );
+        			$('#data-get-sensor-data').button();
+        			$('.data-sensor-search-results').fadeIn( 250 );
+        		});
+        	}
+        });
         
     });
+
+	// Retrieve sensor data for specific sensors
+	$('#main-content').on( 'click', '#data-get-sensor-data', function () {
+		// Get the list of sensor IDs
+		var sensor_ids = [];
+
+		$('.sensor-search-results:visible input:checked').each( function () {
+			sensor_ids.push( $(this).val() );
+		});
+
+		if ( sensor_ids.length ) {
+			$.mobile.changePage( '/data-graphing', { data: { sensor_ids: sensor_ids }, type: 'GET' } );
+		}
+	});
 
 });
 
@@ -70,7 +120,11 @@ $(document).bind( 'pageinit', function () {
     var page = ( $('#page[data-external-page="true"]').length ) ? $('#page[data-external-page="true"]') : $('#page');
 
     // Make sure big text fits correctly
-    $('.fittext').fitText();
+    page.find('.fittext').fitText();
+    $(window).trigger( 'resize' );
+    setTimeout( function () {
+    	$(window).trigger( 'resize' );
+    }, 250 );
     
     // Get server status - the status starts as Unknown so there's no
     // need to set that status explicitly
@@ -83,7 +137,6 @@ $(document).bind( 'pageinit', function () {
                 $('#nccp-status').removeClass( 'unknown' ).addClass( 'bad' ).find( '.status-text' ).html( "The NCCP Portal is <b>down</b>" );
             else if ( status.success )
                 $('#nccp-status').removeClass( 'unknown' ).addClass( 'good' ).find( '.status-text' ).html( "The NCCP Portal is <b>up</b>" );
-
             
             // Set the timestamp
             var now = new Date();
@@ -122,6 +175,32 @@ $(document).bind( 'pageinit', function () {
 ////////////////////////////////////////////////////////////////////
 // Functions ///////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////
+
+function build_sensor_list ( sensors ) {
+	var list = $( '<div/>', {
+		'data-role': 'fieldcontain',
+		'class': 'sensor-search-results'
+	});
+	var controlGroup = $( '<fieldset/>', {
+		'data-role': 'controlgroup',
+		'data-theme': 'a'
+	});
+
+	$.each( sensors, function () {
+		controlGroup.append(
+			$( '<label/>', {
+				html: '<span>Interval: ' + this.interval + 'm' + '</span> ' + this.name
+			}).prepend( $( '<input/>', {
+				type: 'checkbox',
+				value: this.logical_sensor_id,
+			}))
+		);
+	});
+
+	list.append( controlGroup );
+
+	return list;
+}
 
 function get_server_status ( service, callback ) {
      

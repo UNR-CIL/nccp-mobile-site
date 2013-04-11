@@ -23,20 +23,18 @@ get_header(); ?>
 					// Gonna need the wp database
 					global $wpdb;
 
-					if ( isset( $_GET['query'] ) ) {
-						print_r( $_GET['query'] );
+					// Check if sensor_ids exist.  If so, let loose the dogs of... data or something
+					if ( isset( $_GET['sensor_ids'] ) ) {
+						$sensor_ids = $_GET['sensor_ids'];
+
+						if ( ! $sensors = get_sensor_data( $sensor_ids, '2012-01-01', '2012-06-01', 100, 'hourly' ) ) {
+							$msg = "Could not retrieve sensor information.";
+						}
+					} else {
+						$msg = "Must send valid array of sensor IDs.";
 					}
-
-					// Get lists we need to build the data interface
-
-					// Get the current list of properties
-					$properties = $wpdb->get_results( "SELECT property_id, description, name FROM ci_logical_sensor_property ORDER BY name" );
-
-					// Get the current data sites
-					$sites = $wpdb->get_results( "SELECT lat, lng, site_id, site_name FROM ci_logical_sensor_deployment GROUP BY site_name ORDER BY site_name" );
-
-					// Get measurement types
-					$types = $wpdb->get_results( "SELECT * FROM ci_logical_sensor_types ORDER BY name" );
+					//$sensor_ids = array( 2, 7, 10 );
+					//$sensors = get_sensor_data( $sensor_ids, '2012-01-01', '2013-01-01', 100, 'hourly' );
 					?>
 
 					<div id="main-content">
@@ -48,7 +46,38 @@ get_header(); ?>
 
 							<?php the_content(); ?>
 
+							<?php if ( isset( $msg ) ) { ?>
+
+							<h2 class="error"><?php echo $msg; ?></h2>
+
+							<?php } ?>
 							
+							<?php if ( isset( $sensors ) ) { ?>
+
+							<div id="sensor-data">
+								<?php foreach ( $sensor_ids as $sensor_id ) { ?>
+
+									<h2>Sensor <?php echo $sensor_id; ?></h2>
+
+									<?php if ( ! empty( $sensors->sensor_data->$sensor_id ) ) { ?>
+									<table class="sensor-data-table">
+										<?php foreach ( $sensors->sensor_data->$sensor_id as $row ) { ?>							
+										<tr>
+											<td><?php echo $row->timestamp; ?><td>
+											<td><?php echo $row->value; ?><td>
+										</tr>
+										<?php } ?>									
+									</table>
+									<?php } else { ?>
+
+									<h2 class="error">No data available for this sensor.</h2>
+									
+									<?php } ?>
+
+								<?php } ?>
+							</div>
+
+							<?php } ?>												
 
 						</div>
 						

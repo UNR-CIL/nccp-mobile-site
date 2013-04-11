@@ -71,6 +71,38 @@ function admin_scripts () {
 
 // Helper functions
 
+// Retrieve sensor data from Data API
+// Parameters:
+// $sensor_ids - array of sensor_ids
+// $start - date in Y:m:d H:i:s form
+// $end - date
+// $count - number of results to return
+// $interval - 'hourly,' 'daily,' 'weekly,' 'monthly,' defaults to per minute
+function get_sensor_data ( $sensor_ids, $start, $end, $count, $interval ) {
+	/*$request = http_build_query( array(
+		'sensor_ids' => array( 2, 7, 10 ),
+		'start' => '2012-01-01',
+		'end' => '2013-01-01',
+		'count' => 100,
+		'interval' => 'hourly'
+	));*/
+	$request = http_build_query( array(
+		'sensor_ids' => $sensor_ids,
+		'start' => $start,
+		'end' => $end,
+		'count' => $count,
+		'interval' => $interval
+	));
+	$curl_options = array(
+		CURLOPT_URL => get_option( 'data_api_base' ) . "get?" . $request,
+		CURLOPT_RETURNTRANSFER => true
+	);
+	$ch = curl_init();
+	curl_setopt_array( $ch, $curl_options );
+
+	return ( $result = curl_exec( $ch ) ) ? json_decode( $result ) : false;
+}
+
 // Is the client mobile?  If so, optionally, what OS do they have and what device is it?
 function detect_mobile ( $return_info = false ) { // Pass true if more specific info is needed
 
@@ -138,56 +170,59 @@ function detect_mobile ( $return_info = false ) { // Pass true if more specific 
 
 }
 
+/////////////////////////////////////////////////////////////////
+// Classes //////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////
+
 // Custom menu building class
 class menu_walker extends Walker_Nav_Menu {						
-					private $prev = null;
-					private $next = null;
+	private $prev = null;
+	private $next = null;
 
-					function __construct () {
-						global $post; // Current content
-						$post_url = get_permalink( $post->ID );
+	function __construct () {
+		global $post; // Current content
+		$post_url = get_permalink( $post->ID );
 
-						$current = null;
+		$current = null;
 
-						// Get all the menu items so we can tell if a page has a previous/next for prefetching purposes
-						$menu_items = wp_get_nav_menu_items( 'Main Navigation' );						
+		// Get all the menu items so we can tell if a page has a previous/next for prefetching purposes
+		$menu_items = wp_get_nav_menu_items( 'Main Navigation' );						
 
-						// Strip the item IDs out into their own array of linear menu item IDs
-						array_walk( $menu_items, function ( $item, $index ) use ( $post_url, &$current ) {
-							if ( $item->url == $post_url ) // This is the current menu item
-								$current = $index;
-						});
+		// Strip the item IDs out into their own array of linear menu item IDs
+		array_walk( $menu_items, function ( $item, $index ) use ( $post_url, &$current ) {
+			if ( $item->url == $post_url ) // This is the current menu item
+				$current = $index;
+		});
 
-						if ( $current > 0 ) $this->prev = $menu_items[ $current - 1 ];
-						if ( $current < count( $menu_items ) - 1 ) $this->next = $menu_items[ $current + 1 ];
-					}
+		if ( $current > 0 ) $this->prev = $menu_items[ $current - 1 ];
+		if ( $current < count( $menu_items ) - 1 ) $this->next = $menu_items[ $current + 1 ];
+	}
 
-					function start_el (  &$output, $item ) {
-						// Basic menu template:
-						//<li id="menu-item-78" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-21 current_page_item menu-item-78">
-						//<a href="http://nccp.local/contact/">Contact</a>
+	function start_el (  &$output, $item ) {
+		// Basic menu template:
+		//<li id="menu-item-78" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-21 current_page_item menu-item-78">
+		//<a href="http://nccp.local/contact/">Contact</a>
 
-						// Deal with the previous/next items of the current page if they exist
-						if ( $this->prev && $item->ID == $this->prev->ID )
-							$prev = true;
+		// Deal with the previous/next items of the current page if they exist
+		if ( $this->prev && $item->ID == $this->prev->ID )
+			$prev = true;
 
-						if ( $this->next && $item->ID == $this->next->ID )
-							$next = true;		
+		if ( $this->next && $item->ID == $this->next->ID )
+			$next = true;		
 
-						$output .= sprintf( 
-							'<li id="menu-item-%d" class="menu-item menu-item-%d page-item page-item-%d %s">
-								<a href="%s" data-transition="%s" class="%s" %s>%s</a>',
-							$item->ID,
-							$item->ID,
-							$item->ID,
-							$item->current ? 'current-page-item' : '',
-							$item->url,
-							'slidefade',
-							isset( $prev ) ? 'page-prev' : ( isset( $next ) ? 'page-next' : '' ),
-							isset( $prev ) || isset( $next ) ? 'data-prefetch' : '',
-							$item->title
-						); 
-					}
-				}
-
+		$output .= sprintf( 
+			'<li id="menu-item-%d" class="menu-item menu-item-%d page-item page-item-%d %s">
+				<a href="%s" data-transition="%s" class="%s" %s>%s</a>',
+			$item->ID,
+			$item->ID,
+			$item->ID,
+			$item->current ? 'current-page-item' : '',
+			$item->url,
+			'slidefade',
+			isset( $prev ) ? 'page-prev' : ( isset( $next ) ? 'page-next' : '' ),
+			isset( $prev ) || isset( $next ) ? 'data-prefetch' : '',
+			$item->title
+		); 
+	}
+}
 ?>

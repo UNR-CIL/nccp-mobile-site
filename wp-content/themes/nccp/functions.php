@@ -78,14 +78,7 @@ function admin_scripts () {
 // $end - date
 // $count - number of results to return
 // $interval - 'hourly,' 'daily,' 'weekly,' 'monthly,' defaults to per minute
-function get_sensor_data ( $sensor_ids, $start, $end, $count, $interval ) {
-	/*$request = http_build_query( array(
-		'sensor_ids' => array( 2, 7, 10 ),
-		'start' => '2012-01-01',
-		'end' => '2013-01-01',
-		'count' => 100,
-		'interval' => 'hourly'
-	));*/
+function get_sensor_data ( $sensor_ids, $start, $end, $count, $interval, $csv = false ) {
 	$request = http_build_query( array(
 		'sensor_ids' => $sensor_ids,
 		'start' => $start,
@@ -100,7 +93,43 @@ function get_sensor_data ( $sensor_ids, $start, $end, $count, $interval ) {
 	$ch = curl_init();
 	curl_setopt_array( $ch, $curl_options );
 
-	return ( $result = curl_exec( $ch ) ) ? json_decode( $result ) : false;
+	$result = curl_exec( $ch );
+
+	if ( $result ) {
+		return $csv ? make_sensor_data_csv( json_decode( $result ) ) : json_decode( $result );
+	} else {
+		return false;
+	}
+
+}
+
+// Returns useful info about a sensor (type, property, deployment, unit, etc.)
+// Parameters:
+// $sensor_ids - array of sensor to return info on
+function get_sensor_info( $sensor_ids ) {
+
+}
+
+function make_sensor_data_csv ( $data ) {
+	if ( $data && ! empty( $data ) ) {
+		$base = wp_upload_dir();
+		$filename = 'sensor_data_' . uniqid() . '.csv';
+
+		$file = fopen( $base['basedir'] . '/csv/' . $filename, 'w' );
+
+		fputcsv( $file, array( 'sensor_id', 'timestamp', 'value' ) );
+
+		foreach ( $data->sensor_data as $sensor_id => $sensor ) {
+			foreach ( $sensor as $row ) {
+				fputcsv( $file, (array) $row );
+			}
+		}
+
+		fclose( $file );
+
+		// Return the download path to the CSV
+		return $base['baseurl'] . '/csv/' . $filename;
+	}
 }
 
 // Is the client mobile?  If so, optionally, what OS do they have and what device is it?

@@ -137,18 +137,33 @@ $(document).bind( 'pageinit', function () {
                     $('.data-sensor-search-results').append( sensor_list );
 
                     // Add get data button
-                    $('.data-sensor-search-results').append( $( '<input/>', {
-                        type: 'button',
-                        'class': 'data-button',
-                        name: 'data-get-sensor-data',
-                        id: 'data-get-sensor-data',
-                        value: 'Get Sensor Data',
-                        'data-theme': 'a'
-                    }));
+                    $('.data-sensor-search-results').append( $( '<div/>', {
+                        'data-role': 'controlgroup',
+                        id: 'get-data-group'
+                    }).append(
+                        $( '<input/>', {
+                            type: 'button',
+                            'class': 'data-button',
+                            name: 'data-get-sensor-data',
+                            id: 'data-get-sensor-data',
+                            value: 'Get Sensor Data',
+                            'data-theme': 'a'
+                        }),
+                        $( '<input/>', {
+                            type: 'button',
+                            'class': 'data-button',
+                            name: 'data-download-sensor-data',
+                            id: 'data-download-sensor-data',
+                            value: 'Download Sensor Data',
+                            'data-theme': 'a'
+                        })
+                    ));                    
 
                     $('.data-sensor-search').fadeOut( 250, function () {
                         $('.sensor-search-results').trigger( 'create' );
                         page.find('#data-get-sensor-data').button();
+                        page.find('#data-download-sensor-data').button();
+                        page.find('#get-data-group').controlgroup();                        
                         $('.data-sensor-search-results').fadeIn( 250 );
                     });
                 }
@@ -167,6 +182,20 @@ $(document).bind( 'pageinit', function () {
 
             if ( sensor_ids.length ) {
                 $.mobile.changePage( '/data-graphing', { data: { sensor_ids: sensor_ids }, type: 'GET' } );
+            }
+        });
+
+        // Get CSV download of the sensor data
+        page.on( 'click', '#data-download-sensor-data', function () {
+            // Get the list of sensor IDs
+            var sensor_ids = [];
+
+            $('.sensor-search-results:visible input:checked').each( function () {
+                sensor_ids.push( $(this).val() );
+            });
+
+            if ( sensor_ids.length ) {
+                $.mobile.changePage( '/data-graphing', { data: { sensor_ids: sensor_ids, csv: true }, type: 'GET' } );
             }
         });
     }

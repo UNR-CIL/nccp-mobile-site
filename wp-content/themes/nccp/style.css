@@ -131,6 +131,34 @@ background-size: 100%; }
 .data-filter-date-time { display: none; }
 .data-view-options { display: none; }
 
+/* Data tables */
+
+.sensor-data-table .ui-li-static.ui-li { padding: 0; overflow: hidden; border-bottom: 1px solid #ccc; background: #65757c; /* Old browsers */
+background: -moz-linear-gradient(top,  #65757c 1%, #505b63 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,#65757c), color-stop(100%,#505b63)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #65757c 1%,#505b63 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #65757c 1%,#505b63 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #65757c 1%,#505b63 100%); /* IE10+ */
+background: linear-gradient(to bottom,  #65757c 1%,#505b63 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#65757c', endColorstr='#505b63',GradientType=0 ); /* IE6-9 */
+}
+.sensor-data-table div { display: inline-block; font-weight: 200; font-style: normal; padding: 0.3em 0.8em; }
+.sensor-data-table .timestamp {  }
+.sensor-data-table .value { float: right; font-weight: 400; background: #ddd; color: #505b63; background: #f2f2f2; /* Old browsers */
+background: -moz-linear-gradient(top,  #f2f2f2 0%, #dddddd 99%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f2f2f2), color-stop(99%,#dddddd)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top,  #f2f2f2 0%,#dddddd 99%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top,  #f2f2f2 0%,#dddddd 99%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top,  #f2f2f2 0%,#dddddd 99%); /* IE10+ */
+background: linear-gradient(to bottom,  #f2f2f2 0%,#dddddd 99%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2f2f2', endColorstr='#dddddd',GradientType=0 ); /* IE6-9 */
+text-shadow: 0 1px 0 #ffffff;
+}
+
+/* Graphing */
+
+.graph { width: 500px; height: 500px; }
+
 /* Post content */
 
 article { margin-bottom: 4%; }

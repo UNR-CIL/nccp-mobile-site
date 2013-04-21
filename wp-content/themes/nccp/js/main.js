@@ -38,76 +38,6 @@ $( function () {
         $(this).parent().children('label').buttonMarkup({theme: $(this).prop('checked') ? 'a' : 'b' }).removeClass('ui-btn-hover-b');
     });
 
-    // Data page
-
-    // Search sensor list for various properties
-    $('#main-content').on( 'click', '#data-sensor-search', function () {
-        
-        // Build data query based on checked properties
-        var query = {
-            properties: [],
-            sites: [],
-            types: []
-        };
-        
-        $('#data-selectors:visible .data-properties input:checked').each( function () {
-            query.properties.push( $(this).val() ); 
-        });
-        
-        $('#data-selectors:visible .data-sites input:checked').each( function () {
-            query.sites.push( $(this).val() ); 
-        });
-        
-        $('#data-selectors:visible .data-measurements-types input:checked').each( function () {
-            query.types.push( $(this).val() );
-        });
-        
-        // Send request to get applicable sensors
-        $.getJSON( 'http://ec2-54-241-223-209.us-west-1.compute.amazonaws.com:6227/api/search?callback=?', { 
-        	properties: query.properties, 
-        	sites: query.sites,
-        	types: query.types,
-        	count: 20 
-        }, function ( sensors ) { 
-        	if ( sensors.length ) {
-        		// Construct sensor list
-        		var sensor_list = build_sensor_list( sensors );
-        		$('.data-sensor-search-results').append( sensor_list );
-
-        		// Add get data button
-        		$('.data-sensor-search-results').append( $( '<input/>', {
-        			type: 'button',
-        			'class': 'data-button',
-        			name: 'data-get-sensor-data',
-        			id: 'data-get-sensor-data',
-        			value: 'Get Sensor Data',
-        			'data-theme': 'a'
-        		}));
-
-        		$('.data-sensor-search').fadeOut( 250, function () {
-        			$('.sensor-search-results').trigger( 'create' );
-        			$('#data-get-sensor-data').button();
-        			$('.data-sensor-search-results').fadeIn( 250 );
-        		});
-        	}
-        });
-        
-    });
-
-	// Retrieve sensor data for specific sensors
-	$('#main-content').on( 'click', '#data-get-sensor-data', function () {
-		// Get the list of sensor IDs
-		var sensor_ids = [];
-
-		$('.sensor-search-results:visible input:checked').each( function () {
-			sensor_ids.push( $(this).val() );
-		});
-
-		if ( sensor_ids.length ) {
-			$.mobile.changePage( '/data-graphing', { data: { sensor_ids: sensor_ids }, type: 'GET' } );
-		}
-	});
-
 });
 
 // This stuff will fire on every page load, AJAX or otherwise
@@ -168,6 +98,78 @@ $(document).bind( 'pageinit', function () {
         });
         
     }   
+
+    // Get Data flow
+
+    if ( page.find('#data-selectors').length ) {
+
+        // Search sensor list for various properties
+        page.find('#data-sensor-search').click(function () {
+            // Build data query based on checked properties
+            var query = {
+                properties: [],
+                sites: [],
+                types: []
+            };
+            
+            $('#data-selectors:visible .data-properties input:checked').each( function () {
+                query.properties.push( $(this).val() ); 
+            });
+            
+            $('#data-selectors:visible .data-sites input:checked').each( function () {
+                query.sites.push( $(this).val() ); 
+            });
+            
+            $('#data-selectors:visible .data-measurements-types input:checked').each( function () {
+                query.types.push( $(this).val() );
+            });
+            
+            // Send request to get applicable sensors
+            $.getJSON( 'http://ec2-54-241-223-209.us-west-1.compute.amazonaws.com:6227/api/search?callback=?', { 
+                properties: query.properties, 
+                sites: query.sites,
+                types: query.types,
+                count: 20 
+            }, function ( sensors ) { 
+                if ( sensors.length ) {
+                    // Construct sensor list
+                    var sensor_list = build_sensor_list( sensors );
+                    $('.data-sensor-search-results').append( sensor_list );
+
+                    // Add get data button
+                    $('.data-sensor-search-results').append( $( '<input/>', {
+                        type: 'button',
+                        'class': 'data-button',
+                        name: 'data-get-sensor-data',
+                        id: 'data-get-sensor-data',
+                        value: 'Get Sensor Data',
+                        'data-theme': 'a'
+                    }));
+
+                    $('.data-sensor-search').fadeOut( 250, function () {
+                        $('.sensor-search-results').trigger( 'create' );
+                        page.find('#data-get-sensor-data').button();
+                        $('.data-sensor-search-results').fadeIn( 250 );
+                    });
+                }
+            });
+            
+        });
+
+        // Retrieve sensor data for specific sensors
+        page.on( 'click', '#data-get-sensor-data', function () {
+            // Get the list of sensor IDs
+            var sensor_ids = [];
+
+            $('.sensor-search-results:visible input:checked').each( function () {
+                sensor_ids.push( $(this).val() );
+            });
+
+            if ( sensor_ids.length ) {
+                $.mobile.changePage( '/data-graphing', { data: { sensor_ids: sensor_ids }, type: 'GET' } );
+            }
+        });
+    }
       
 });
 

@@ -135,7 +135,8 @@ class Data extends CI_Controller {
 		$end = new DateTime();
 		$end->add( new DateInterval( 'PT8H' ) ); // Adjust for timezone difference
 		$start = clone $end;
-		$start->sub( new DateInterval( $period ) );			
+		$start->sub( new DateInterval( $period ) );		
+		$start->sub( new DateInterval( 'PT8H' ) ); // Adjust for timezone difference
 
 		// If start/end is cool, get the number of results from the API
 		// and perform the data update

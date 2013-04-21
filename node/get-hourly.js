@@ -15,7 +15,7 @@ var config = require( 'config' );
 
 // Constants and bookkeeping
 var MAX_SENSORS = 5,
-	INTERVAL = 10,
+	INTERVAL = 4,
 	TIMEOUT = 300, // 5 min
 	RESET_TIMEOUT = 28800, // 8 hours
 	sensorPool = [], // Currently working on
@@ -37,7 +37,7 @@ var pool = mysql.createPool({
 
 Startup( pool );
 
-// Start polling every 15 seconds //////////////////////////
+// Start polling every <interval> seconds //////////////////////////
 
 var interval = setInterval( function () {
 

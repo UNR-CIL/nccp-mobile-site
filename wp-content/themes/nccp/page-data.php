@@ -10,7 +10,7 @@
 get_header(); ?>
 
 		<div id="primary">
-			<div id="content" role="main">
+			<div id="content">
 
 				<?php while ( have_posts() ) : the_post(); ?>
 
@@ -26,13 +26,13 @@ get_header(); ?>
 					// Get lists we need to build the data interface
 
 					// Get the current list of properties				
-					$properties = json_decode( file_get_contents( get_option( 'data_api_base' ) . "get/sensor-info/properties" ) );
+					$properties = json_decode( file_get_contents( DATA_API_BASE . "get/sensors/properties" ) );
 
 					// Get the current data sites
-					$sites = json_decode( file_get_contents( get_option( 'data_api_base' ) . "get/sensor-info/sites" ) );
+					$sites = json_decode( file_get_contents( DATA_API_BASE . "get/sensors/sites" ) );
 
 					// Get measurement types
-					$types = json_decode( file_get_contents( get_option( 'data_api_base' ) . "get/sensor-info/types" ) );
+					$types = json_decode( file_get_contents( DATA_API_BASE . "get/sensors/types" ) );
 					?>
 
 					<div id="main-content">

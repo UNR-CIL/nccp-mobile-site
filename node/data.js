@@ -38,6 +38,78 @@ api.configure( function () {
 
 // Define the API routes
 
+// This returns a list of sensors based on query parameters which should
+// be arrays of the following:
+// properties - sensor property ID(s) (for temperature, wind speed, etc.)
+// sites - data site ID(s)
+// types - type of measurement ID(s) (maximum, average, etc.)
+api.get( '/api/search', function ( request, response ) {
+
+	var q = request.query;
+
+	if ( ! q.properties && ! q.sites && ! q.types ) {
+		response.jsonp( { error: 'Must send at least one of: sensor properties, sites or types.' } );
+	} else {
+
+		// Set up the database connection
+		var conn = db.createConnection({
+			host: config.db.host,
+			user: config.db.user,
+			password: config.db.pass,
+			database: config.db.name
+		});
+
+		conn.connect();
+
+		// Build the query from passed parameters
+		var sql = "SELECT r.*, d.site_id, d.name FROM ci_logical_sensor_relationships AS r " +
+			"JOIN ci_logical_sensor_deployment AS d ON d.deployment_id = r.deployment_id " +
+			"WHERE 1 ";
+
+		if ( q.properties ) {
+			sql += "AND ( " + _.map( q.properties, function ( v ) { return 'property_id = ' + v } ).join( " OR " ) + " ) ";
+		}
+
+		if ( q.sites ) {
+			sql += "AND ( " + _.map( q.sites, function ( v ) { return 'site_id = ' + v } ).join( " OR " ) + " ) ";
+		}
+
+		if ( q.types ) {
+			sql += "AND ( " + _.map( q.types, function ( v ) { return 'type_id = ' + v } ).join( " OR " ) + " ) ";
+		}
+
+		var limit = q.count ? q.count : 1000;
+
+		sql += "GROUP BY r.logical_sensor_id LIMIT " + limit;
+
+		// Send the query
+		conn.query( sql, function ( err, rows, fields ) {
+			console.log( 'Sending response...' );
+
+			// Process errors first
+			if ( err ) {
+
+				console.log( err );
+				response.jsonp( { error: 'An error occurred. =(' } );
+
+			// Otherwise process the results
+			} else {
+
+				if ( rows.length > 0 ) {					
+					response.jsonp( rows );
+				} else
+					response.jsonp( { msg: 'No results found.' } );
+
+			}
+
+			conn.end();
+
+		});	
+
+	}
+
+});
+
 // Request data points from the database
 // Params:
 // sensor_ids*
@@ -47,7 +119,7 @@ api.configure( function () {
 // count: limit results
 // format: 'raw' will return array of ONLY data values, no timestamps
 // Example AJAX request:
-// $.getJSON( 'http://nccp.local:6227/api/get/?callback=?', { sensor_id: 7, count: 10, start: '2013-02-08', end: '2013-02-10' }, function ( response ) { console.log( response ) } )
+// $.getJSON( 'http://nccp.local:6227/api/get/?callback=?', { sensor_ids: 7, count: 10, start: '2013-02-08', end: '2013-02-10' }, function ( response ) { console.log( response ) } )
 api.get( '/api/get', function ( request, response ) {
 
 	var q = request.query;
@@ -141,24 +213,23 @@ api.get( '/api/get', function ( request, response ) {
 						response.jsonp( { msg: 'No results found.' } );
 				}
 
+				conn.end();
+
 		});	
 	}	
 
 });
 
-// This returns a list of sensors based on query parameters which should
-// be arrays of the following:
-// properties - sensor property ID(s) (for temperature, wind speed, etc.)
-// sites - data site ID(s)
-// types - type of measurement ID(s) (maximum, average, etc.)
-api.get( '/api/search', function ( request, response ) {
+// Request information about specified sensors (type, unit, deployment, etc.)
+// Params:
+// sensor_ids* - array of at least one sensor ID
+api.get( '/api/get/sensor-info', function ( request, response ) {
 
 	var q = request.query;
 
-	if ( ! q.properties && ! q.sites && ! q.types ) {
-		response.jsonp( { error: 'Must send at least one of: sensor properties, sites or types.' } );
+	if ( ! q.sensor_ids ) {
+		response.jsonp( { error: 'Must send at least one valid sensor ID.' } );
 	} else {
-
 		// Set up the database connection
 		var conn = db.createConnection({
 			host: config.db.host,
@@ -169,29 +240,22 @@ api.get( '/api/search', function ( request, response ) {
 
 		conn.connect();
 
-		// Build the query from passed parameters
-		var sql = "SELECT r.*, d.site_id, d.name FROM ci_logical_sensor_relationships AS r " +
-			"JOIN ci_logical_sensor_deployment AS d ON d.deployment_id = r.deployment_id " +
-			"WHERE 1 ";
-
-		if ( q.properties ) {
-			sql += "AND ( " + _.map( q.properties, function ( v ) { return 'property_id = ' + v } ).join( " OR " ) + " ) ";
-		}
-
-		if ( q.sites ) {
-			sql += "AND ( " + _.map( q.sites, function ( v ) { return 'site_id = ' + v } ).join( " OR " ) + " ) ";
-		}
-
-		if ( q.types ) {
-			sql += "AND ( " + _.map( q.types, function ( v ) { return 'type_id = ' + v } ).join( " OR " ) + " ) ";
-		}
-
-		var limit = q.count ? q.count : 1000;
-
-		sql += "GROUP BY r.logical_sensor_id LIMIT " + limit;
+		// Format the sensor_ids
+		sensor_ids = _.map( q.sensor_ids, function ( v ) { return 'r.logical_sensor_id = ' + v } ).join( " OR " );
 
 		// Send the query
-		conn.query( sql, function ( err, rows, fields ) {
+		conn.query( "SELECT DISTINCT " +
+		"r.logical_sensor_id, r.deployment_id, r.property_id, r.system_id, r.type_id, r.unit_id, r.`interval`, " +
+		"d.lat, d.lng, d.z_offset, d.`name` AS deployment_name, d.site_id, d.site_name, " +
+		"p.description AS property_description, p.`name` AS property_name, p.system_name, " +
+		"t.description AS type_description, t.`name` AS type_name, " +
+		"u.abbreviation, u.aspect_id, u.aspect_name, u.`name` AS unit_name " +
+		"FROM ci_logical_sensor_relationships AS r " +
+		"JOIN ci_logical_sensor_deployment AS d ON d.deployment_id = r.deployment_id " +
+		"JOIN ci_logical_sensor_property AS p ON p.property_id = r.property_id " +
+		"JOIN ci_logical_sensor_types AS t ON t.type_id = r.type_id " +
+		"JOIN ci_logical_sensor_units AS u ON u.unit_id = r.unit_id " +
+		"WHERE ( " + sensor_ids + " )", function ( err, rows, fields ) {
 			console.log( 'Sending response...' );
 
 			// Process errors first
@@ -206,21 +270,19 @@ api.get( '/api/search', function ( request, response ) {
 				if ( rows.length > 0 ) {					
 					response.jsonp( rows );
 				} else
-					response.jsonp( { msg: 'No results found.' } );
+					response.jsonp( { msg: 'Nothing found.' } );
 
 			}
 
 			conn.end();
 
-		});	
-
+		});
 	}
-
 });
 
 // Retrieve the current list of properties.  Searching said properties uses search
 // defined above.
-api.get( '/api/get/sensor-info/properties', function ( request, response ) {
+api.get( '/api/get/sensors/properties', function ( request, response ) {
 
 	// Set up the database connection
 	var conn = db.createConnection({
@@ -260,7 +322,7 @@ api.get( '/api/get/sensor-info/properties', function ( request, response ) {
 
 // Retrieve the current list of data sites.  Searching said sites uses search
 // defined above.
-api.get( '/api/get/sensor-info/sites', function ( request, response ) {
+api.get( '/api/get/sensors/sites', function ( request, response ) {
 
 	// Set up the database connection
 	var conn = db.createConnection({
@@ -300,7 +362,7 @@ api.get( '/api/get/sensor-info/sites', function ( request, response ) {
 
 // Retrieve the current list of property types (avg, min, max, etc.).  Searching said types uses search
 // defined above.
-api.get( '/api/get/sensor-info/types', function ( request, response ) {
+api.get( '/api/get/sensors/types', function ( request, response ) {
 
 	// Set up the database connection
 	var conn = db.createConnection({

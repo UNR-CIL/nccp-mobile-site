@@ -10,7 +10,7 @@
 get_header(); ?>
 
 		<div id="primary">
-			<div id="content" role="main">
+			<div id="content">
 
 				<?php while ( have_posts() ) : the_post(); ?>
 
@@ -24,7 +24,7 @@ get_header(); ?>
 					global $wpdb;
 
 					// Check if sensor_ids exist.  If so, let loose the dogs of... data or whatever
-					/*if ( isset( $_GET['sensor_ids'] ) ) {
+					if ( isset( $_GET['sensor_ids'] ) ) {
 						$sensor_ids = $_GET['sensor_ids'];
 						$csv = isset( $_GET['csv'] ) ? true : false;
 
@@ -33,12 +33,15 @@ get_header(); ?>
 						}
 					} else {
 						$msg = "Must send valid array of sensor IDs.";
-					}*/
+					}
 
 					// Test values
-					$csv = false;
-					$sensor_ids = array( 2, 7, 10 );
-					$sensors = get_sensor_data( $sensor_ids, '2012-01-01', '2013-01-01', 100, 'hourly', $csv );
+					//$csv = false;
+					//$sensor_ids = array( 2, 7, 10 );
+					//$sensors = get_sensor_data( $sensor_ids, '2012-01-01', '2013-01-01', 100, 'hourly', $csv );
+
+					// Also get sensor info
+					$sensor_info = get_sensor_info( $sensor_ids );
 					?>
 
 					<div id="main-content">
@@ -55,41 +58,45 @@ get_header(); ?>
 							<h2 class="error"><?php echo $msg; ?></h2>
 
 							<?php } ?>
-							
-							<?php if ( isset( $sensors ) ) { ?>
 
-							<?php if ( isset( $csv ) && $csv ) { ?>
+							<div id="data-table-download">
 
-							<a href="<?php echo $sensors; ?>" data-role="button" data-ajax="false">Download CSV</a>
+								<?php if ( isset( $sensors ) ) { ?>
 
-							<?php } else { ?>
+								<?php if ( isset( $csv ) && $csv ) { ?>
 
-							<div id="sensor-data">
-								<?php foreach ( $sensor_ids as $sensor_id ) { ?>
+								<a href="<?php echo $sensors; ?>" data-role="button" data-ajax="false">Download CSV</a>
 
-								<h2>Sensor <?php echo $sensor_id; ?></h2>
-
-								<?php if ( ! empty( $sensors->sensor_data->$sensor_id ) ) { ?>
-								<ul class="sensor-data-table" data-role="listview" data-theme="a" data-inset="true">
-									<?php foreach ( $sensors->sensor_data->$sensor_id as $row ) { ?>							
-									<li>
-										<div class="timestamp"><?php echo $row->timestamp; ?></div>
-										<div class="value"><?php echo $row->value; ?></div>
-									</li>
-									<?php } ?>
-								</ul>
 								<?php } else { ?>
 
-								<h3 class="error">No data available for this sensor.</h3>
-									
+								<div id="sensor-data">
+									<?php foreach ( $sensor_ids as $sensor_id ) { ?>
+
+									<h2>Sensor <?php echo $sensor_id; ?>: <?php echo $sensor_info[$sensor_id]->property_name; ?></h2>
+
+									<?php if ( ! empty( $sensors->sensor_data->$sensor_id ) ) { ?>
+									<ul class="sensor-data-table" data-role="listview" data-theme="a" data-inset="true">
+										<?php foreach ( $sensors->sensor_data->$sensor_id as $row ) { ?>							
+										<li>
+											<div class="left"><?php echo $row->timestamp; ?></div>
+											<div class="right"><?php echo $row->value; ?></div>
+										</li>
+										<?php } ?>
+									</ul>
+									<?php } else { ?>
+
+									<h3 class="error">No data available for this sensor.</h3>
+										
+									<?php } ?>
+
+									<?php } ?>
+								</div>
+
 								<?php } ?>
 
 								<?php } ?>
+
 							</div>
-
-							<?php } ?>
-
-							<?php } ?>												
 
 						</div>
 						

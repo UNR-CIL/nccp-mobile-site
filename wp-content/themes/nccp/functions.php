@@ -1,7 +1,7 @@
 <?php
 
-define( 'DATA_API_BASE', 'http://nccp.local:6227/api/' );
-//define( 'DATA_API_BASE', get_option( 'data_api_base' ) );
+//define( 'DATA_API_BASE', 'http://nccp.local:6227/api/' );
+define( 'DATA_API_BASE', get_option( 'data_api_base' ) );
 
 // Template functions.  This includes any logic which has to be handled globally
 // (outside of page template) or defined globally.  This file is also used to hook

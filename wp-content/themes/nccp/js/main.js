@@ -5,8 +5,8 @@ nccp = {};
 
 // Global server config info //////////////////////////////////
 nccp.config = {};
-//nccp.config.DATA_SERVER = "http://ec2-54-241-223-209.us-west-1.compute.amazonaws.com";
-nccp.config.DATA_SERVER = 'http://nccp.local:6227';
+nccp.config.DATA_SERVER = "http://ec2-54-241-223-209.us-west-1.compute.amazonaws.com:6227";
+//nccp.config.DATA_SERVER = 'http://nccp.local:6227';
 nccp.config.DATA_API_BASE = nccp.config.DATA_SERVER + '/api/';
 
 // The normal jquery init event will only be fired on initial page load, not AJAX loads
@@ -160,9 +160,17 @@ $(document).bind( 'pageinit', function () {
                         $( '<input/>', {
                             type: 'button',
                             'class': 'data-button',
-                            name: 'data-view-download-sensor-data',
-                            id: 'data-view-download-sensor-data',
-                            value: 'View/Download Sensor Data',
+                            name: 'data-view-sensor-data',
+                            id: 'data-view-sensor-data',
+                            value: 'View Sensor Data',
+                            'data-theme': 'a'
+                        }),
+                        $( '<input/>', {
+                            type: 'button',
+                            'class': 'data-button',
+                            name: 'data-download-sensor-data',
+                            id: 'data-download-sensor-data',
+                            value: 'Download Sensor Data CSV',
                             'data-theme': 'a'
                         })
                     ));                    
@@ -170,7 +178,8 @@ $(document).bind( 'pageinit', function () {
                     $('.data-sensor-search').fadeOut( 250, function () {
                         $('.sensor-search-results').trigger( 'create' );
                         page.find('#data-graph-sensor-data').button();
-                        page.find('#data-view-download-sensor-data').button();
+                        page.find('#data-view-sensor-data').button();
+                        page.find('#data-download-sensor-data').button();
                         page.find('#get-data-group').controlgroup();                        
                         $('.data-sensor-search-results').fadeIn( 250 );
                     });
@@ -195,7 +204,22 @@ $(document).bind( 'pageinit', function () {
         });
 
         // Get CSV download of the sensor data
-        page.on( 'click', '#data-view-download-sensor-data', function () {
+        page.on( 'click', '#data-view-sensor-data', function () {
+            // Get the list of sensor IDs
+            var sensor_ids = [];
+
+            $('.sensor-search-results:visible input:checked').each( function () {
+                sensor_ids.push( $(this).val() );
+            });
+
+            if ( sensor_ids.length ) {
+                nccp.sensor_ids = sensor_ids;
+                $.mobile.changePage( '/data-table', { data: { sensor_ids: sensor_ids }, type: 'GET' } );
+            }
+        });
+
+        // Get CSV download of the sensor data
+        page.on( 'click', '#data-download-sensor-data', function () {
             // Get the list of sensor IDs
             var sensor_ids = [];
 

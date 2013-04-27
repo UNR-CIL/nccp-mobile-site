@@ -56,7 +56,7 @@
 		<div id="split" class="">
 			<img class="split-bg" src="<?php echo get_template_directory_uri(); ?>/img/split-bg.png" border="0" />
 			<div class="split-content">
-				<div id="main-navigation" class="fittext">				
+				<div id="main-navigation">				
 					<?php wp_nav_menu( array( 'menu' => 'Main Navigation', 'walker' => new menu_walker, 'depth' => 2 ) ); ?>											
 				</div>
 			</div>

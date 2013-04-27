@@ -13,13 +13,6 @@ nccp.config.DATA_API_BASE = nccp.config.DATA_SERVER + '/api/';
 // This means control events should be bound here because they're bound in pageinit they'll be
 // bound with EVERY pageload instead of only once
 $( function () {
-
-	// Make sure big text fits correctly
-    $('.fittext').fitText();
-    $(window).trigger( 'resize' );
-    setTimeout( function () {
-    	$(window).trigger( 'resize' );
-    }, 250 );
     
     // Go to previous on right swipe
 
@@ -57,13 +50,6 @@ $(document).bind( 'pageinit', function () {
     // time pageinit fires.  All parent selectors should be namespaced by this (i.e. page.find( blah ) 
     // instead of $( blah ))
     var page = ( $('#page[data-external-page="true"]').length ) ? $('#page[data-external-page="true"]') : $('#page');
-
-    // Make sure big text fits correctly
-    page.find('.fittext').fitText();
-    $(window).trigger( 'resize' );
-    setTimeout( function () {
-    	$(window).trigger( 'resize' );
-    }, 250 );
     
     // Get Server Status Page ///////////////////////////////
     
@@ -183,6 +169,34 @@ $(document).bind( 'pageinit', function () {
                         page.find('#get-data-group').controlgroup();                        
                         $('.data-sensor-search-results').fadeIn( 250 );
                     });
+                } else {
+                    // Didn't find anything, so display error message
+                    $('.data-sensor-search-results').append( 
+                        $( '<h3/>', {
+                            'class': 'data-message',
+                            html: sensors.msg
+                        }),
+                        $( '<input/>', {
+                            type: 'button',
+                            'class': 'data-button',
+                            name: 'data-reload-search',
+                            id: 'data-reload-search',
+                            value: 'Try Again',
+                            'data-theme': 'a'
+                        })
+                    );
+
+                    $('.data-sensor-search').fadeOut( 250, function () {
+                        page.find('#data-reload-search').button();
+                        $('.data-sensor-search-results').fadeIn( 250 );
+
+                        page.find('#data-reload-search').click(function () {
+                            $('.data-sensor-search-results').fadeOut( 250, function () {
+                                $('.data-sensor-search-results').html( '' );
+                                $('.data-sensor-search').fadeIn( 250 );
+                            });
+                        });
+                    });                    
                 }
             });
             

@@ -56,7 +56,6 @@ function theme_scripts () {
 
 	wp_enqueue_script( 'jquery-cdn', 'http://code.jquery.com/jquery-1.9.1.min.js' );
 	wp_enqueue_script( 'jquery-mobile-cdn', 'http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js', array( 'jquery-cdn' ) );
-	wp_enqueue_script( 'fittext', get_template_directory_uri() . '/js/jquery.fittext.js', array( 'jquery-cdn' ) );
 	wp_enqueue_script( 'google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBxK-OTkhR7AXxyzaRCbuFhzmVBTHhmOrs&sensor=false' );
 	wp_enqueue_script( 'google-maps', get_template_directory_uri() . '/js/gmaps.js', array( 'google-maps-api', 'jquery-cdn' ) );
 	wp_enqueue_script( 'infobox', get_template_directory_uri() . '/js/infobox.js', array( 'google-maps' ) );

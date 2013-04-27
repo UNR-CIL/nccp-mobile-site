@@ -133,7 +133,7 @@ background-size: 100%; }
 .data-filter-date-time { display: none; }
 .data-view-options { display: none; }
 .ui-btn-inner { font-weight: normal; }
-#data-show-individual { display: none; }
+.data-show-individual-wrapper { display: none; }
 
 /* Data tables */
 
@@ -168,7 +168,7 @@ text-shadow: 0 1px 0 #ffffff;
 path { stroke: steelblue; stroke-width: 2; fill: none; }
 line { stroke: black; }
 .boundary { stroke-width: 2; }
-text { font-size: 0.4em; }
+text { font-size: 0.4em;}
 .xLines, .yLines { stroke-width: 0.5; z-index: 1; stroke: #444; }
 .line { stroke-width: 3; }
 

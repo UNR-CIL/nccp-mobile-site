@@ -92,8 +92,12 @@ get_header(); ?>
 									<svg class="graph combined" id="graph-combined"></svg>
 								</div>
 
-								<input type="button" class="data-button" id="data-show-combined" name="data-show-combined" value="View Combined" data-theme='a'>
-								<input type="button" class="data-button" id="data-show-individual" name="data-show-individual" value="View Individual" data-theme='a'>
+								<div class="data-show-combined-wrapper">
+									<input type="button" class="data-button" id="data-show-combined" name="data-show-combined" value="View Combined" data-theme='a'>
+								</div>
+								<div class="data-show-individual-wrapper">
+									<input type="button" class="data-button" id="data-show-individual" name="data-show-individual" value="View Individual" data-theme='a'>
+								</div>	
 
 							</div>																		
 

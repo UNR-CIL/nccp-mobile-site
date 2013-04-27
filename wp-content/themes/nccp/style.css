@@ -133,6 +133,7 @@ background-size: 100%; }
 .data-filter-date-time { display: none; }
 .data-view-options { display: none; }
 .ui-btn-inner { font-weight: normal; }
+#data-show-individual { display: none; }
 
 /* Data tables */
 
@@ -163,6 +164,7 @@ text-shadow: 0 1px 0 #ffffff;
 
 .graphs { }
 .graph { margin: 0.5em 0;}
+.graph.combined { display: none; }
 path { stroke: steelblue; stroke-width: 2; fill: none; }
 line { stroke: black; }
 .boundary { stroke-width: 2; }

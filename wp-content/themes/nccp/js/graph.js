@@ -49,75 +49,7 @@ function build_combined_graph( data, parent ) {
 	});	
 
 	// Append axis boundaries
-	g.append( "svg:line" )
-		.attr( "class", "boundary" )
-		.attr( "x1", margin )
-		.attr( "y1", 0 )
-		.attr( "x2", w - margin )
-		.attr( "y2", 0 );
-
-	g.append( "svg:line" )
-		.attr( "class", "boundary" )
-		.attr( "x1", margin )
-		.attr( "y1", -h )
-		.attr( "x2", w - margin )
-		.attr( "y2", -h );
-	 
-	g.append("svg:line" )
-		.attr( "class", "boundary" )
-		.attr( "x1", margin )
-		.attr( "y1", 0 )
-		.attr( "x2", margin )
-		.attr( "y2", -h );
-
-	g.append("svg:line" )
-		.attr( "class", "boundary" )
-		.attr( "x1", w - margin )
-		.attr( "y1", 0 )
-		.attr( "x2", w - margin )
-		.attr( "y2", -h );
-	
-	// Append tick labels
-	g.selectAll( ".xLabel" )
-		.data( x.ticks( 5 ) )
-		.enter().append( "svg:text" )
-		.attr( "class", "xLabel" )
-		.text( function ( v ) { 
-			var date = new Date( v ); 
-			return date.getFullYear() + '-' + ( date.getMonth() + 1 ) + '-' + date.getDate() + ' ' + 
-				date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
-		})
-		.attr( "x", function(d) { return x(d) })
-		.attr( "y", 30 )
-		.attr( "text-anchor", "middle" )
-
-	g.selectAll( ".xLines" )
-		.data( x.ticks( 5 ) )
-		.enter().append( "svg:line" )
-		.attr( "class", "xLines" )
-		.attr( "x1", function ( d ) { return x( d ); } )
-		.attr( "y1", 0 )
-		.attr( "x2", function ( d ) { return x( d ); } )
-		.attr( "y2", -h );
-
-	g.selectAll( ".yLabel" )
-		.data( y.ticks( 5 ) )
-		.enter().append( "svg:text" )
-		.attr( "class", "yLabel" )
-		.text( function ( v ) { return parseFloat( v ); } )
-		.attr( "x", 0 )
-		.attr( "y", function(d) { return -1 * y(d) } )
-		.attr( "text-anchor", "right" )
-		.attr( "dy", 4 );
-
-	g.selectAll( ".yLines" )
-		.data( y.ticks( 5 ) )
-		.enter().append( "svg:line" )
-		.attr( "class", "yLines" )
-		.attr( "x1", margin )
-		.attr( "y1", function(d) { return -1 * y(d) } )
-		.attr( "x2", w - margin )
-		.attr( "y2", function(d) { return -1 * y(d) } );
+	build_graph_axes( x, y, w, h, margin, g );
 }
 
 function build_line_graph( data, parent, index ) {
@@ -128,7 +60,7 @@ function build_line_graph( data, parent, index ) {
 		margin = 40,
 		start = new Date( data[0].timestamp ),
 		end = new Date( data[data.length - 1].timestamp ),
-		y = d3.scale.linear().domain([d3.min(data, function ( d ) { return d.value; }), d3.max(data, function ( d ) { return d.value; })]).range([0 + margin, h - margin]),
+		y = d3.scale.linear().domain([d3.min(data, function ( d ) { return d.value; }), d3.max(data, function ( d ) { return d.value; })]).range([ 0 + margin, h - margin ]),
 		x = d3.scale.linear().domain([ start, end ]).range([0 + margin, w - margin]);
 
 	var g = d3.select( parent ).append("svg:g").attr("transform", "translate(0, " + h + ")");
@@ -144,36 +76,43 @@ function build_line_graph( data, parent, index ) {
 		.style( "stroke", colorSwatch[ index % colorSwatch.length ] );
 
 	// Append axis boundaries
-	g.append( "svg:line" )
+	build_graph_axes( x, y, w, h, margin, g );
+
+}
+
+// Builds graph labels from passed x and y (d3 functions) and
+// specified graph
+function build_graph_axes( x, y, width, height, margin, graph ) {
+	graph.append( "svg:line" )
 		.attr( "class", "boundary" )
 		.attr( "x1", margin )
 		.attr( "y1", 0 )
-		.attr( "x2", w - margin )
+		.attr( "x2", width - margin )
 		.attr( "y2", 0 );
 
-	g.append( "svg:line" )
+	graph.append( "svg:line" )
 		.attr( "class", "boundary" )
 		.attr( "x1", margin )
-		.attr( "y1", -h )
-		.attr( "x2", w - margin )
-		.attr( "y2", -h );
+		.attr( "y1", -height )
+		.attr( "x2", width - margin )
+		.attr( "y2", -height );
 	 
-	g.append("svg:line" )
+	graph.append( "svg:line" )
 		.attr( "class", "boundary" )
 		.attr( "x1", margin )
 		.attr( "y1", 0 )
 		.attr( "x2", margin )
-		.attr( "y2", -h );
+		.attr( "y2", -height );
 
-	g.append("svg:line" )
+	graph.append("svg:line" )
 		.attr( "class", "boundary" )
-		.attr( "x1", w - margin )
+		.attr( "x1", width - margin )
 		.attr( "y1", 0 )
-		.attr( "x2", w - margin )
-		.attr( "y2", -h );
+		.attr( "x2", width - margin )
+		.attr( "y2", -height );
 	
 	// Append tick labels
-	g.selectAll( ".xLabel" )
+	graph.selectAll( ".xLabel" )
 		.data( x.ticks( 5 ) )
 		.enter().append( "svg:text" )
 		.attr( "class", "xLabel" )
@@ -182,35 +121,35 @@ function build_line_graph( data, parent, index ) {
 			return date.getFullYear() + '-' + ( date.getMonth() + 1 ) + '-' + date.getDate() + ' ' + 
 				date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
 		})
-		.attr( "x", function(d) { return x(d) })
+		.attr( "x", function( d ) { return x( d ) })
 		.attr( "y", 30 )
 		.attr( "text-anchor", "middle" )
 
-	g.selectAll( ".xLines" )
+	graph.selectAll( ".xLines" )
 		.data( x.ticks( 5 ) )
 		.enter().append( "svg:line" )
 		.attr( "class", "xLines" )
 		.attr( "x1", function ( d ) { return x( d ); } )
 		.attr( "y1", 0 )
 		.attr( "x2", function ( d ) { return x( d ); } )
-		.attr( "y2", -h );
+		.attr( "y2", -height );
 
-	g.selectAll( ".yLabel" )
+	graph.selectAll( ".yLabel" )
 		.data( y.ticks( 5 ) )
 		.enter().append( "svg:text" )
 		.attr( "class", "yLabel" )
 		.text( function ( v ) { return parseFloat( v ); } )
 		.attr( "x", 0 )
-		.attr( "y", function(d) { return -1 * y(d) } )
+		.attr( "y", function( d ) { return -1 * y( d ) } )
 		.attr( "text-anchor", "left" )
 		.attr( "dy", 4 );
 
-	g.selectAll( ".yLines" )
+	graph.selectAll( ".yLines" )
 		.data( y.ticks( 5 ) )
 		.enter().append( "svg:line" )
 		.attr( "class", "yLines" )
 		.attr( "x1", margin )
-		.attr( "y1", function(d) { return -1 * y(d) } )
-		.attr( "x2", w - margin )
-		.attr( "y2", function(d) { return -1 * y(d) } );
+		.attr( "y1", function( d ) { return -1 * y( d ) } )
+		.attr( "x2", width - margin )
+		.attr( "y2", function( d ) { return -1 * y( d ) } );
 }

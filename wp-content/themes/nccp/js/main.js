@@ -50,6 +50,41 @@ $(document).bind( 'pageinit', function () {
 	// time pageinit fires.  All parent selectors should be namespaced by this (i.e. page.find( blah ) 
 	// instead of $( blah ))
 	var page = ( $('#page[data-external-page="true"]').length ) ? $('#page[data-external-page="true"]') : $('#page');
+
+	// Homepage /////////////////////////////////////////////
+
+	// Collapsible links
+	page.find('.collapse').click( function () {
+		$(this).next().stop().slideToggle();
+	});
+
+	// Generate a random graph for the homepage
+	page.find('.graph.random').each( function () {
+		var sensor_id = Math.floor( Math.random() * 2104 ) + 1,
+			now = new Date,
+			then = new Date( ( now.getFullYear() - 1 ) + '-' + ( now.getMonth() + 1 ) + '-' + now.getDate() ),
+			parent = this;
+
+		$.getJSON( nccp.config.DATA_API_BASE + 'get/?callback=?', { 
+			sensor_ids: [sensor_id], 
+			count: 500, 
+			start: then.getFullYear() + '-' + ( then.getMonth() + 1 ) + '-' + then.getDate(),
+			end: now.getFullYear() + '-' + ( now.getMonth() + 1 ) + '-' + now.getDate(),
+			interval: 'hourly'
+		}, function ( response ) {
+			if ( response.num_results ) {
+				// Then build graph in the new container
+				build_line_graph( response.sensor_data[sensor_id], '.graph.random', 0 );
+
+				// Size the graph explicitly because some browsers size SVGs weirdly
+				$( parent ).height( Math.floor( $(window).height() / 3 ) + 40 );	
+			} else {
+				// Size the graph explicitly because some browsers size SVGs weirdly
+				$( parent ).height( 0 );
+			}
+			
+		});
+	});
 	
 	// Get Server Status Page ///////////////////////////////
 	

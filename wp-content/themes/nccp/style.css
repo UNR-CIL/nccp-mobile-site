@@ -31,6 +31,7 @@ li { list-style: none; }
 
 /* Tag-level styles */
 
+html, body { overflow-x: hidden !important; position: relative !important; }
 div, img, span { position: relative; }
 body, body.ui-body-c, body.ui-overlay-c { font-family: 'Oswald', sans-serif; font-weight: 300; color: #3f4e57; width: 100%; height: 100%; line-height: 1.8em; background-image: url('img/bg-mirrored.jpg'); background-size: contain; background-repeat: repeat; }
 h1, h2, h3, h4 { line-height: 1.8em; font-weight: 400; margin-bottom: 1%;}

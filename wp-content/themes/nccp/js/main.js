@@ -49,7 +49,7 @@ $(document).bind( 'pageinit', function () {
 	// can't reliably use the widget selectors because they won't have gone through yet by the
 	// time pageinit fires.  All parent selectors should be namespaced by this (i.e. page.find( blah ) 
 	// instead of $( blah ))
-	var page = ( $('#page[data-external-page="true"]').length ) ? $('#page[data-external-page="true"]') : $('#page');
+	var page = $('body');
 
 	// Homepage /////////////////////////////////////////////
 

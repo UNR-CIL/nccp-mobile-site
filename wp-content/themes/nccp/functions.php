@@ -55,7 +55,8 @@ function admin_styles () {
 function theme_scripts () {
 
 	wp_enqueue_script( 'jquery-cdn', 'http://code.jquery.com/jquery-1.9.1.min.js' );
-	wp_enqueue_script( 'jquery-mobile-cdn', 'http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js', array( 'jquery-cdn' ) );
+	wp_enqueue_script( 'jquery-mobile-init', get_template_directory_uri() . '/js/jqm-init.js', array( 'jquery-cdn' ) );
+	wp_enqueue_script( 'jquery-mobile-cdn', 'http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js', array( 'jquery-cdn', 'jquery-mobile-init' ) );
 	wp_enqueue_script( 'google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBxK-OTkhR7AXxyzaRCbuFhzmVBTHhmOrs&sensor=false' );
 	wp_enqueue_script( 'google-maps', get_template_directory_uri() . '/js/gmaps.js', array( 'google-maps-api', 'jquery-cdn' ) );
 	wp_enqueue_script( 'infobox', get_template_directory_uri() . '/js/infobox.js', array( 'google-maps' ) );
@@ -274,7 +275,7 @@ class menu_walker extends Walker_Nav_Menu {
 			$item->url,
 			'slidefade',
 			isset( $prev ) ? 'page-prev' : ( isset( $next ) ? 'page-next' : '' ),
-			isset( $prev ) || isset( $next ) ? 'data-prefetch' : '',
+			'',//isset( $prev ) || isset( $next ) ? 'data-prefetch' : '',
 			$item->title
 		); 
 	}

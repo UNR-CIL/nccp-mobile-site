@@ -37,7 +37,7 @@
 
 <body <?php body_class(); ?> data-role="none">	
 
-	<div id="page" data-role="page" class="container">
+	<div id="page" class="container">
 
 		<header id="header" data-role="header" class="">
 

@@ -191,34 +191,34 @@ article { margin-bottom: 4%; }
 
 /* Fluid structure */
 
-@media ( max-width: 400px ) {
+@media ( max-width: 500px ) {
         
-    body { font-size: 1.1em; }
-    #main-navigation li { font-size: 0.7em; }
+    body { font-size: 1.0em; }
+    #main-navigation li { font-size: 0.5em; }
     
 }
 
 @media ( min-width: 500px ) {
         
-    body { font-size: 1.3em; }
+    body { font-size: 1.2em; }
 
 }
 
 @media ( min-width: 600px ) {
         
-    body { font-size: 1.4em; }
+    body { font-size: 1.3em; }
     
 }
 
 @media ( min-width: 800px ) {
         
-    body { font-size: 1.9em; }
+    body { font-size: 1.8em; }
 
 }
 
 @media ( min-width: 1000px ) {
         
-    body { font-size: 2em; }
+    body { font-size: 1.9em; }
 
 }
 

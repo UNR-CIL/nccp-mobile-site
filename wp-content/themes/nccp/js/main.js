@@ -31,15 +31,7 @@ $( function () {
 		$.mobile.changePage( $('.ui-page-active .page-next').attr( 'href' ), {
 			transition: 'slide'
 		});
-	});  
-
-	// Data events
-
-	$(".data-form input[type='checkbox']").on( "change", function(event, ui) {
-		// Last bit with removeClass is necessary due to a bug with JQM on button refresh
-		$(this).parent().children('label').buttonMarkup({theme: $(this).prop('checked') ? 'a' : 'b' }).removeClass('ui-btn-hover-b');
 	});
-
 });
 
 // This stuff will fire on every page load, AJAX or otherwise
@@ -51,12 +43,21 @@ $(document).bind( 'pageinit', function () {
 	// instead of $( blah ))
 	var page = $('body');
 
-	// Homepage /////////////////////////////////////////////
+	// Global
 
 	// Collapsible links
 	page.find('.collapse').click( function () {
 		$(this).next().stop().slideToggle();
 	});
+
+	// Data events
+
+	$(".data-form input[type='checkbox']").on( "change", function(event, ui) {
+		// Last bit with removeClass is necessary due to a bug with JQM on button refresh
+		$(this).parent().children('label').buttonMarkup({theme: $(this).prop('checked') ? 'a' : 'b' }).removeClass('ui-btn-hover-b');
+	});
+
+	// Homepage /////////////////////////////////////////////	
 
 	// Generate a random graph for the homepage
 	page.find('.graph.random').each( function () {

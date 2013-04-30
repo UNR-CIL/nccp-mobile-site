@@ -97,7 +97,7 @@ background-size: 100%; }
 #footer-bg { position: absolute; width: 100%; left: 0px; top: -20%;}
 #footer-logo { width: 13%; margin-right: 2%; position: relative; top: -4em;}
 #footer-logo img { width: 10%; }
-.footer-text { color: white; line-height: 2.2em; font-weight: 200; text-shadow: none; width: 50%; display: block; white-space: nowrap; margin: 0px auto 0px auto; padding-top: 1%; font-size: 0.8em; text-shadow: 0px 1px 1px #000; }
+.footer-text { color: white; line-height: 2em; font-weight: 200; text-shadow: none; width: 75%; display: block; white-space: nowrap; margin: 0px auto 0px auto; padding-top: 1%; font-size: 0.8em; text-shadow: 0px 1px 1px #000; }
 .footer-text b { font-weight: 400; }
 #footer-text img {}
 #copyright { font-size: 1em; color: #efc48d; padding-right: 1%; position: absolute; width: 100%; left: -0.5%; background-image: url('img/footer-copyright-bg.png'); background-repeat: no-repeat; background-position: center; background-size: contain; bottom: -25%; text-shadow: none; font-weight: normal;}
@@ -195,6 +195,8 @@ article { margin-bottom: 4%; }
         
     body { font-size: 1.0em; }
     #main-navigation li { font-size: 0.5em; }
+    .footer-text { line-height: 1.2em; }
+    #main-navigation { top: -0.3em; }
     
 }
 

@@ -4,8 +4,9 @@ Theme URI: http://monterey-j.com
 Author: Tim Shaw
 Author URI: http://monterey-j.com
 Description: The main theme for the NCCP Mobile project.
-
 */
+
+/* Actual styles in assets/css */
 
 /* Reset all the junky CSS yo */
 
@@ -33,7 +34,7 @@ li { list-style: none; }
 
 html, body { overflow-x: hidden !important; }
 div, img, span { position: relative; }
-body, .ui-body-c, .ui-overlay-c { font-family: 'Oswald', sans-serif; font-weight: 300; color: #3f4e57; width: 100%; height: 100%; line-height: 1.8em; background-image: url('img/bg-mirrored.jpg'); background-size: contain; background-repeat: repeat; }
+body, .ui-body-c, .ui-overlay-c { font-family: 'Oswald', sans-serif; font-weight: 300; color: #3f4e57; width: 100%; height: 100%; line-height: 1.8em; background-image: url('assets/img/bg-mirrored.jpg'); background-size: contain; background-repeat: repeat; }
 h1, h2, h3, h4 { line-height: 1.8em; font-weight: 400; margin-bottom: 1%;}
 h1 { font-size: 1.6em; }
 h2 { padding: 1% 1% 1% 0; font-size: 1.4em; }
@@ -87,7 +88,7 @@ img.status-ribbon { width: 80%; }
 /* Main content */
 
 #page { position: relative; z-index: 1; width: 88%; padding-bottom: 12%; background: transparent;}
-#main { padding: 8% 10% 4% 10%; overflow-x: visible; background-image: url('img/content-bg.png');
+#main { padding: 8% 10% 4% 10%; overflow-x: visible; background-image: url('assets/img/content-bg.png');
 background-size: 100%; }
 #main-content { font-size: 1.2em; color: #505B63; padding-bottom: 5%;}
 
@@ -100,7 +101,7 @@ background-size: 100%; }
 .footer-text { color: white; line-height: 2em; font-weight: 200; text-shadow: none; width: 75%; display: block; white-space: nowrap; margin: 0px auto 0px auto; padding-top: 1%; font-size: 0.8em; text-shadow: 0px 1px 1px #000; }
 .footer-text b { font-weight: 400; }
 #footer-text img {}
-#copyright { font-size: 1em; color: #efc48d; padding-right: 1%; position: absolute; width: 100%; left: -0.5%; background-image: url('img/footer-copyright-bg.png'); background-repeat: no-repeat; background-position: center; background-size: contain; bottom: -25%; text-shadow: none; font-weight: normal;}
+#copyright { font-size: 1em; color: #efc48d; padding-right: 1%; position: absolute; width: 100%; left: -0.5%; background-image: url('assets/img/footer-copyright-bg.png'); background-repeat: no-repeat; background-position: center; background-size: contain; bottom: -25%; text-shadow: none; font-weight: normal;}
 #copyright .date { font-size: 0.75em; }
 
 /* Page content *******************************************************/
@@ -118,13 +119,13 @@ h3 a, h3 .ui-body-c .ui-link, .collapse { background: #505b63; padding: 0.1em 0.
 .status-text { font-size: 1.2em }
 .status-date { color: #828486; }
 
-.status-block.unknown .status-icon { background-image: url('img/icons/unknown.png'); background-repeat: no-repeat; background-size: 100%;}
+.status-block.unknown .status-icon { background-image: url('assets/img/icons/unknown.png'); background-repeat: no-repeat; background-size: 100%;}
 .status-block.unknown .status-text { color: #7c7b7b; }
 
-.status-block.good .status-icon { background-image: url('img/icons/good.png'); background-repeat: no-repeat; background-size: contain;}
+.status-block.good .status-icon { background-image: url('assets/img/icons/good.png'); background-repeat: no-repeat; background-size: contain;}
 .status-block.good .status-text { color: #2999f6; }
 
-.status-block.bad .status-icon { background-image: url('img/icons/bad.png'); background-repeat: no-repeat; background-size: 100%;}
+.status-block.bad .status-icon { background-image: url('assets/img/icons/bad.png'); background-repeat: no-repeat; background-size: 100%;}
 .status-block.bad .status-text { color: #d54811; }
 
 /* Data page */

@@ -17,7 +17,7 @@
 
 		<?php else : ?>
 
-			<div class="error">Page content not found.</div>
+			<div class="text-error">Page content not found.</div>
 
 		<?php endif; ?>
 

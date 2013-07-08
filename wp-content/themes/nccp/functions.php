@@ -1,6 +1,5 @@
 <?php
 
-//define( 'DATA_API_BASE', 'http://nccp.local:6227/api/' );
 define( 'DATA_API_BASE', get_option( 'data_api_base' ) );
 
 // Template functions.  This includes any logic which has to be handled globally
@@ -8,72 +7,15 @@ define( 'DATA_API_BASE', get_option( 'data_api_base' ) );
 // in necessary styles and scripts for both the front and back ends.
 
 //////////////////////////////////////////////////////////////////
-// Theme code ////////////////////////////////////////////////////
+// Callable theme functions //////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 
-// Register scripts/styles with the proper authorities
- 
-add_action( 'wp_enqueue_scripts', 'theme_styles' ); // Front
-add_action( 'admin_enqueue_scripts', 'admin_styles' ); // Back
+// Callable to check if browser is < 9
+function is_IE () {
+	$browser = get_browser();
 
-add_action( 'wp_enqueue_scripts', 'theme_scripts' ); // Front
-add_action( 'admin_enqueue_scripts', 'admin_scripts' ); // Back
-
-// Register menus
-
-add_action( 'init', 'main_menus' );
-
-//////////////////////////////////////////////////////////////////
-// Theme functions ///////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////
-
-// WP action functions
-
-function main_menus () {
-
-  	register_nav_menus(
-    	array( 'main-navigation' => __( 'Main Navigation' ) )
-	);
-
+	return $browser->browser == 'Internet Explorer' && $browser->version < 9 ? true : false;
 }
-
-// Global styles
-function theme_styles () {
-
-	wp_enqueue_style( 'jquery-mobile-theme', get_stylesheet_directory_uri() . '/css/mobile-themes/nccp.min.css' );
-	wp_enqueue_style( 'jquery-mobile-styles', 'http://code.jquery.com/mobile/1.3.0/jquery.mobile.structure-1.3.0.min.css', 'jquery-mobile-theme' );
-	wp_enqueue_style( 'style-main', get_stylesheet_directory_uri() . '/style.css' );
-
-}
-
-// Styles to only be included in the admin version of the site
-function admin_styles () {
-	//wp_enqueue_style( 'style-main' );
-}
-
-// Global scripts
-function theme_scripts () {
-
-	wp_enqueue_script( 'jquery-cdn', 'http://code.jquery.com/jquery-1.9.1.min.js' );
-	wp_enqueue_script( 'jquery-mobile-init', get_template_directory_uri() . '/js/jqm-init.js', array( 'jquery-cdn' ) );
-	wp_enqueue_script( 'jquery-mobile-cdn', 'http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.min.js', array( 'jquery-cdn', 'jquery-mobile-init' ) );
-	wp_enqueue_script( 'google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBxK-OTkhR7AXxyzaRCbuFhzmVBTHhmOrs&sensor=false' );
-	wp_enqueue_script( 'google-maps', get_template_directory_uri() . '/js/gmaps.js', array( 'google-maps-api', 'jquery-cdn' ) );
-	wp_enqueue_script( 'infobox', get_template_directory_uri() . '/js/infobox.js', array( 'google-maps' ) );
-	wp_enqueue_script( 'd3', 'http://d3js.org/d3.v3.min.js' );
-	wp_enqueue_script( 'js-main', get_template_directory_uri() . '/js/main.js', array( 'jquery-cdn', 'jquery-mobile-cdn', 'd3' ) );
-	wp_enqueue_script( 'graph', get_template_directory_uri() . '/js/graph.js', array( 'jquery-cdn', 'd3', 'js-main' ) );
-
-}
-
-// Scripts to only be included in the admin section of the site
-function admin_scripts () {
-
-	//wp_enqueue_script( 'jquery-local', get_template_directory_uri() . '/js/jquery-1.8.3.min.js' );
-
-}
-
-// Helper functions
 
 // Retrieve sensor data from Data API
 // Parameters:
@@ -160,7 +102,6 @@ function make_sensor_data_csv ( $data ) {
 
 // Is the client mobile?  If so, optionally, what OS do they have and what device is it?
 function detect_mobile ( $return_info = false ) { // Pass true if more specific info is needed
-
 	$user_agents = $_SERVER['HTTP_USER_AGENT'];
 	$is_mobile = false;
 	$mobile_info = new stdClass();
@@ -222,6 +163,90 @@ function detect_mobile ( $return_info = false ) { // Pass true if more specific 
 	}
 
 	return $return_info ? ( $is_mobile ? $mobile_info : false ) : $is_mobile;
+}
+
+//////////////////////////////////////////////////////////////////
+// Theme code ////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+
+// Register scripts/styles with the proper authorities
+ 
+add_action( 'wp_enqueue_scripts', 'theme_styles' ); // Front
+add_action( 'admin_enqueue_scripts', 'admin_styles' ); // Back
+
+add_action( 'wp_enqueue_scripts', 'theme_scripts' ); // Front
+add_action( 'admin_enqueue_scripts', 'admin_scripts' ); // Back
+
+// Register menus
+
+add_action( 'init', 'main_menus' );
+
+// IE support
+
+if ( is_IE() ) {
+	add_action( 'wp_enqueue_scripts', 'ie_theme_styles' );
+	add_action( 'wp_enqueue_scripts', 'ie_theme_scripts' );
+}
+
+//////////////////////////////////////////////////////////////////
+// Theme initialization functions ////////////////////////////////
+//////////////////////////////////////////////////////////////////
+
+// WP action functions
+
+function main_menus () {
+
+  	register_nav_menus(
+    	array( 'main-navigation' => __( 'Main Navigation' ) )
+	);
+
+}
+
+// Global styles
+function theme_styles () {
+
+	wp_enqueue_style( 'bootstrap-css', get_stylesheet_directory_uri() . '/assets/bootstrap/bootstrap/css/bootstrap.min.css' );
+	wp_enqueue_style( 'style-main', get_stylesheet_directory_uri() . '/assets/css/application.css' );
+
+}
+
+function ie_theme_styles () {
+
+	wp_enqueue_style( 'style-ie', get_stylesheet_directory_uri() . '/assets/css/application-ie.css' );
+
+}
+
+// Styles to only be included in the admin version of the site
+function admin_styles () {
+	//wp_enqueue_style( 'style-main' );
+}
+
+// Global scripts
+function theme_scripts () {
+
+	wp_enqueue_script( 'jquery-cdn', 'http://code.jquery.com/jquery-1.9.1.min.js', false, false, true );
+	wp_enqueue_script( 'google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBxK-OTkhR7AXxyzaRCbuFhzmVBTHhmOrs&sensor=false', false, false, true );
+	wp_enqueue_script( 'google-maps', get_template_directory_uri() . '/assets/js/gmaps.js', array( 'google-maps-api', 'jquery-cdn' ), false, true );
+	wp_enqueue_script( 'd3', 'http://d3js.org/d3.v3.min.js', false, false, true );	
+	wp_enqueue_script( 'bootstrap-js', get_stylesheet_directory_uri() . '/assets/bootstrap/bootstrap/js/bootstrap.js', false, false, true );
+	wp_enqueue_script( 'underscore-local', get_template_directory_uri() . '/assets/js/underscore-min.js', array( 'jquery-cdn', 'd3', 'google-maps', 'bootstrap-js' ), false, true );
+	wp_enqueue_script( 'backbone-local', get_template_directory_uri() . '/assets/js/backbone-min.js', array( 'underscore-local' ), false, true );
+	wp_enqueue_script( 'graph', get_template_directory_uri() . '/assets/js/graph.js', array( 'backbone-local' ), false, true );
+	wp_enqueue_script( 'js-main', get_template_directory_uri() . '/assets/js/main.js', array( 'backbone-local', 'graph' ), false, true );
+	wp_enqueue_script( 'application', get_template_directory_uri() . '/assets/js/application.js', array( 'backbone-local', 'graph' ), false, true );
+
+}
+
+function ie_theme_scripts () {
+
+	wp_enqueue_script( 'respond', get_template_directory_uri() . '/assets/js/respond/respond.min.js', false, true );
+
+}
+
+// Scripts to only be included in the admin section of the site
+function admin_scripts () {
+
+	//wp_enqueue_script( 'jquery-local', get_template_directory_uri() . '/assets/js/jquery-1.8.3.min.js' );
 
 }
 

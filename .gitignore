@@ -1,5 +1,6 @@
 design
 *.psd
+wp-content/themes/nccp/assets/css/.sass-cache
 bak
 generated
 notes.txt

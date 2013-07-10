@@ -3,6 +3,12 @@
 /* Base compass styles */
 @import compass/css3
 
+/* Sprites */
+@import icons/*.png
+@import sprites/*.png
+@include all-icons-sprites
+@include all-sprites-sprites
+
 /* Media queries */
 @import breakpoint
 
@@ -15,15 +21,19 @@
 /* Base styles */
 @import base/generic
 @import base/tag-level
+@import base/layout
 
 /* Components */
 @import partials/content
 @import partials/header
 @import partials/logo
+@import partials/ribbon
 @import partials/navigation
-@import partials/status
-@import partials/data
 @import partials/tables
 @import partials/graphs
-@import partials/posts
 @import partials/footer
+
+/* Pages */
+@import pages/data
+@import pages/posts
+@import pages/status

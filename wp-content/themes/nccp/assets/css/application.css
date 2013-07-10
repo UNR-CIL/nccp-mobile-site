@@ -1,4 +1,27 @@
 /* Base compass styles */
+/* Sprites */
+.icons-sprite, .icons-status-bad, .icons-status-good, .icons-status-unknown, .icons-status { background: url('../img/icons-s7dfe999538.png') no-repeat; }
+
+.sprites-sprite, .sprites-footer-base, .sprites-footer-bg, .sprites-header-bg-white, .sprites-header-bg, .sprites-menu { background: url('../img/sprites-s8bd7a20e9e.png') no-repeat; }
+
+.icons-status-bad { background-position: 0 -277px; }
+
+.icons-status-good { background-position: 0 -427px; }
+
+.icons-status-unknown { background-position: 0 -127px; }
+
+.icons-status { background-position: 0 0; }
+
+.sprites-footer-base { background-position: 0 -1001px; }
+
+.sprites-footer-bg { background-position: 0 -788px; }
+
+.sprites-header-bg-white { background-position: 0 0; }
+
+.sprites-header-bg { background-position: 0 -394px; }
+
+.sprites-menu { background-position: 0 -1113px; }
+
 /* Media queries */
 /* Compass helpers */
 /* Variables */
@@ -12,15 +35,64 @@
 
 .hidden { display: none; opacity: 0; }
 
+.fluid img { width: 100%; }
+
 /* Tag-level styles */
+body { background: url(../img/bg.jpg) top center; background-repeat: repeat-y; background-size: contain; font-family: "Oswald", sans-serif; color: #434c52; font-size: 1em; }
+
+h1, h2, h3, h4, h5, h6 { font-family: "Oswald", sans-serif; text-rendering: auto; }
+
+h1, h2 { font-family: "Oswald", sans-serif; text-rendering: auto; color: #3885c5; border-bottom: 1px solid #3885c5; }
+
+h3 { font-weight: 400; }
+
+div, header, footer, ul, li, span { position: relative; }
+
+p { font-weight: 300; padding: 3%; font-size: 2.2em; line-height: 1.4em; }
+
+/* Layout */
+.container.main { background: white; border-left: 2px solid #434c52; border-right: 2px solid #434c52; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #e9ffe3)); background-image: -webkit-linear-gradient(#ffffff, #e9ffe3); background-image: -moz-linear-gradient(#ffffff, #e9ffe3); background-image: -o-linear-gradient(#ffffff, #e9ffe3); background-image: linear-gradient(#ffffff, #e9ffe3); }
+
+#main-content { padding: 2%; z-index: 2; }
+
+@media (max-width: 768px) { .span6 { width: 49%; display: inline-block; } }
+
 /* Components */
 /* Content blocks */
 /* Header */
+header { z-index: 3; }
+header #logo { width: 96%; margin: 0 auto; }
+header .navbar { padding-top: 0; background: #eeeeee; }
+header .navbar .brand { position: absolute; top: 33%; font-size: 3em; }
+@media (min-width: 768px) { header .navbar .brand { display: none; } }
+header .navbar .btn-navbar { padding: 0; width: 14%; right: 1%; }
+header .navbar .nav-collapse { background: #103407; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #103407), color-stop(100%, #1b4d0e)); background-image: -webkit-linear-gradient(#103407, #1b4d0e); background-image: -moz-linear-gradient(#103407, #1b4d0e); background-image: -o-linear-gradient(#103407, #1b4d0e); background-image: linear-gradient(#103407, #1b4d0e); border-bottom: 1px solid #2d7818; }
+header .navbar .nav li a:hover { color: white; }
+header .navbar .nav > li { font-size: 2em; }
+header .navbar .nav .sub-menu li { font-weight: 300; margin-bottom: 0.6em; }
+@media (max-width: 768px) { header .navbar .nav > li { font-size: 1.5em; }
+  header .navbar .nav > li a { color: white; }
+  header .navbar .nav .sub-menu li { margin-left: 2%; }
+  header .navbar .nav .sub-menu li a { color: #73a266; } }
+
 /* Logo */
+/* Header ribbon */
+#ribbon { width: 13%; margin: 0 3% -10%; }
+
 /* Main Navigation */
-/* Status page */
-/* Data page */
 /* Data tables */
 /* Graphs */
-/* Post content */
+.graph { display: none; }
+
 /* Footer */
+footer { width: 96%; margin: 0 auto; z-index: 3; }
+footer #footer-content { position: absolute; top: 0; width: 100%; margin: 7% 0 0 2%; }
+footer #footer-content .copyright { color: #c67300; font-weight: 300; font-size: 4em; }
+footer #footer-content .copyright span { font-size: 1.5em; top: 0.03em; }
+footer #footer-bg { background: url(../img/sprites/footer-bg.png); background-size: cover; }
+footer #footer-base { margin-top: -12%; width: 104.2%; margin-left: -2.1%; }
+
+/* Pages */
+/* Data page */
+/* Post content */
+/* Status page */

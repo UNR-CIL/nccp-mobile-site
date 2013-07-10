@@ -1,0 +1,17 @@
+/* Layout */
+
+.container
+	&.main
+		background: white
+		border-left: 2px solid $gray-blue
+		border-right: 2px solid $gray-blue
+		+background-image(linear-gradient(white, #e9ffe3))
+
+#main-content
+	padding: 2%
+	z-index: 2
+
+.span6
+	+breakpoint($breakpoint-max-768)
+		width: 49%
+		display: inline-block

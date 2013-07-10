@@ -27,24 +27,36 @@
 
 <body <?php body_class(); ?> >
 
-	<div id="page" class="container">
+	<div class="container main">
 
-		<header id="header" class="">
+		<header>
 
-			<div id="ribbon">
+			<div id="ribbon" class="pull-right fluid">
 				<a href="../status">
 					<img class="status-ribbon" border="0" src="<?php echo get_template_directory_uri(); ?>/assets/img/icons/status.png" border="0" />
 				</a>
-			</div>	
-
-			<div id="logo">
-				<a href="<?php echo home_url(); ?>/" data-transition="slidefade"><img src="<?php echo get_template_directory_uri(); ?>/assets/img/logo.png" border="0" /></a>
 			</div>
 
-			<?php //wp_nav_menu( array( 'menu' => 'Main Navigation', 'walker' => new menu_walker, 'depth' => 2 ) ); ?>
+			<div id="logo" class="fluid">
+				<a href="<?php echo home_url(); ?>/"><img src="<?php echo get_template_directory_uri(); ?>/assets/img/sprites/header-bg-white.png" border="0" /></a>
+			</div>
+
+			<div class="navbar">
+				<div class="container fluid">
+				    <a class="brand" href="#">Menu</a>
+
+					<div class="nav-collapse collapse">
+						<?php wp_nav_menu( array( 
+							'menu' => 'Main Navigation', 
+							'menu_class' => 'nav', 
+							'depth' => 2 
+						)); ?>	
+					</div>
+
+					<div class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+						<img src="<?php echo get_template_directory_uri(); ?>/assets/img/sprites/menu.png" border="0" />
+				    </div>
+				</div>
+			</div>			
 			
 		</header>
-
-			
-
-		<div id="main">

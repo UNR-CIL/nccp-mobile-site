@@ -1,1 +1,56 @@
 /* Header */
+
+header
+	z-index: 3
+
+	#logo
+		width: 96%
+		margin: 0 auto
+
+	.navbar
+		padding-top: 0
+		background: $gray-light
+
+		.brand
+			position: absolute
+			top: 33%
+			font-size: 3em
+
+			+breakpoint($breakpoint-min-768)
+				display: none
+
+		.btn-navbar
+			padding: 0
+			width: 14%
+			right: 1%
+
+		.nav-collapse
+			background: $green-darker
+			+background-image(linear-gradient($green-darker, #1b4d0e))
+			border-bottom: 1px solid $green-dark
+
+		.nav
+			li a:hover
+				color: white
+
+			> li
+				font-size: 2em
+
+			.sub-menu
+				li
+					font-weight: 300
+					margin-bottom: 0.6em
+
+			+breakpoint($breakpoint-max-768)
+				> li
+					font-size: 1.5em
+
+					a
+						color: white
+
+				.sub-menu
+					li 
+						margin-left: 2%
+
+						a
+							color: $green-forest

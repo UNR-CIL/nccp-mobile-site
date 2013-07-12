@@ -60,9 +60,9 @@ li { list-style: none; }
 /* Layout */
 .container.main { background: white; border-left: 2px solid #434c52; border-right: 2px solid #434c52; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #e9ffe3)); background-image: -webkit-linear-gradient(#ffffff, #e9ffe3); background-image: -moz-linear-gradient(#ffffff, #e9ffe3); background-image: -o-linear-gradient(#ffffff, #e9ffe3); background-image: linear-gradient(#ffffff, #e9ffe3); }
 
-#main-content { padding: 4%; z-index: 2; }
-#main-content li { font-size: 2.8em; font-weight: 400; line-height: 1.9em; padding-left: 1%; }
-#main-content li:before { content: "\00BB"; color: #73a266; margin-right: 0.3em; font-size: 1.5em; margin-left: -0.7em; }
+.main-content { padding: 4%; z-index: 2; }
+.main-content li { font-size: 2.8em; font-weight: 400; line-height: 1.9em; padding-left: 1%; }
+.main-content li:before { content: "\00BB"; color: #73a266; margin-right: 0.3em; font-size: 1.5em; margin-left: -0.7em; }
 
 @media (max-width: 768px) { .span6 { width: 49%; display: inline-block; } }
 
@@ -113,15 +113,15 @@ footer #footer-base { margin-top: -12%; width: 104.2%; margin-left: -2.1%; }
 /* Data page */
 /* Post content */
 /* Status page */
-#status { margin: 0 0 5% 5%; }
-#status .status-block { clear: both; padding-bottom: 8%; }
-#status .status-block.unknown .status-icon { background-image: url("../img/icons/status-unknown.png"); background-repeat: no-repeat; background-size: 100%; }
-#status .status-block.unknown .status-text { color: #7c7c7c; }
-#status .status-block.good .status-icon { background-image: url("../img/icons/status-good.png"); background-repeat: no-repeat; background-size: contain; }
-#status .status-block.good .status-text { color: #2790e7; }
-#status .status-block.bad .status-icon { background-image: url("../img/icons/status-bad.png"); background-repeat: no-repeat; background-size: 100%; }
-#status .status-block.bad .status-text { color: #d94f19; }
-#status .status-icon { width: 14%; float: left; margin-right: 3%; margin-bottom: 1%; height: 15em; }
-#status .status-content { padding-top: 6%; }
-#status .status-text { font-size: 2.2em; }
-#status .status-date { color: #7c7c7c; }
+.status { margin: 0 0 5% 5%; }
+.status .status-block { clear: both; padding-bottom: 8%; }
+.status .status-block.unknown .status-icon { background-image: url("../img/icons/status-unknown.png"); background-repeat: no-repeat; background-size: 100%; }
+.status .status-block.unknown .status-text { color: #7c7c7c; }
+.status .status-block.good .status-icon { background-image: url("../img/icons/status-good.png"); background-repeat: no-repeat; background-size: contain; }
+.status .status-block.good .status-text { color: #2790e7; }
+.status .status-block.bad .status-icon { background-image: url("../img/icons/status-bad.png"); background-repeat: no-repeat; background-size: 100%; }
+.status .status-block.bad .status-text { color: #d94f19; }
+.status .status-icon { width: 14%; float: left; margin-right: 3%; margin-bottom: 1%; height: 15em; }
+.status .status-content { padding-top: 5%; }
+.status .status-text { font-size: 3em; margin-bottom: 0.7em; }
+.status .status-date { color: #7c7c7c; font-size: 1.7em; }

@@ -53,7 +53,7 @@ get_header(); ?>
 
 							<?php } ?>
 
-							<div id="data-graphs">
+							<div class="data-graphs">
 
 								<div class="sensor-info">
 									<h3>Sensors:</h3>

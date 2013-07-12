@@ -231,9 +231,7 @@ function theme_scripts () {
 	wp_enqueue_script( 'bootstrap-js', get_stylesheet_directory_uri() . '/assets/bootstrap/bootstrap/js/bootstrap.min.js', false, false, true );
 	wp_enqueue_script( 'underscore-local', get_template_directory_uri() . '/assets/js/underscore-min.js', array( 'jquery-cdn', 'd3', 'google-maps', 'bootstrap-js' ), false, true );
 	wp_enqueue_script( 'backbone-local', get_template_directory_uri() . '/assets/js/backbone-min.js', array( 'underscore-local' ), false, true );
-	//wp_enqueue_script( 'graph', get_template_directory_uri() . '/assets/js/graph.js', array( 'backbone-local' ), false, true );
-	//wp_enqueue_script( 'js-main', get_template_directory_uri() . '/assets/js/main.js', array( 'backbone-local', 'graph' ), false, true );
-	wp_enqueue_script( 'application', get_template_directory_uri() . '/assets/js/application.js', array( 'backbone-local', 'graph' ), false, true );
+	wp_enqueue_script( 'application', get_template_directory_uri() . '/assets/js/application.js', array( 'backbone-local' ), false, true );
 
 }
 

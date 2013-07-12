@@ -15,7 +15,7 @@
 
 				<?php get_template_part( 'content', 'page' ); ?>
 
-				<section id="status">
+				<section class="status">
 					<div id="nccp-status" class="status-block unknown">
 						<div class="status-icon"></div>
 						<div class="status-content">

@@ -6,7 +6,7 @@
  */
 ?>
 
-<div id="main-content">
+<div class="main-content home">
 
 	<?php the_content(); ?>
 	

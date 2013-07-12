@@ -44,7 +44,7 @@ get_header(); ?>
 
 							<?php the_content(); ?>
 
-							<form id="data-selectors" name="data-selectors">
+							<form class="data-selectors">
 							
 								<div class="data-sensor-search">
 									<div class="data-form" data-role="collapsible-set">

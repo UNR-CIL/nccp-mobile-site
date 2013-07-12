@@ -15,7 +15,7 @@
 
 				<?php get_template_part( 'content', 'page' ); ?>
 
-				<div id="status">
+				<section id="status">
 					<div id="nccp-status" class="status-block unknown">
 						<div class="status-icon"></div>
 						<div class="status-content">
@@ -37,7 +37,7 @@
 							<div class="status-date"></div>
 						</div>
 					</div>
-				</div>
+				</section>
 
 			<?php endwhile; ?>
 

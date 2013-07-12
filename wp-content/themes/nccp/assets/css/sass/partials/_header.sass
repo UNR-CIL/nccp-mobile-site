@@ -6,10 +6,15 @@ header
 	#logo
 		width: 96%
 		margin: 0 auto
+		z-index: 2
 
 	.navbar
 		padding-top: 0
 		background: $gray-light
+		margin: 0 auto
+		width: 92%
+		+border-bottom-radius(0.5em)
+		padding-bottom: 1em
 
 		.brand
 			position: absolute
@@ -36,21 +41,54 @@ header
 			> li
 				font-size: 2em
 
+				a
+					color: #428bca
+					font-size: 1.3em
+					padding-top: 1.2em
+
 			.sub-menu
+				list-style: none
+				margin-left: 0.8em
+
 				li
 					font-weight: 300
 					margin-bottom: 0.6em
 
+					a
+						color: $gray-medium
+						line-height: 1.6em
+						font-size: 1em
+
+			+breakpoint($breakpoint-min-768)
+				width: 100%
+				display: table
+
+				> li
+					display: table-cell
+					float: none
+
+					&:nth-child(2n)
+						background: #dfdfdf
+
 			+breakpoint($breakpoint-max-768)
 				> li
-					font-size: 1.5em
+					font-size: 2.2em
 
 					a
 						color: white
+						padding: 1em
+						background: rgb(37, 94, 22)
+						border-top: 1px solid rgb(94, 170, 74)
+						border-bottom: 2px solid rgb(15, 41, 8)
 
 				.sub-menu
 					li 
 						margin-left: 2%
+						margin-bottom: 0
 
 						a
 							color: $green-forest
+							display: block
+							padding: 0.8em 0 1em 1em
+							background: none
+							border: none

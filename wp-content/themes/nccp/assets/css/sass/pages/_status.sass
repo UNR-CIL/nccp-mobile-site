@@ -1,1 +1,51 @@
 /* Status page */
+
+#status
+	margin: 0 0 5% 5%
+
+	.status-block
+		clear: both
+		padding-bottom: 8%
+
+		&.unknown
+			.status-icon
+				background-image: url('../img/icons/status-unknown.png')
+				background-repeat: no-repeat
+				background-size: 100%
+
+			.status-text
+				color: $gray-medium
+
+		&.good
+			.status-icon
+				background-image: url('../img/icons/status-good.png')
+				background-repeat: no-repeat
+				background-size: contain
+
+			.status-text
+				color: $blue
+
+		&.bad
+			.status-icon
+				background-image: url('../img/icons/status-bad.png')
+				background-repeat: no-repeat
+				background-size: 100%
+
+			.status-text
+				color: $red
+
+	.status-icon
+		width: 14%
+		float: left
+		margin-right: 3%
+		margin-bottom: 1%
+		height: 15em
+
+	.status-content
+		padding-top: 6%
+
+	.status-text
+		font-size: 2.2em
+
+	.status-date
+		color: $gray-medium

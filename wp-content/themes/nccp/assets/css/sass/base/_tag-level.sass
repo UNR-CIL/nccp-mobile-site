@@ -8,6 +8,9 @@ body
 	color: $gray-blue
 	font-size: 1em
 
+	+breakpoint($breakpoint-max-768)
+		font-size: 0.8em
+
 h1, h2, h3, h4, h5, h6
 	font-family: 'Oswald', sans-serif
 	text-rendering: auto
@@ -17,15 +20,30 @@ h1, h2
 	text-rendering: auto
 	color: $blue-light
 	border-bottom: 1px solid $blue-light
+	padding-bottom: 2%
+
+h1
+	font-size: 5em
+	padding-bottom: 3%
+
+h2
+	font-size: 4.2em
+	line-height: 2em
 
 h3
-	font-weight: 400
+	font-weight: 300
+	font-size: 3.8em
+	color: $green-forest
+	line-height: 1.3em
 
 div, header, footer, ul, li, span
 	position: relative
 
 p
 	font-weight: 300
-	padding: 3%
-	font-size: 2.2em
-	line-height: 1.4em
+	padding: 3% 0
+	font-size: 3.2em
+	line-height: 1.5em
+
+li
+	list-style: none

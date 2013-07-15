@@ -127,7 +127,7 @@ $(document).bind( 'pageinit', function () {
 			$('#measurement-status').find( '.status-date' ).text( 'As of: ' + now.getHours() + ':' + now.getMinutes() );
 		});
 		
-	}   
+	}
 
 	// Get Data flow ////////////////////////////////////////
 

@@ -29,6 +29,9 @@ header
 			width: 14%
 			right: 1%
 
+			+breakpoint($breakpoint-min-768)
+				display: none !important
+
 		.nav-collapse
 			background: $green-darker
 			+background-image(linear-gradient($green-darker, #1b4d0e))
@@ -45,6 +48,7 @@ header
 					color: #428bca
 					font-size: 1.3em
 					padding-top: 1.2em
+					z-index: 3
 
 			.sub-menu
 				list-style: none
@@ -58,6 +62,7 @@ header
 						color: $gray-medium
 						line-height: 1.6em
 						font-size: 1em
+						z-index: 2
 
 			+breakpoint($breakpoint-min-768)
 				width: 100%

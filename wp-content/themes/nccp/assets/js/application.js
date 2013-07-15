@@ -27,7 +27,7 @@ var App = Backbone.View.extend({
 
 		// Data
 		if ( $('.data-selectors').length ) {
-			this.DataSelection();
+			this.GetData();
 		}
 
 		// Graphs
@@ -47,11 +47,40 @@ var App = Backbone.View.extend({
 
 	// Initialization functions ////////////////////////
 	CollapsibleLinks: function () {
-
+		$('.collapse').click( function () {
+			$(this).next().stop().slideToggle();
+		});
 	},
 
 	RandomGraph: function () {
+		var app = this;
 
+		$('.graph.random').each( function () {
+			var sensor_id = Math.floor( Math.random() * 2104 ) + 1,
+				now = new Date,
+				then = new Date( ( now.getFullYear() - 1 ) + '-' + ( now.getMonth() + 1 ) + '-' + now.getDate() ),
+				parent = this;
+
+			$.getJSON( app.attributes.DATA_SERVER + '/api/get/?callback=?', { 
+				sensor_ids: [sensor_id], 
+				count: 500, 
+				start: then.getFullYear() + '-' + ( then.getMonth() + 1 ) + '-' + then.getDate(),
+				end: now.getFullYear() + '-' + ( now.getMonth() + 1 ) + '-' + now.getDate(),
+				interval: 'hourly'
+			}, function ( response ) {
+				if ( response.num_results ) {
+					// Then build graph in the new container
+					app.Graphs.BuildLineGraph( response.sensor_data[sensor_id], '.graph.random', 0 );
+
+					// Size the graph explicitly because some browsers size SVGs weirdly
+					$( parent ).height( Math.floor( $(window).height() / 3 ) + 40 );	
+				} else {
+					// Size the graph explicitly because some browsers size SVGs weirdly
+					$( parent ).height( 0 );
+				}
+				
+			});
+		});
 	},
 
 	GetServerStatus: function () {
@@ -94,8 +123,114 @@ var App = Backbone.View.extend({
 		});
 	},
 
-	DataSelection: function () {
+	GetData: function () {
+		var app = this;
 
+		// Remove default checkboxes
+		$(function () {
+			$('input[type="checkbox"]').simpleCheckbox({
+				newElementClass: 'checkbox',
+				activeElementClass: 'checked'
+			});
+		});
+
+		// Events ///////////////////////////////////////////////////////
+
+		// Search sensor list for various properties
+		$('#data-sensor-search').click( function () {
+			// Build data query based on checked properties
+			var query = {
+				properties: [],
+				sites: [],
+				types: []
+			};
+			
+			$('.data-selectors:visible .data-properties input:checked').each( function () {
+				query.properties.push( $(this).val() );
+			});
+			
+			$('.data-selectors:visible .data-sites input:checked').each( function () {
+				query.sites.push( $(this).val() );
+			});
+			
+			$('.data-selectors:visible .data-measurements-types input:checked').each( function () {
+				query.types.push( $(this).val() );
+			});
+			
+			// Send request to get applicable sensors
+			$.getJSON( app.attributes.DATA_SERVER + '/api/search?callback=?', {
+				properties: query.properties,
+				sites: query.sites,
+				types: query.types,
+				count: 20
+			}, function ( sensors ) {
+				if ( sensors.length ) {
+					// Construct sensor list
+					var sensor_list = app._BuildSensorList( sensors );
+					$('.data-sensor-search-results .results').append( sensor_list );
+
+					$('.data-sensor-search').fadeOut( 250, function () {
+						$('.data-sensor-search-results').fadeIn( 250 );
+					});
+				} else {
+					// Didn't find anything, so display error message
+					$('.data-sensor-search-results').append(
+						$( '<h3/>', {
+							'class': 'data-message',
+							html: sensors.msg
+						}),
+						$( '<input/>', {
+							type: 'button',
+							'class': 'data-button btn',
+							id: 'data-reload-search',
+							value: 'Try Again'
+						})
+					);
+
+					$('.data-sensor-search').fadeOut( 250, function () {
+						$('.data-sensor-search-results').fadeIn( 250 );
+
+						$('#data-reload-search').click( function () {
+							$('.data-sensor-search-results').fadeOut( 250, function () {
+								$('.data-sensor-search-results').html( '' );
+								$('.data-sensor-search').fadeIn( 250 );
+							});
+						});
+					});					
+				}
+			});			
+		});
+
+		// View data table of sensor data
+		page.on( 'click', '#data-view-sensor-data', function () {
+			// Get the list of sensor IDs
+			var sensor_ids = [];
+
+			$('.sensor-search-results:visible input:checked').each( function () {
+				sensor_ids.push( $(this).val() );
+			});
+
+			if ( sensor_ids.length ) {
+				nccp.sensor_ids = sensor_ids;
+				$.mobile.changePage( '/data-table', { data: { sensor_ids: sensor_ids }, type: 'GET' } );
+			}
+		});
+
+		// Get CSV download of the sensor data
+		$('#data-download-sensor-data').click( function () {
+			// Get the list of sensor IDs
+			var sensor_ids = [];
+
+			$('.sensor-search-results:visible input:checked').each( function () {
+				sensor_ids.push( $(this).val() );
+			});
+
+			console.log( sensor_ids );
+
+			//if ( sensor_ids.length ) {				
+			//	$.mobile.changePage( '/data-table', { data: { sensor_ids: sensor_ids, csv: true }, type: 'GET' } );
+			//}
+		});
 	},
 
 	LoadGraphs: function () {
@@ -108,13 +243,9 @@ var App = Backbone.View.extend({
 	// Internal functions ///////////////////////////////////////////
 	_BuildSensorList: function ( sensors ) {
 		var list = $( '<div/>', {
-			'data-role': 'fieldcontain',
 			'class': 'sensor-search-results'
 		});
-		var controlGroup = $( '<fieldset/>', {
-			'data-role': 'controlgroup',
-			'data-theme': 'a'
-		});
+		var controlGroup = $( '<fieldset/>' );
 
 		$.each( sensors, function () {
 			controlGroup.append(
@@ -128,6 +259,12 @@ var App = Backbone.View.extend({
 		});
 
 		list.append( controlGroup );
+
+		// Remove checkboxes
+		list.find('input[type="checkbox"]').simpleCheckbox({
+			newElementClass: 'checkbox',
+			activeElementClass: 'checked'
+		});
 
 		return list;
 	},
@@ -152,6 +289,176 @@ var App = Backbone.View.extend({
 		$.post( '/data/index.php/api/get_sensor_data', options, function ( response ) { 
 			callback( response ); 
 		});
+	},
+
+	// Force download of CSV
+	_ForceDownload: function ( url ) {
+		var iframe = document.getElementById( 'hiddenDownloader' );
+
+		if ( iframe === null ) {
+			iframe = document.createElement( 'iframe' );  
+			iframe.id = 'hiddenDownloader';
+			iframe.style.display = 'none';
+			document.body.appendChild( iframe );
+		}
+		
+	    iframe.src = url; // Trigger the download
+	},
+
+	// Graphing functions
+	Graphs: {
+		colors: [
+			'#016483',
+			'#D92929',
+			'#F2911B',
+			'#F2CB05',
+			'#6ECAC7'
+		],
+
+		BuildCombinedGraph: function ( data, parent ) {
+			// Base the scale off the first set of data
+			var first = data[ Object.keys( data )[ 0 ] ];
+
+			// Figure out who has the min and max values
+			var min = d3.min( first, function ( d ) { return d.value; } ),
+				max = d3.max( first, function ( d ) { return d.value; } )
+
+			$.each( data, function () {
+				var thisMin = d3.min( this, function ( d ) { return d.value; } ),
+					thisMax = d3.max( this, function ( d ) { return d.value; } )
+
+				if ( thisMin < min ) min = thisMin;
+				if ( thisMax > max ) max = thisMax;
+			});
+
+			// Graph width is calculated using window width because this is pretty much
+			// the only thing that will ALWAYS return a consistent value
+			var w = Math.floor( $(window).width() * 0.7 ),
+				h = Math.floor( $(window).height() / 3 ),
+				margin = 40,
+				start = new Date( first[0].timestamp ),
+				end = new Date( first[first.length - 1].timestamp ),
+				y = d3.scale.linear().domain([ min, max ]).range([0 + margin, h - margin]),
+				x = d3.scale.linear().domain([ start, end ]).range([0 + margin, w - margin]);
+
+			var g = d3.select( parent ).append("svg:g").attr("transform", "translate(0, " + h + ")");
+
+			// Calculate the actual data line and append to the graph
+			var line = d3.svg.line()
+				.x( function( d, i ) { return x( new Date( d.timestamp ) ); })
+				.y( function( d ) { return -1 * y( d.value ); });
+
+			$.each( data, function ( i ) {
+				g.append( "svg:path" )
+					.attr( "d", line( this ) )
+					.attr( "class", "line" )
+					.style( "stroke", colorSwatch[ i % colorSwatch.length ] );
+			});	
+
+			// Append axis boundaries
+			build_graph_axes( x, y, w, h, margin, g );
+		},
+
+		BuildLineGraph: function ( data, parent, index ) {
+			// Graph width is calculated using window width because this is pretty much
+			// the only thing that will ALWAYS return a consistent value
+			var w = Math.floor( $(window).width() * 0.7 ),
+				h = Math.floor( $(window).height() / 3 ),
+				margin = 40,
+				start = new Date( data[0].timestamp ),
+				end = new Date( data[data.length - 1].timestamp ),
+				y = d3.scale.linear().domain([d3.min(data, function ( d ) { return d.value; }), d3.max(data, function ( d ) { return d.value; })]).range([ 0 + margin, h - margin ]),
+				x = d3.scale.linear().domain([ start, end ]).range([0 + margin, w - margin]);
+
+			var g = d3.select( parent ).append("svg:g").attr("transform", "translate(0, " + h + ")");
+
+			// Calculate the actual data line and append to the graph
+			var line = d3.svg.line()
+				.x( function( d, i ) { return x( new Date( d.timestamp ) ); })
+				.y( function( d ) { return -1 * y( d.value ); });
+
+			console.log( this );
+
+			g.append( "svg:path" )
+				.attr( "d", line( data ) )
+				.attr( "class", "line" )
+				.style( "stroke", this.colors[ index % this.colors.length ] );
+
+			// Append axis boundaries
+			this.BuildGraphAxes( x, y, w, h, margin, g );
+		},
+
+		BuildGraphAxes: function ( x, y, width, height, margin, graph ) {
+			graph.append( "svg:line" )
+				.attr( "class", "boundary" )
+				.attr( "x1", margin )
+				.attr( "y1", 0 )
+				.attr( "x2", width - margin )
+				.attr( "y2", 0 );
+
+			graph.append( "svg:line" )
+				.attr( "class", "boundary" )
+				.attr( "x1", margin )
+				.attr( "y1", -height )
+				.attr( "x2", width - margin )
+				.attr( "y2", -height );
+			 
+			graph.append( "svg:line" )
+				.attr( "class", "boundary" )
+				.attr( "x1", margin )
+				.attr( "y1", 0 )
+				.attr( "x2", margin )
+				.attr( "y2", -height );
+
+			graph.append("svg:line" )
+				.attr( "class", "boundary" )
+				.attr( "x1", width - margin )
+				.attr( "y1", 0 )
+				.attr( "x2", width - margin )
+				.attr( "y2", -height );
+			
+			// Append tick labels
+			graph.selectAll( ".xLabel" )
+				.data( x.ticks( 5 ) )
+				.enter().append( "svg:text" )
+				.attr( "class", "xLabel" )
+				.text( function ( v ) { 
+					var date = new Date( v ); 
+					return date.getFullYear() + '-' + ( date.getMonth() + 1 ) + '-' + date.getDate() + ' ' + 
+						date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
+				})
+				.attr( "x", function( d ) { return x( d ) })
+				.attr( "y", 30 )
+				.attr( "text-anchor", "middle" )
+
+			graph.selectAll( ".xLines" )
+				.data( x.ticks( 5 ) )
+				.enter().append( "svg:line" )
+				.attr( "class", "xLines" )
+				.attr( "x1", function ( d ) { return x( d ); } )
+				.attr( "y1", 0 )
+				.attr( "x2", function ( d ) { return x( d ); } )
+				.attr( "y2", -height );
+
+			graph.selectAll( ".yLabel" )
+				.data( y.ticks( 5 ) )
+				.enter().append( "svg:text" )
+				.attr( "class", "yLabel" )
+				.text( function ( v ) { return parseFloat( v ); } )
+				.attr( "x", 0 )
+				.attr( "y", function( d ) { return -1 * y( d ) } )
+				.attr( "text-anchor", "left" )
+				.attr( "dy", 4 );
+
+			graph.selectAll( ".yLines" )
+				.data( y.ticks( 5 ) )
+				.enter().append( "svg:line" )
+				.attr( "class", "yLines" )
+				.attr( "x1", margin )
+				.attr( "y1", function( d ) { return -1 * y( d ) } )
+				.attr( "x2", width - margin )
+				.attr( "y2", function( d ) { return -1 * y( d ) } );
+		}
 	}
 });
 

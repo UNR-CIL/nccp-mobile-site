@@ -1,4 +1,29 @@
 /* Graphs */
 
 .graph
-	display: none
+	margin: 0.5em 0
+
+	&.combined
+		display: none
+
+path
+	stroke: steelblue
+	stroke-width: 2
+	fill: none
+
+line
+	stroke: black
+
+.boundary
+	stroke-width: 2
+
+text
+	font-size: 0.4em
+
+.xLines, .yLines
+	stroke-width: 0.5
+	z-index: 1
+	stroke: $gray-medium
+
+.line
+	stroke-width: 3

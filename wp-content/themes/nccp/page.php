@@ -13,7 +13,15 @@
 
 			<?php while ( have_posts() ) : the_post(); ?>
 
-				<?php get_template_part( 'content', 'page' ); ?>
+				<div class="main-content page">
+					<header class="entry-header">
+						<h1 class="entry-title"><?php the_title(); ?></h1>
+					</header>
+
+					<div class="entry-content">
+						<?php the_content(); ?>
+					</div>
+				</div>
 
 			<?php endwhile; ?>
 

@@ -11,7 +11,11 @@
 
 			<?php while ( have_posts() ) : the_post(); ?>
 
-				<?php get_template_part( 'content', 'home' ); ?>
+				<div class="main-content home">
+
+					<?php the_content(); ?>
+					
+				</div>
 
 			<?php endwhile; ?>
 

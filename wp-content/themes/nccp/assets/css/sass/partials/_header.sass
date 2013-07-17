@@ -14,7 +14,10 @@ header
 		margin: 0 auto
 		width: 92%
 		+border-bottom-radius(0.5em)
+		+border-top-radius(0)
 		padding-bottom: 1em
+		border: 2px solid #BDBDBD
+		border-top: none
 
 		.brand
 			position: absolute
@@ -28,6 +31,9 @@ header
 			padding: 0
 			width: 14%
 			right: 1%
+			+border-top-radius(0)
+			background: none
+			border: none
 
 			+breakpoint($breakpoint-min-768)
 				display: none !important

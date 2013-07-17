@@ -230,7 +230,8 @@ function theme_scripts () {
 	//wp_enqueue_script( 'google-maps', get_template_directory_uri() . '/assets/js/gmaps.js', array( 'google-maps-api', 'jquery-cdn' ), false, true );
 	wp_enqueue_script( 'd3', 'http://d3js.org/d3.v3.min.js', false, false, true );	
 	wp_enqueue_script( 'bootstrap-js', get_stylesheet_directory_uri() . '/assets/bootstrap/bootstrap/js/bootstrap.min.js', false, false, true );
-	wp_enqueue_script( 'underscore-local', get_template_directory_uri() . '/assets/js/underscore-min.js', array( 'jquery-cdn', 'd3', 'bootstrap-js' ), false, true );
+	wp_enqueue_script( 'templates', get_stylesheet_directory_uri() . '/assets/js/templates.js', false, false, true );
+	wp_enqueue_script( 'underscore-local', get_template_directory_uri() . '/assets/js/underscore-min.js', array( 'jquery-cdn', 'd3', 'bootstrap-js', 'templates' ), false, true );
 	wp_enqueue_script( 'backbone-local', get_template_directory_uri() . '/assets/js/backbone-min.js', array( 'underscore-local' ), false, true );
 	wp_enqueue_script( 'application', get_template_directory_uri() . '/assets/js/application.js', array( 'backbone-local' ), false, true );
 

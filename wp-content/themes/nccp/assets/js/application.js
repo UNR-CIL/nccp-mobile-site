@@ -1,8 +1,8 @@
 var App = Backbone.View.extend({
 
 	attributes: {
-		//DATA_SERVER	: "http://nccp.local:6227",
-		DATA_SERVER 	: 'http://ec2-54-241-223-209.us-west-1.compute.amazonaws.com:6227',
+		DATA_SERVER	: "http://api.nccp.local:6227",
+		//DATA_SERVER 	: 'http://ec2-54-241-223-209.us-west-1.compute.amazonaws.com:6227',
 	},
 
 	// Initial view setup - load functions, jQuery UI setup, etc.
@@ -165,12 +165,15 @@ var App = Backbone.View.extend({
 				count: 20
 			}, function ( sensors ) {
 				if ( sensors.length ) {
+					// Save the sensor list to the global namespace for use elsewhere
+					nccp.sensor_search_results = sensors;
+
 					// Construct sensor list
 					var sensor_list = app._BuildSensorList( sensors );
 					$('.data-sensor-search-results .results').append( sensor_list );
 
 					$('.data-sensor-search').fadeOut( 250, function () {
-						$('.data-sensor-search-results').fadeIn( 250 );
+						$('.data-sensor-search-results, .data-filter-date-time, .data-view-options').fadeIn( 250 );
 					});
 				} else {
 					// Didn't find anything, so display error message
@@ -202,7 +205,7 @@ var App = Backbone.View.extend({
 		});
 
 		// View data table of sensor data
-		page.on( 'click', '#data-view-sensor-data', function () {
+		$('#data-view-sensor-data').click( function () {
 			// Get the list of sensor IDs
 			var sensor_ids = [];
 
@@ -211,8 +214,28 @@ var App = Backbone.View.extend({
 			});
 
 			if ( sensor_ids.length ) {
-				nccp.sensor_ids = sensor_ids;
-				$.mobile.changePage( '/data-table', { data: { sensor_ids: sensor_ids }, type: 'GET' } );
+				app._GetSensorData( sensor_ids, function ( sensor_data ) {
+					if ( sensor_data ) {
+						var table_template = _.template( nccp.templates.data_table );
+
+						$.each( sensor_data, function ( index ) {
+							// Get sensor info from the last search results
+							// What this is doing: 
+							// Pull all the sensor_ids from the search results -->
+							// Find the index of said sensor_id -->
+							// Grab the sensor's object by the retrieved array index
+							var sensor_info 	= nccp.sensor_search_results[ _.pluck( nccp.sensor_search_results, 'logical_sensor_id' ).indexOf( parseInt( index ) ) ];
+								sensor_id 		= sensor_info.logical_sensor_id,
+								sensor_name 	= sensor_info.name;
+
+							$('.data-output .data-table').append( table_template({
+								sensor: this,
+								sensor_id: sensor_id,
+								sensor_name: sensor_name
+							}));
+						});
+					}
+				});
 			}
 		});
 
@@ -239,8 +262,10 @@ var App = Backbone.View.extend({
 
 	// Functionality ///////////////////////////////////
 
-
+	/////////////////////////////////////////////////////////////////
 	// Internal functions ///////////////////////////////////////////
+	/////////////////////////////////////////////////////////////////
+
 	_BuildSensorList: function ( sensors ) {
 		var list = $( '<div/>', {
 			'class': 'sensor-search-results'
@@ -281,13 +306,11 @@ var App = Backbone.View.extend({
 		$.getJSON( url, callback );
 	},
 
-	_GetSensorData: function ( sensor_id, period, flot, callback ) {
-		var options = { 'sensor_id' : sensor_id };
-	
-		if ( period ) options.period = period;
-		
-		$.post( '/data/index.php/api/get_sensor_data', options, function ( response ) { 
-			callback( response ); 
+	_GetSensorData: function ( sensor_ids, callback ) {
+		$.getJSON( this.attributes.DATA_SERVER + '/api/get?callback=?', { 
+			sensor_ids: sensor_ids, start: '2012-01-01', end: '2012-02-01' 
+		}, function ( response ) { 
+			callback( response.num_results > 0 ? response.sensor_data : false );
 		});
 	},
 
@@ -305,7 +328,10 @@ var App = Backbone.View.extend({
 	    iframe.src = url; // Trigger the download
 	},
 
-	// Graphing functions
+	//////////////////////////////////////////////////////////
+	// Graphing functions ////////////////////////////////////
+	//////////////////////////////////////////////////////////
+
 	Graphs: {
 		colors: [
 			'#016483',

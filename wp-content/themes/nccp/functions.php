@@ -78,28 +78,6 @@ function get_sensor_info( $sensor_ids ) {
 	return $result ? $final : false;
 }
 
-function make_sensor_data_csv ( $data ) {
-	if ( $data && ! empty( $data ) ) {
-		$base = wp_upload_dir();
-		$filename = 'sensor_data_' . uniqid() . '.csv';
-
-		$file = fopen( $base['basedir'] . '/csv/' . $filename, 'w' );
-
-		fputcsv( $file, array( 'sensor_id', 'timestamp', 'value' ) );
-
-		foreach ( $data->sensor_data as $sensor_id => $sensor ) {
-			foreach ( $sensor as $row ) {
-				fputcsv( $file, (array) $row );
-			}
-		}
-
-		fclose( $file );
-
-		// Return the download path to the CSV
-		return $base['baseurl'] . '/csv/' . $filename;
-	}
-}
-
 // Is the client mobile?  If so, optionally, what OS do they have and what device is it?
 function detect_mobile ( $return_info = false ) { // Pass true if more specific info is needed
 	$user_agents = $_SERVER['HTTP_USER_AGENT'];

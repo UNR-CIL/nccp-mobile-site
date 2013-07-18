@@ -214,7 +214,7 @@ var App = Backbone.View.extend({
 			});
 
 			if ( sensor_ids.length ) {
-				app._GetSensorData( sensor_ids, function ( sensor_data ) {
+				app._GetSensorData( sensor_ids, false, function ( sensor_data ) {
 					if ( sensor_data ) {
 						var table_template = _.template( nccp.templates.data_table );
 
@@ -240,7 +240,7 @@ var App = Backbone.View.extend({
 		});
 
 		// Get CSV download of the sensor data
-		$('#data-download-sensor-data').click( function () {
+		$('#data-view-download').click( function () {
 			// Get the list of sensor IDs
 			var sensor_ids = [];
 
@@ -248,11 +248,13 @@ var App = Backbone.View.extend({
 				sensor_ids.push( $(this).val() );
 			});
 
-			console.log( sensor_ids );
-
-			//if ( sensor_ids.length ) {				
-			//	$.mobile.changePage( '/data-table', { data: { sensor_ids: sensor_ids, csv: true }, type: 'GET' } );
-			//}
+			if ( sensor_ids.length ) {
+				app._GetSensorData( sensor_ids, true, function ( download_link ) {
+					if ( download_link ) {
+						app._ForceDownload( download_link );
+					}
+				});
+			}
 		});
 	},
 
@@ -306,11 +308,22 @@ var App = Backbone.View.extend({
 		$.getJSON( url, callback );
 	},
 
-	_GetSensorData: function ( sensor_ids, callback ) {
-		$.getJSON( this.attributes.DATA_SERVER + '/api/get?callback=?', { 
-			sensor_ids: sensor_ids, start: '2012-01-01', end: '2012-02-01' 
-		}, function ( response ) { 
-			callback( response.num_results > 0 ? response.sensor_data : false );
+	_GetSensorData: function ( sensor_ids, csv, callback ) {
+		var args = {
+			sensor_ids: sensor_ids, 
+			start: '2012-01-01', 
+			end: '2012-02-01'
+		};
+
+		if ( csv ) args.csv = true;
+
+		$.getJSON( this.attributes.DATA_SERVER + '/api/get?callback=?', args, function ( response ) {
+			if ( csv ) {
+				callback( response.download_link ? response.download_link : false );
+			} else {
+				callback( response.num_results > 0 ? response.sensor_data : false );
+			}
+			
 		});
 	},
 

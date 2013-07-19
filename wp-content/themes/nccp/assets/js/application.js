@@ -1,8 +1,8 @@
 var App = Backbone.View.extend({
 
 	attributes: {
-		DATA_SERVER	: "http://api.nccp.local:6227",
-		//DATA_SERVER 	: 'http://ec2-54-241-223-209.us-west-1.compute.amazonaws.com:6227',
+		//DATA_SERVER	: "http://api.nccp.local:6227",
+		DATA_SERVER 	: 'http://ec2-54-241-223-209.us-west-1.compute.amazonaws.com:6227'
 	},
 
 	// Initial view setup - load functions, jQuery UI setup, etc.
@@ -177,7 +177,7 @@ var App = Backbone.View.extend({
 
 						// Bind date/time pickers
 						$('#date-start, #date-end').datepicker();
-						
+
 						var timepicker = $('#time').timepicker();
 						timepicker.focus( function () {
 							$(this).timepicker( 'showWidget' );

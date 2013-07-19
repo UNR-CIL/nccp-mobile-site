@@ -174,6 +174,14 @@ var App = Backbone.View.extend({
 
 					$('.data-sensor-search').fadeOut( 250, function () {
 						$('.data-sensor-search-results, .data-filter-date-time, .data-view-options').fadeIn( 250 );
+
+						// Bind date/time pickers
+						$('#date-start, #date-end').datepicker();
+						
+						var timepicker = $('#time').timepicker();
+						timepicker.focus( function () {
+							$(this).timepicker( 'showWidget' );
+						});
 					});
 				} else {
 					// Didn't find anything, so display error message
@@ -499,8 +507,9 @@ var App = Backbone.View.extend({
 				.attr( "y2", function( d ) { return -1 * y( d ) } );
 		}
 	}
+
 });
 
 // Start the music
 
-var application = new App({ el: 'body' });
+nccp.App = new App({ el: 'body' });

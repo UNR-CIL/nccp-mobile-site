@@ -112,6 +112,24 @@ get_header(); ?>
 						<input type="button" class="btn" id="data-filter-date" value="Filter by Date">
 						<input type="button" class="btn" id="data-filter-time" value="Filter by Time">
 					</div>
+
+					<div class="filter-date">
+						<div class="icon-date"><img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/icons/date.png" border="0" /></div>
+						<div class="input-group row">
+							<span class="input-group-addon input-large span3">Start</span>
+							<input id="date-start" type="text" class="input-large" data-date-format="mm/dd/yyyy">
+							<span class="input-group-addon input-large span3">End</span>
+							<input id="date-end" type="text" class="input-large" data-date-format="mm/dd/yyyy">
+						</div>
+					</div>
+
+					<div class="filter-time">
+						<div class="icon-time"><img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/icons/time.png" border="0" /></div>
+						<div class="input-group bootstrap-timepicker">
+							<span class="input-group-addon input-large">Time</span>
+							<input id="time" type="text" class="input-large">
+						</div>
+					</div>
 				</div>
 
 				<!-- Choose how data should be viewed -->
@@ -132,10 +150,10 @@ get_header(); ?>
 
 				<div class="data-output">
 					<div class="data-table">
-						
+						<!-- Populated dynamically -->
 					</div>
 					<div class="data-graphs">
-						
+						<!-- Populated dynamically -->
 					</div>
 				</div>
 

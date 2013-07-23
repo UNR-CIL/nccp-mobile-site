@@ -4,6 +4,17 @@
 	//.data-filter-date-time, .data-view-options
 	//	display: none
 
+	.data-form
+		margin-bottom: 1.5em
+
+	.data-list
+		margin-bottom: 1.5em
+		+box-shadow(rgba(0, 0, 0, 0.4) 0 0.1em 0.3em)
+		padding: 1em 0 0.5em 0
+
+		label:first-child
+			margin-top: 0
+
 	.data-filter-date-time
 		.row
 			margin: 0
@@ -11,21 +22,15 @@
 		.input-group
 			margin-top: 4%
 
-		.input-group-addon.input-large
-			font-size: 2em
-
 		.filter-date, .filter-time
 			margin-bottom: 4%
-
-		.filter-date
-			.icon-date
-				img
-					width: 10%
 
 		.filter-time
 			input
 				width: 45%
 
-			.icon-time
-				img
-					width: 10%
+		.filter-date .icon-date, .filter-time .icon-time
+			margin: 0 0 -4% 1%
+
+			img
+				width: 33%

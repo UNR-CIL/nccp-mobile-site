@@ -11,7 +11,7 @@ var App = Backbone.View.extend({
 			app = this;
 
 		// Generic Setup //////////////////////////////////////////
-		this.CollapsibleLinks();
+		this.Thwomp();
 
 		// Page setup /////////////////////////////////////////////
 
@@ -46,9 +46,13 @@ var App = Backbone.View.extend({
 	////////////////////////////////////////////////////
 
 	// Initialization functions ////////////////////////
-	CollapsibleLinks: function () {
-		$('.collapse').click( function () {
-			$(this).next().stop().slideToggle();
+	Thwomp: function () {
+		$('.thwomp').click( function () {
+			var parent = $(this);
+
+			parent.next().stop().slideToggle( function () {
+				parent.toggleClass( 'up' );
+			});
 		});
 	},
 
@@ -176,7 +180,11 @@ var App = Backbone.View.extend({
 						$('.data-sensor-search-results, .data-filter-date-time, .data-view-options').fadeIn( 250 );
 
 						// Bind date/time pickers
-						$('#date-start, #date-end').datepicker();
+						$('#date-start, #date-end').datepicker({ autoclose: false });
+
+						// Tag the datepickers so they can be styled separately
+						$('#date-start').data( 'datepicker' ).picker.addClass( 'start' );
+						$('#date-end').data( 'datepicker' ).picker.addClass( 'end' );
 
 						var timepicker = $('#time').timepicker();
 						timepicker.focus( function () {
@@ -278,7 +286,7 @@ var App = Backbone.View.extend({
 
 	_BuildSensorList: function ( sensors ) {
 		var list = $( '<div/>', {
-			'class': 'sensor-search-results'
+			'class': 'sensor-search-results data-list'
 		});
 		var controlGroup = $( '<fieldset/>' );
 

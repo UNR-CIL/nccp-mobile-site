@@ -8,34 +8,64 @@ body
 	color: $gray-blue
 	font-size: 1em
 
+	+breakpoint($breakpoint-min-1200)
+		font-size: 2.3em
+
+	+breakpoint($breakpoint-max-1200)
+		font-size: 2.2em
+
+	+breakpoint($breakpoint-max-992)
+		font-size: 2em
+
 	+breakpoint($breakpoint-max-768)
-		font-size: 0.8em
+		font-size: 1.7em
+
+	+breakpoint($breakpoint-max-480)
+		font-size: 1.5em	
 
 h1, h2, h3, h4, h5, h6
 	font-family: 'Oswald', sans-serif
 	text-rendering: auto
 
+h1, h2, h3
+	margin-bottom: 4%
+	line-height: 2em
+
+	a:after
+		content: "\00BB"
+		color: #428bca
+		font-size: 1.5em
+		margin-left: 0.1em
+		top: 0.1em
+		position: relative
+
 h1, h2
 	font-family: 'Oswald', sans-serif
 	text-rendering: auto
-	color: $blue-light
-	border-bottom: 3px solid $blue-light
-	padding-bottom: 2%
+	color: $blue-light	
 
 h1
-	font-size: 5em
-	padding-bottom: 3%
+	font-size: 1.8em
+	border-bottom: 3px solid $blue-light
+	+box-shadow(rgba(0, 0, 0, 0.4) 0 0.1em 0.3em)
+	padding-left: 0.5em
+
+	+breakpoint($breakpoint-max-480)
+		border-bottom: 1px solid $blue-light
 
 h2
-	font-size: 4.2em
-	line-height: 2em
+	font-size: 1.5em
+	font-weight: 300
+	border-bottom: 2px solid $blue-light
+
+	+breakpoint($breakpoint-max-480)
+		border-bottom: 1px solid $blue-light
 
 h3
 	font-weight: 300
-	font-size: 3.8em
+	font-size: 1.3em
 	color: $green-forest
 	line-height: 1.3em
-	border-bottom: 3px solid $blue-light
 
 div, header, footer, ul, li, span
 	position: relative
@@ -43,14 +73,12 @@ div, header, footer, ul, li, span
 p
 	font-weight: 300
 	padding-bottom: 0.5em
-	font-size: 3.2em
-	line-height: 1.5em
+	line-height: 1.6em
 
 li
 	list-style: none
 
 section
-	font-size: 2em
 	font-weight: 300
 	line-height: 1.7em
-	margin-bottom: 1.2em
+	margin: 1.2em 0

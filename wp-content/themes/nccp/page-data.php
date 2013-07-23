@@ -32,9 +32,7 @@ get_header(); ?>
 		?>
 
 		<div class="main-content page get-data">
-			<header class="entry-header">
-				<h1 class="entry-title"><?php the_title(); ?></h1>
-			</header>
+			<h1 class="entry-title"><?php the_title(); ?></h1>
 
 			<div class="entry-content">
 
@@ -45,27 +43,22 @@ get_header(); ?>
 						<div class="data-form">
 
 							<div>
-								<h2>Properties</h2>
+								<h2 class="thwomp up">Sensor Properties</h2>
 								
-								<div class="data-properties">
+								<div class="data-properties data-list">
 								    <fieldset>
-									   <legend>Data properties</legend>
-
 									   <?php foreach ( $properties as $p ) { ?>
 									   <label><input type="checkbox" value="<?php echo $p->property_id; ?>" /> <?php echo $p->name; ?> </label>
 									   <?php } ?>
 								    </fieldset>
-								</div>
-								
+								</div>								
 							</div>
 							
 							<div>
-								<h2>Data Sites</h2>
+								<h2 class="thwomp up">Sensor Sites</h2>
 								
-								<div class="data-sites">
+								<div class="data-sites data-list">
 								    <fieldset >
-									   <legend>Data sites</legend>
-
 									   <?php foreach ( $sites as $s ) { ?>
 									   <label><input type="checkbox" name="data-sites" id="data-sites" value="<?php echo $s->site_id; ?>" /> <?php echo $s->site_name; ?> </label>
 									   <?php } ?>
@@ -74,12 +67,10 @@ get_header(); ?>
 							</div>
 
 							<div>
-								<h2>Measurement Types</h2>
+								<h2 class="thwomp up">Measurement Types</h2>
 								
-								<div class="data-measurements-types">
-								    <fieldset>
-									   <legend>Measurement types</legend>
-									   
+								<div class="data-measurements-types data-list">
+								    <fieldset>									   
 									   <?php foreach ( $types as $t ) { ?>
 									   <label><input type="checkbox" value="<?php echo $t->type_id; ?>" /> <?php echo $t->name; ?> </label>
 									   <?php } ?>
@@ -114,7 +105,7 @@ get_header(); ?>
 					</div>
 
 					<div class="filter-date">
-						<div class="icon-date"><img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/icons/date.png" border="0" /></div>
+						<div class="icon-date"><img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/sprites/half-calendar.png" border="0" /></div>
 						<div class="input-group row">
 							<span class="input-group-addon input-large span3">Start</span>
 							<input id="date-start" type="text" class="input-large" data-date-format="mm/dd/yyyy">
@@ -124,7 +115,7 @@ get_header(); ?>
 					</div>
 
 					<div class="filter-time">
-						<div class="icon-time"><img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/icons/time.png" border="0" /></div>
+						<div class="icon-time"><img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/sprites/half-clock.png" border="0" /></div>
 						<div class="input-group bootstrap-timepicker">
 							<span class="input-group-addon input-large">Time</span>
 							<input id="time" type="text" class="input-large">

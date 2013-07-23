@@ -43,7 +43,7 @@
 
 			<div class="navbar">
 				<div class="container fluid">
-				    <a class="brand" href="#">Menu</a>
+				    <a class="brand" href="#">menu</a>
 
 					<div class="nav-collapse collapse">
 						<?php wp_nav_menu( array( 

@@ -3,12 +3,18 @@
 input, select, textarea
 	font-family: 'Oswald', sans-serif
 
-input[type="text"]
+input[type="text"], .input-text
 	border: 1px solid #1b81d6
-	border-bottom: 3px solid $gray-medium
+	border-bottom: 3px solid $gray-medium	
 
 	&.input-large
 		font-size: 1.2em
+
+.input-group .input-text
+	+background-image(linear-gradient(white, #e6e6e6))
+
+	&:last-child
+		+border-right-radius(6px)
 
 input[type="button"]
 	+text-shadow(rgba(0, 0, 0, 0.5) 1px 0 2px)
@@ -53,7 +59,7 @@ label
 	&:hover
 		border-color: $blue-highlight
 
-	&.input-large
-		font-size: 1em
-		padding: 0.6em
-		font-weight: 300
+.input-large
+	font-size: 1em
+	padding: 0.6em
+	font-weight: 300

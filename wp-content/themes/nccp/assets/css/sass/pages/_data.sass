@@ -15,7 +15,12 @@
 		label:first-child
 			margin-top: 0
 
+	.data-view-options
+		display: none
+
 	.data-filter-date-time
+		display: none
+
 		.row
 			margin: 0
 
@@ -24,10 +29,14 @@
 
 		.filter-date, .filter-time
 			margin-bottom: 4%
+			display: none
 
 		.filter-time
 			input
 				width: 45%
+
+			.input-group-addon
+				+border-left-radius(6px)
 
 		.filter-date .icon-date, .filter-time .icon-time
 			margin: 0 0 -4% 1%

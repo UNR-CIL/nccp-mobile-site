@@ -104,13 +104,14 @@ get_header(); ?>
 						<input type="button" class="btn" id="data-filter-time" value="Filter by Time">
 					</div>
 
+					<?php $now = new DateTime(); $then = clone $now; $then->sub( new DateInterval( 'P1Y' ) ); ?>
 					<div class="filter-date">
 						<div class="icon-date"><img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/sprites/half-calendar.png" border="0" /></div>
 						<div class="input-group row">
 							<span class="input-group-addon input-large span3">Start</span>
-							<input id="date-start" type="text" class="input-large" data-date-format="mm/dd/yyyy">
+							<div id="date-start" type="text" class="input-large input-text" data-date-format="mm/dd/yyyy"><?php echo $then->format( 'm/d/Y' ); ?></div>
 							<span class="input-group-addon input-large span3">End</span>
-							<input id="date-end" type="text" class="input-large" data-date-format="mm/dd/yyyy">
+							<div id="date-end" type="text" class="input-large input-text" data-date-format="mm/dd/yyyy"><?php echo $now->format( 'm/d/Y' ); ?></div>
 						</div>
 					</div>
 
@@ -118,7 +119,7 @@ get_header(); ?>
 						<div class="icon-time"><img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/sprites/half-clock.png" border="0" /></div>
 						<div class="input-group bootstrap-timepicker">
 							<span class="input-group-addon input-large">Time</span>
-							<input id="time" type="text" class="input-large">
+							<div id="time" type="text" class="input-large input-text">00:00</div>
 						</div>
 					</div>
 				</div>

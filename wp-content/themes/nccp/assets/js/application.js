@@ -177,26 +177,48 @@ var App = Backbone.View.extend({
 					$('.data-sensor-search-results .results').append( sensor_list );
 
 					$('.data-sensor-search').fadeOut( 250, function () {
+						// Fade in results and filtering options
 						$('.data-sensor-search-results, .data-filter-date-time, .data-view-options').fadeIn( 250 );
+
+						// Bind events for choosing date/time filtering
+						$('#data-filter-date').click( function () {
+							$('.filter-date').slideToggle();
+						});
+
+						$('#data-filter-time').click( function () {
+							$('.filter-time').slideToggle();
+						});
 
 						// Bind date/time pickers
 						$('#date-start, #date-end').datepicker({ autoclose: false });
+						$('#date-start').datepicker().on( 'changeDate', function( e ) {
+							$('#date-start').text( $('#date-start').data('date') );
+						});
+						$('#date-end').datepicker().on( 'changeDate', function( e ) {
+							$('#date-end').text( $('#date-end').data('date') );
+						});
 
 						// Tag the datepickers so they can be styled separately
 						$('#date-start').data( 'datepicker' ).picker.addClass( 'start' );
 						$('#date-end').data( 'datepicker' ).picker.addClass( 'end' );
 
-						var timepicker = $('#time').timepicker();
-						timepicker.focus( function () {
+						var timepicker = $('#time').timepicker({
+							defaultTime: '00:00',
+							showMeridian: false
+						});
+						timepicker.click( function () {
 							$(this).timepicker( 'showWidget' );
 						});
+						timepicker.timepicker().on('changeTime.timepicker', function(e) {
+							timepicker.text( e.time.value );
+						});						
 					});
 				} else {
 					// Didn't find anything, so display error message
 					$('.data-sensor-search-results').append(
 						$( '<h3/>', {
-							'class': 'data-message',
-							html: sensors.msg
+							'class': 'data-message error',
+							html: 'No results found.'
 						}),
 						$( '<input/>', {
 							type: 'button',
@@ -222,15 +244,11 @@ var App = Backbone.View.extend({
 
 		// View data table of sensor data
 		$('#data-view-sensor-data').click( function () {
-			// Get the list of sensor IDs
-			var sensor_ids = [];
+			// Collect sensor info			
+			var args = app._GetSensorInfo();
 
-			$('.sensor-search-results:visible input:checked').each( function () {
-				sensor_ids.push( $(this).val() );
-			});
-
-			if ( sensor_ids.length ) {
-				app._GetSensorData( sensor_ids, false, function ( sensor_data ) {
+			if ( args.sensor_ids.length && args.start && args.end ) {
+				app._GetSensorData( args, false, function ( sensor_data ) {
 					if ( sensor_data ) {
 						var table_template = _.template( nccp.templates.data_table );
 
@@ -257,14 +275,10 @@ var App = Backbone.View.extend({
 
 		// Get CSV download of the sensor data
 		$('#data-view-download').click( function () {
-			// Get the list of sensor IDs
-			var sensor_ids = [];
+			// Collect sensor info			
+			var args = app._GetSensorInfo();
 
-			$('.sensor-search-results:visible input:checked').each( function () {
-				sensor_ids.push( $(this).val() );
-			});
-
-			if ( sensor_ids.length ) {
+			if ( args.sensor_ids.length && args.start && args.end ) {
 				app._GetSensorData( sensor_ids, true, function ( download_link ) {
 					if ( download_link ) {
 						app._ForceDownload( download_link );
@@ -283,6 +297,34 @@ var App = Backbone.View.extend({
 	/////////////////////////////////////////////////////////////////
 	// Internal functions ///////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////
+
+	_GetSensorInfo: function () {
+		var args = {
+				sensor_ids: [],
+				start: null,
+				end: null
+			};
+
+		// Collect selected sensors
+		$('.sensor-search-results:visible input:checked').each( function () {
+			args.sensor_ids.push( $(this).val() );
+		});
+
+		// Grab time/date
+		var start = new Date( $('#date-start').text() ),
+			end = new Date( $('#date-end').text() );
+
+		// Dates
+		args.start = start.getFullYear() + '-' + ( start.getMonth() + 1 ) + '-' + start.getDate();
+		args.end = end.getFullYear() + '-' + ( end.getMonth() + 1 ) + '-' + end.getDate();
+
+		// Time
+		var time = $('#time').data('timepicker');
+		args.start += ' ' + time.hour + ':' + time.minute + ':' + '00';
+		args.end += ' ' + time.hour + ':' + time.minute + ':' + '00';
+
+		return args;
+	},
 
 	_BuildSensorList: function ( sensors ) {
 		var list = $( '<div/>', {
@@ -324,13 +366,7 @@ var App = Backbone.View.extend({
 		$.getJSON( url, callback );
 	},
 
-	_GetSensorData: function ( sensor_ids, csv, callback ) {
-		var args = {
-			sensor_ids: sensor_ids, 
-			start: '2012-01-01', 
-			end: '2012-02-01'
-		};
-
+	_GetSensorData: function ( args, csv, callback ) {
 		if ( csv ) args.csv = true;
 
 		$.getJSON( this.attributes.DATA_SERVER + '/api/get?callback=?', args, function ( response ) {
@@ -338,8 +374,7 @@ var App = Backbone.View.extend({
 				callback( response.download_link ? response.download_link : false );
 			} else {
 				callback( response.num_results > 0 ? response.sensor_data : false );
-			}
-			
+			}			
 		});
 	},
 

@@ -24,10 +24,13 @@
 
 	var Datepicker = function(element, options){
 		this.element = $(element);
+		this.options = options;
 		this.language = options.language||this.element.data('date-language')||"en";
 		this.language = this.language in dates ? this.language : "en";
 		this.format = DPGlobal.parseFormat(options.format||this.element.data('date-format')||'mm/dd/yyyy');
-		this.picker = $(DPGlobal.template)
+		this.outputFormat = (options.template||'widget');
+		this.template = this.outputFormat == 'modal' ? DPGlobal.templates.modal : DPGlobal.templates.widget;
+		this.picker = $(this.template)
 							.appendTo('body')
 							.on({
 								click: $.proxy(this.click, this),
@@ -112,11 +115,17 @@
 
 		show: function(e) {
 			this.picker.show();
-			this.height = this.component ? this.component.outerHeight() : this.element.outerHeight();
-			this.update();
-			this.place();
-			$(window).on('resize', $.proxy(this.place, this));
-			if (e ) {
+
+			if ( this.options.template == 'modal' ) {
+				this.picker.modal('show');				
+			} else {
+				this.height = this.component ? this.component.outerHeight() : this.element.outerHeight();
+				this.update();
+				this.place();
+				$(window).on('resize', $.proxy(this.place, this));	
+			}			
+
+			if (e) {
 				e.stopPropagation();
 				e.preventDefault();
 			}
@@ -626,10 +635,11 @@
 		},
 
 		showMode: function(dir) {
+			var parent = this.options.template == 'modal' ? this.picker.find('.modal-content') : this.picker;
 			if (dir) {
 				this.viewMode = Math.max(0, Math.min(2, this.viewMode + dir));
 			}
-			this.picker.find('>div').hide().filter('.datepicker-'+DPGlobal.modes[this.viewMode].clsName).show();
+			parent.find('>div').hide().filter('.datepicker-'+DPGlobal.modes[this.viewMode].clsName).show();
 			this.updateNavArrows();
 		}
 	};
@@ -800,7 +810,9 @@
 				date.push(val[format.parts[i]]);
 			}
 			return date.join('');
-		},
+		}		
+	};
+	DPGlobal.templates = {
 		headTemplate: '<thead>'+
 							'<tr>'+
 								'<th class="prev"><i class="icon-arrow-left"/></th>'+
@@ -810,25 +822,37 @@
 						'</thead>',
 		contTemplate: '<tbody><tr><td colspan="7"></td></tr></tbody>'
 	};
-	DPGlobal.template = '<div class="datepicker dropdown-menu">'+
-							'<div class="datepicker-days">'+
-								'<table class=" table-condensed">'+
-									DPGlobal.headTemplate+
-									'<tbody></tbody>'+
-								'</table>'+
-							'</div>'+
-							'<div class="datepicker-months">'+
-								'<table class="table-condensed">'+
-									DPGlobal.headTemplate+
-									DPGlobal.contTemplate+
-								'</table>'+
-							'</div>'+
-							'<div class="datepicker-years">'+
-								'<table class="table-condensed">'+
-									DPGlobal.headTemplate+
-									DPGlobal.contTemplate+
-								'</table>'+
-							'</div>'+
-						'</div>';
-
+	DPGlobal.templates.base =	'<div class="datepicker-days">'+
+									'<table class=" table-condensed">'+
+										DPGlobal.templates.headTemplate+
+										'<tbody></tbody>'+
+									'</table>'+
+								'</div>'+
+								'<div class="datepicker-months">'+
+									'<table class="table-condensed">'+
+										DPGlobal.templates.headTemplate+
+										DPGlobal.templates.contTemplate+
+									'</table>'+
+								'</div>'+
+								'<div class="datepicker-years">'+
+									'<table class="table-condensed">'+
+										DPGlobal.templates.headTemplate+
+										DPGlobal.templates.contTemplate+
+									'</table>'+
+								'</div>';
+	DPGlobal.templates.widget = '<div class="datepicker dropdown-menu">'+
+									DPGlobal.templates.base +
+								'</div>';
+	DPGlobal.templates.modal = 	'<div class="datepicker modal fade in">' +
+									'<div class="modal-header">' +
+										'<a href="#" class="close" data-dismiss="modal">×</a>' +
+										'<h3>Pick a Date</h3>' +
+									'</div>' +
+									'<div class="modal-content">' +
+										DPGlobal.templates.base +
+									'</div>' +
+									'<div class="modal-footer">' +
+										'<a href="#" class="btn btn-primary" data-dismiss="modal">OK</a>' +
+									'</div>' +
+							 	'</div>';
 }( window.jQuery );

@@ -190,7 +190,10 @@ var App = Backbone.View.extend({
 						});
 
 						// Bind date/time pickers
-						$('#date-start, #date-end').datepicker({ autoclose: false });
+						$('#date-start, #date-end').datepicker({ 
+							autoclose: false,
+							template: 'modal'
+						});
 						$('#date-start').datepicker().on( 'changeDate', function( e ) {
 							$('#date-start').text( $('#date-start').data('date') );
 						});
@@ -204,10 +207,13 @@ var App = Backbone.View.extend({
 
 						var timepicker = $('#time').timepicker({
 							defaultTime: '00:00',
-							showMeridian: false
+							showMeridian: false,
+							template: 'modal',
+							modalBackdrop: true
 						});
-						timepicker.click( function () {
-							$(this).timepicker( 'showWidget' );
+						$('.bootstrap-timepicker-widget').removeClass( 'hide' );
+						timepicker.click( function () {							
+							$(this).timepicker( 'showWidget' );							
 						});
 						timepicker.timepicker().on('changeTime.timepicker', function(e) {
 							timepicker.text( e.time.value );

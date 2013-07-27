@@ -44,6 +44,9 @@
 .datepicker > div {
   display: none;
 }
+.datepicker .modal-header, .datepicker .modal-content, .datepicker .modal-footer {
+  display: block;
+}
 .datepicker.days div.datepicker-days {
   display: block;
 }

@@ -81,8 +81,8 @@ h1 a:after, h2 a:after, h3 a:after { content: "\00BB"; color: #428bca; font-size
 
 h1, h2 { font-family: "Oswald", sans-serif; text-rendering: auto; color: #3885c5; }
 
-h1 { font-size: 1.8em; border-bottom: 3px solid #3885c5; -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0 0.1em 0.3em; -moz-box-shadow: rgba(0, 0, 0, 0.4) 0 0.1em 0.3em; box-shadow: rgba(0, 0, 0, 0.4) 0 0.1em 0.3em; padding-left: 0.5em; }
-@media (max-width: 480px) { h1 { border-bottom: 1px solid #3885c5; } }
+h1 { font-size: 1.8em; border: 1px solid #3885c5; border-bottom: 4px solid #3885c5; -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0 0.1em 0.3em; -moz-box-shadow: rgba(0, 0, 0, 0.4) 0 0.1em 0.3em; box-shadow: rgba(0, 0, 0, 0.4) 0 0.1em 0.3em; padding-left: 0.5em; }
+@media (max-width: 480px) { h1 { border-bottom: 2px solid #3885c5; } }
 
 h2 { font-size: 1.5em; font-weight: 300; border-bottom: 2px solid #3885c5; }
 @media (max-width: 480px) { h2 { border-bottom: 1px solid #3885c5; } }
@@ -100,7 +100,7 @@ section { font-weight: 300; line-height: 1.7em; margin: 1.2em 0; }
 /* Layout */
 .container.main { background: white; border-left: 2px solid #434c52; border-right: 2px solid #434c52; }
 
-.main-content { padding: 4%; z-index: 2; }
+.main-content { padding: 4%; }
 .main-content li { font-weight: 400; line-height: 1.9em; padding-left: 1%; }
 .main-content li:before { content: "\00BB"; color: #73a266; margin-right: 0.3em; font-size: 1.5em; margin-left: -0.7em; }
 
@@ -127,7 +127,14 @@ label { font-size: 1em; font-weight: 300; position: relative; display: block; ma
 
 .input-large { font-size: 1em; padding: 0.6em; font-weight: 300; }
 
-/* Components */
+/* Standalone components */
+/* Modals */
+.modal h3 { color: #3885c5; }
+.modal .modal-header a { font-size: 3.5em; line-height: 0; }
+.modal .modal-footer a { width: 100%; padding: 0.7em 0; }
+@media (max-width: 768px) { .modal { left: 5%; width: 88%; margin-left: 0; } }
+
+/* Page components */
 /* Content blocks */
 /* Header */
 header { z-index: 3; }
@@ -189,34 +196,32 @@ footer #footer-bg { background: url(../img/sprites/footer-bg.png); background-si
 footer #footer-base { margin-top: -12%; width: 104.2%; margin-left: -2.1%; }
 
 /* Bootstrap datepicker */
-.datepicker { font-size: 0.8em; padding: 3%; line-height: 1.4em; }
-.datepicker table { width: 20em; max-width: none; }
+.datepicker { padding: 2%; line-height: 1.4em; left: 47%; }
+.datepicker:before, .datepicker:after { display: none; }
+@media (max-width: 768px) { .datepicker { left: 3%; } }
+@media (max-width: 480px) { .datepicker { font-size: 0.8em; } }
 .datepicker table thead { font-size: 1.5em; }
 .datepicker table thead .switch { padding: 5%; font-size: 1.3em; line-height: 1.2em; }
 .datepicker table thead .dow { padding: 3% 3% 6%; font-weight: 400; }
 .datepicker table tbody .day { padding: 3%; font-weight: 300; }
-@media (max-width: 480px) { .datepicker.start { left: 12% !important; } }
-.datepicker.end:before { left: auto !important; right: 6px !important; }
-.datepicker.end:after { left: auto !important; right: 7px !important; }
-@media (max-width: 480px) { .datepicker.end { left: 15% !important; } }
-@media (max-width: 768px) { .datepicker.end { left: auto !important; right: 6% !important; } }
-@media (max-width: 1824px) { .datepicker.end { left: auto !important; right: 15% !important; } }
 .datepicker .icon-arrow-right, .datepicker .icon-arrow-left { background-size: contain; width: 2em; height: 2em; display: block; background-position: center; background-repeat: no-repeat; }
 .datepicker .icon-arrow-right { background-image: url(../img/sprites/arrow-blue-right.png); }
 .datepicker .icon-arrow-left { background-image: url(../img/sprites/arrow-blue-left.png); }
 
 /* Bootstrap timepicker */
+.bootstrap-timepicker-widget { padding: 2%; }
 .bootstrap-timepicker-widget .icon-chevron-up, .bootstrap-timepicker-widget .icon-chevron-down { background-size: contain; width: 100%; height: 2em; display: block; background-position: center; background-repeat: no-repeat; }
 .bootstrap-timepicker-widget .icon-chevron-up { background-image: url(../img/sprites/arrow-blue-up.png); }
 .bootstrap-timepicker-widget .icon-chevron-down { background-image: url(../img/sprites/arrow-blue-down.png); }
 
 /* Pages */
 /* Data page */
-.page.get-data .data-form { margin-bottom: 1.5em; }
+.page.get-data .data-sensor-search .data-form { margin-bottom: 1.5em; }
+.page.get-data .data-sensor-search input[type="button"] { padding: 1.3em 0.7em; }
 .page.get-data .data-list { margin-bottom: 1.5em; -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0 0.1em 0.3em; -moz-box-shadow: rgba(0, 0, 0, 0.4) 0 0.1em 0.3em; box-shadow: rgba(0, 0, 0, 0.4) 0 0.1em 0.3em; padding: 1em 0 0.5em 0; }
 .page.get-data .data-list label:first-child { margin-top: 0; }
 .page.get-data .data-view-options { display: none; }
-.page.get-data .data-filter-date-time { display: none; z-index: 3; }
+.page.get-data .data-filter-date-time { display: none; }
 .page.get-data .data-filter-date-time .row { margin: 0; }
 .page.get-data .data-filter-date-time .input-group { margin-top: 4%; }
 .page.get-data .data-filter-date-time .filter-date, .page.get-data .data-filter-date-time .filter-time { margin-bottom: 4%; display: none; }

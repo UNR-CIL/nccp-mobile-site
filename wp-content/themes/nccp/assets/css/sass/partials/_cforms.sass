@@ -1,0 +1,38 @@
+/* Cforms */
+
+.cform
+	ol
+		margin-left: 0
+
+	li
+		list-style: none
+
+		&:before
+			content: none
+
+		label
+			margin-left: 0.5em
+			color: $green-desat
+			font-size: 1.2em
+			font-weight: 400
+
+			&:before
+				content: "\00BB"
+				color: $green-desat
+				margin-right: 0.3em
+				font-size: 1.5em
+				margin-left: -0.7em
+
+	.reqtxt, .emailreqtxt
+		display: none
+
+	.sendbutton
+		+border-radius(0.3em)
+		width: 100%
+		font-weight: 400
+
+	.cf_hidden
+		height: 0
+
+.linklove
+	display: none

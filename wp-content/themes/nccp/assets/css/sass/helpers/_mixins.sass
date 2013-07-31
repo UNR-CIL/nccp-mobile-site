@@ -3,3 +3,15 @@
 @mixin font-style( $weight: 400, $family: 'Oswald' )
 	font-family: $family, sans-serif
 	font-weight: $weight
+
+@mixin input-placeholder
+	&.placeholder
+		@content
+	&:-moz-placeholder
+		@content
+	&::-moz-placeholder
+		@content
+	&:-ms-input-placeholder
+		@content
+	&::-webkit-input-placeholder
+		@content 

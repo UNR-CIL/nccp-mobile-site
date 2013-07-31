@@ -159,6 +159,15 @@ add_action( 'admin_enqueue_scripts', 'admin_scripts' ); // Back
 
 add_action( 'init', 'main_menus' );
 
+// Register shortcodes
+
+add_shortcode( 'people', 'shortcode_people' );
+add_shortcode( 'participants', 'shortcode_participants' );
+
+// Enable SVG support
+
+add_filter( 'upload_mimes', 'add_svg' );
+
 // IE support
 
 if ( is_IE() ) {
@@ -175,7 +184,7 @@ if ( is_IE() ) {
 function main_menus () {
 
   	register_nav_menus(
-    	array( 'main-navigation' => __( 'Main Navigation' ) )
+		array( 'main-navigation' => __( 'Main Navigation' ) )
 	);
 
 }
@@ -230,6 +239,92 @@ function admin_scripts () {
 
 	//wp_enqueue_script( 'jquery-local', get_template_directory_uri() . '/assets/js/jquery-1.8.3.min.js' );
 
+}
+
+// Simple shortcode for displaying project people
+function shortcode_people ( $atts ) {
+
+	$organizations = array(
+		'unr'	=> 'University of Nevada, Reno',
+		'dri'	=> 'Desert Research Institute',
+		'unlv'	=> 'University of Nevada, Las Vegas',
+		'nsc'	=> 'Nevada State College',
+		'ua'	=> 'University of Arizona',
+		'uta'	=> 'University of Texas, Austin'
+	);
+
+	$people = new WP_Query( array (
+		'post_type'	=> 'person',
+		'nopaging'  => true,
+		'order'		=> 'ASC'
+	));
+
+	if ( $people->have_posts() ): $first = true; ?>
+	<ul class="people">
+		<?php while ( $people->have_posts() ): $people->the_post(); ?>
+		<li class="person bulletproof">
+			<h3 class="thwomp <?php if ( ! $first == true ): ?>up<?php endif; $first = false; ?>"><?php the_title(); ?></h3>
+			<div class="row-fluid">
+				<div class="thumbnail span2">
+					<img src="<?php echo types_render_field( 'people-thumbnail', array( 'raw' => true ) ); ?>" border="0" />
+				</div>
+				<div class="content span9">
+					<h3><?php echo types_render_field( 'people-title', array( 'raw' => true ) ); ?></h3>
+					<h4>
+						<?php $orgs = explode( ', ', types_render_field( 'people-organization', null ) );
+						foreach ( $orgs as $index => $org ) { echo $organizations[ $org ]; if ( $index != count( $orgs ) - 1 ) { echo ', '; } } ?>
+					</h4>
+
+					<h5>Component</h5>
+					<p><?php echo ucfirst( str_ireplace( '-', ' ', types_render_field( 'people-component', null ) ) ); ?></p>
+
+					<h5>Research areas</h5>
+					<p><?php echo types_render_field( 'people-research-areas', array( 'raw' => true ) ); ?></p>
+
+					<a href="<?php echo types_render_field( 'people-webpage', array( 'raw' => true ) ); ?>" target="_blank">Website</a> |
+					<a href="<?php echo types_render_field( 'people-email', array( 'raw' => true ) ); ?>" target="_blank">Email</a>
+				</div>	
+			</div>
+			
+		</li>
+		<?php endwhile; ?>
+	</ul>
+	<?php endif; wp_reset_postdata();
+
+}
+
+// Simple shortcode for displaying project participants
+function shortcode_participants ( $atts ) {
+
+	$participants = new WP_Query( array (
+		'post_type'	=> 'participant',
+		'nopaging'  => true,
+		'order'		=> 'ASC'
+	));
+
+	if ( $participants->have_posts() ): $first = true; ?>
+	<ul class="participants">
+		<?php while ( $participants->have_posts() ): $participants->the_post(); ?>
+		<li class="participant bulletproof">
+			<div class="row-fluid">
+				<div class="thumbnail span2">
+					<img src="" border="0" />
+				</div>
+				<div class="content span9">
+					<a href="<?php echo types_render_field( 'participant-url', array( 'raw' => true ) ); ?>" target="_blank"><?php the_title(); ?></a>
+				</div>	
+			</div>
+			
+		</li>
+		<?php endwhile; ?>
+	</ul>
+	<?php endif; wp_reset_postdata();
+
+}
+
+function add_svg ( $mimes ) {
+	$mimes['svg'] = 'image/svg+xml';
+	return $mimes;
 }
 
 /////////////////////////////////////////////////////////////////

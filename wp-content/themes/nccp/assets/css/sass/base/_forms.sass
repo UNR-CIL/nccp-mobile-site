@@ -2,13 +2,22 @@
 
 input, select, textarea
 	font-family: 'Oswald', sans-serif
-
-input[type="text"], .input-text
+	font-weight: 300
 	border: 1px solid #1b81d6
-	border-bottom: 3px solid $gray-medium	
+	border-bottom: 3px solid $gray-medium
 
-	&.input-large
-		font-size: 1.2em
+input[type="text"], .input-text	
+	border: 1px solid #1b81d6
+	border-bottom: 3px solid $gray-medium
+	font-size: 1.2em
+	color: $gray-dark
+
+	+input-placeholder
+		color: #ccc
+
+textarea
+	font-size: 1em
+	padding: 1em
 
 .input-group .input-text
 	+background-image(linear-gradient(white, #e6e6e6))
@@ -44,7 +53,7 @@ label
 		background-image: url(../img/sprites/checkbox-active.png)
 		background-size: cover
 
-.btn, .input-group-addon
+.btn, .input-group-addon, .sendbutton
 	background-color: #3BA2F7
 	+background-image(linear-gradient( #3BA2F7, #1B81D6 ))
 	border: 1px solid $blue-dark

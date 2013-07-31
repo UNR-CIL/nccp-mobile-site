@@ -14,6 +14,10 @@
 .full-width
 	width: 100% !important
 
+.bulletproof
+	&:before
+		content: none !important
+
 .thwomp	
 	padding-right: 1.7em
 	cursor: pointer
@@ -38,10 +42,10 @@
 		float: right
 
 		&:hover
-			+transform2d(rotate(90deg))
-
-	+ div
-		display: none
+			+transform2d(rotate(90deg))	
 
 	&.up
-		//background-image: url(../img/sprites/arrow-white-down.png)	
+		//background-image: url(../img/sprites/arrow-white-down.png)
+
+		+ div
+			display: none

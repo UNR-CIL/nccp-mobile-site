@@ -11,6 +11,7 @@ input[type="text"], .input-text
 	border-bottom: 3px solid $gray-medium
 	font-size: 1.2em
 	color: $gray-dark
+	width: 100%
 
 	+input-placeholder
 		color: #ccc
@@ -18,6 +19,7 @@ input[type="text"], .input-text
 textarea
 	font-size: 1em
 	padding: 1em
+	width: 100%
 
 .input-group .input-text
 	+background-image(linear-gradient(white, #e6e6e6))
@@ -59,7 +61,7 @@ label
 	border: 1px solid $blue-dark
 	border-bottom: 4px solid #0C5088
 	+box-shadow(rgba(0, 0, 0, 0.5) 0 0 3px)
-	font-size: 0.8em
+	font-size: 1em
 	padding: 0.7em
 	margin-bottom: 1em
 	color: white
@@ -68,7 +70,23 @@ label
 	&:hover
 		border-color: $blue-highlight
 
+a.btn
+	text-decoration: none
+
+.btn-large
+	+border-radius(0.3em)
+
 .input-large
-	font-size: 1em
-	padding: 0.6em
+	font-size: 1em !important
+	padding: 0.6em !important
 	font-weight: 300
+	height: auto
+
+.input-group-addon
+	line-height: 1em
+
+.input-group-addon + .input-large
+	+border-left-radius(0)
+
+.input-large
+	+border-right-radius(0)

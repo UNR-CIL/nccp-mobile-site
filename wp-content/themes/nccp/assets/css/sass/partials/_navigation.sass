@@ -7,8 +7,10 @@ header
 		padding-top: 0
 		background: none
 		margin: 0 auto
-		width: 88%		
 		padding-bottom: 1em
+
+		+breakpoint($breakpoint-max-768)
+			padding-bottom: 6em
 
 		.brand
 			position: absolute
@@ -16,6 +18,7 @@ header
 			right: 16%
 			font-size: 1.2em
 			color: #1e5a12
+			text-decoration: none
 
 			&:after
 				content: "\00BB"
@@ -34,14 +37,16 @@ header
 			+border-top-radius(0)
 			background: none
 			border: none
+			position: absolute
 
 			+breakpoint($breakpoint-min-768)
 				display: none !important
 
 		.nav-collapse
-			background: $green-darker
-			+background-image(linear-gradient($green-darker, #1b4d0e))
-			border-bottom: 1px solid $green-dark
+			+breakpoint($breakpoint-max-768)
+				background: $green-darker
+				+background-image(linear-gradient($green-darker, #1b4d0e))
+				border-bottom: 1px solid $green-dark
 
 		.nav
 			li a:hover
@@ -53,6 +58,7 @@ header
 					font-size: 1.2em
 					padding-top: 1.2em
 					z-index: 3
+					text-decoration: none
 
 					&:hover
 						color: #428bca
@@ -81,6 +87,7 @@ header
 			.sub-menu
 				list-style: none
 				margin-left: 0.8em
+				padding-left: 0
 
 				li
 					font-weight: 300

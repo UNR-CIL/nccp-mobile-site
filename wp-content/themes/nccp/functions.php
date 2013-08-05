@@ -192,7 +192,7 @@ function main_menus () {
 // Global styles
 function theme_styles () {
 
-	wp_enqueue_style( 'bootstrap-css', get_stylesheet_directory_uri() . '/assets/bootstrap/bootstrap/css/bootstrap.css' );
+	wp_enqueue_style( 'bootstrap-css', get_stylesheet_directory_uri() . '/assets/bootstrap/css/bootstrap.min.css' );
 	wp_enqueue_style( 'bootstrap-datepicker-css', get_stylesheet_directory_uri() . '/assets/css/bootstrap-datepicker.css' );
 	wp_enqueue_style( 'bootstrap-timepicker-css', get_stylesheet_directory_uri() . '/assets/css/bootstrap-timepicker.min.css' );
 	wp_enqueue_style( 'style-main', get_stylesheet_directory_uri() . '/assets/css/application.css' );
@@ -218,7 +218,7 @@ function theme_scripts () {
 	//wp_enqueue_script( 'google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBxK-OTkhR7AXxyzaRCbuFhzmVBTHhmOrs&sensor=false', false, false, true );
 	//wp_enqueue_script( 'google-maps', get_template_directory_uri() . '/assets/js/gmaps.js', array( 'google-maps-api', 'jquery-cdn' ), false, true );
 	wp_enqueue_script( 'd3', 'http://d3js.org/d3.v3.min.js', false, false, true );	
-	wp_enqueue_script( 'bootstrap-js', get_stylesheet_directory_uri() . '/assets/bootstrap/bootstrap/js/bootstrap.min.js', array( 'jquery-cdn' ), false, true );
+	wp_enqueue_script( 'bootstrap-js', get_stylesheet_directory_uri() . '/assets/bootstrap/js/bootstrap.min.js', array( 'jquery-cdn' ), false, true );
 	wp_enqueue_script( 'bootstrap-datepicker', get_stylesheet_directory_uri() . '/assets/js/bootstrap-datepicker.js', array( 'jquery-cdn', 'bootstrap-js' ), false, true );
 	wp_enqueue_script( 'bootstrap-timepicker', get_stylesheet_directory_uri() . '/assets/js/bootstrap-timepicker.min.js', array( 'jquery-cdn', 'bootstrap-js' ), false, true );
 	wp_enqueue_script( 'templates', get_stylesheet_directory_uri() . '/assets/js/templates.js', false, false, true );
@@ -259,7 +259,7 @@ function shortcode_people ( $atts ) {
 		'order'		=> 'ASC'
 	));
 
-	if ( $people->have_posts() ): $first = true; ?>
+	if ( $people->have_posts() ): $first = true; ob_start(); ?>
 	<ul class="people">
 		<?php while ( $people->have_posts() ): $people->the_post(); ?>
 		<li class="person bulletproof">
@@ -291,6 +291,11 @@ function shortcode_people ( $atts ) {
 	</ul>
 	<?php endif; wp_reset_postdata();
 
+	$output = ob_get_contents();
+
+	ob_end_clean();
+
+	return $output;
 }
 
 // Simple shortcode for displaying project participants
@@ -302,14 +307,17 @@ function shortcode_participants ( $atts ) {
 		'order'		=> 'ASC'
 	));
 
-	if ( $participants->have_posts() ): $first = true; ?>
+	if ( $participants->have_posts() ): $first = true; ob_start(); ?>
+
 	<ul class="participants">
 		<?php while ( $participants->have_posts() ): $participants->the_post(); ?>
 		<li class="participant bulletproof">
 			<div class="row-fluid">
-				<div class="thumbnail span2">
-					<img src="" border="0" />
-				</div>
+				<a href="<?php echo types_render_field( 'participant-url', array( 'raw' => true ) ); ?>" class="no-underline">
+					<div class="thumbnail span2">
+						<img src="<?php echo types_render_field( 'participant-thumbnail', array( 'raw' => true ) ); ?>" title="<?php the_title(); ?>" border="0" />
+					</div>
+				</a>
 				<div class="content span9">
 					<a href="<?php echo types_render_field( 'participant-url', array( 'raw' => true ) ); ?>" target="_blank"><?php the_title(); ?></a>
 				</div>	
@@ -319,6 +327,12 @@ function shortcode_participants ( $atts ) {
 		<?php endwhile; ?>
 	</ul>
 	<?php endif; wp_reset_postdata();
+
+	$output = ob_get_contents();
+
+	ob_end_clean();
+
+	return $output;
 
 }
 

@@ -18,23 +18,29 @@
 	&:before
 		content: none !important
 
+.no-underline
+	text-decoration: none
+
+.error
+	color: $red
+
 .thwomp	
-	padding-right: 1.7em
+	padding: 0.4em 1.5em 0.4em 0.7em
 	cursor: pointer
 	+transition-duration(1s)
 	+transition-property(rotation)
 	+background-image(linear-gradient( #3BA2F7, #1B81D6 ))
 	color: white
-	padding-left: 0.5em
 	+border-top-radius(0.3em)
 	border-bottom: 4px solid #0c5088
 	margin-bottom: 0
+	line-height: 1.2em
 
 	&:after
 		background-image: url(../img/sprites/arrow-white-down.png)
 		background-repeat: no-repeat
 		background-size: 1.2em
-		top: 0.5em
+		top: 0.2em
 		left: 1em
 		content: '\2007\2007\2007'
 		position: relative
@@ -47,5 +53,5 @@
 	&.up
 		//background-image: url(../img/sprites/arrow-white-down.png)
 
-		+ div
+		+ div, + ul
 			display: none

@@ -10,11 +10,22 @@ nccp.templates = {
 		<div class="sensor-info collapse-trigger"> \
 			<div class="id">Sensor <%= sensor_id %>: <%= sensor_name %></div> \
 		</div> \
-		<ul class="data table"> \
-			<% _.each( sensor, function ( row ) { %> \
-			<li><%= row.timestamp %> <span><%= row.value %></span></li> \
-			<% }); %> \
-		</ul> \
+		<table class="data table table-bordered table-striped table-hover"> \
+			<thead> \
+				<tr> \
+					<th>Timestamp</th> \
+					<th>Value</th> \
+				<tr> \
+			</thead> \
+			<tbody> \
+				<% _.each( sensor, function ( row ) { %> \
+				<tr> \
+					<td class="timestamp"><%= row.timestamp %></td> \
+					<td class="value"><%= row.value %></td> \
+				</tr> \
+				<% }); %> \
+			</tbody> \
+		</table> \
 	</div> \
 	'
 };

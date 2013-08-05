@@ -100,11 +100,11 @@ get_header(); ?>
 					</p>
 
 					<div class="btn-group">
-						<input type="button" class="btn" id="data-filter-date" value="Filter by Date">
-						<input type="button" class="btn" id="data-filter-time" value="Filter by Time">
+						<input type="button" class="btn" id="data-filter-date" value="Filter by Date" />
+						<input type="button" class="btn" id="data-filter-time" value="Filter by Time" />
 					</div>
 
-					<?php $now = new DateTime(); $then = clone $now; $then->sub( new DateInterval( 'P1Y' ) ); ?>
+					<?php $now = new DateTime(); $then = clone $now; $then->sub( new DateInterval( 'P1M' ) ); ?>
 					<div class="filter-date">
 						<div class="icon-date"><img src="<?php echo get_stylesheet_directory_uri(); ?>/assets/img/sprites/half-calendar.png" border="0" /></div>
 						<div class="input-group row">
@@ -124,6 +124,16 @@ get_header(); ?>
 					</div>
 				</div>
 
+				<!-- Change data interval -->
+
+				<div class="data-filter-time-interval">
+					<p>
+						You can also choose the interval for each data point. Current interval:
+					</p>
+
+					<a id="interval-picker-trigger" data-toggle="modal" href="#data-filter-interval-modal" class="btn btn-primary btn-large no-underline">Hourly</a>
+				</div>
+
 				<!-- Choose how data should be viewed -->
 
 				<div class="data-view-options">
@@ -141,7 +151,7 @@ get_header(); ?>
 				<!-- Data output -->
 
 				<div class="data-output">
-					<div class="data-table">
+					<div class="data-tables">
 						<!-- Populated dynamically -->
 					</div>
 					<div class="data-graphs">
@@ -151,6 +161,19 @@ get_header(); ?>
 
 			</div>
 			
+		</div>
+
+		<!-- Interval picker modal -->
+
+		<div class="modal fade interval-picker" id="data-filter-interval-modal">
+			<div class="list-group">
+				<a href="#" class="list-group-item">Per minute</a>
+				<a href="#" class="list-group-item">Hourly</a>
+				<a href="#" class="list-group-item">Daily</a>
+				<a href="#" class="list-group-item">Weekly</a>
+				<a href="#" class="list-group-item">Monthly</a>
+				<a href="#" class="list-group-item">Yearly</a>
+			</div>
 		</div>
 
 	<?php endwhile; // end of the loop. ?>

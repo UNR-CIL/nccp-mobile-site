@@ -1,20 +1,32 @@
 /* Modals */
 
 .modal
+	overflow: hidden
+
 	h3
-		color: $aqua
+		color: white
+		margin: 0
+		font-weight: 400
 
 	.modal-header
+		border-bottom: none
+
 		a
 			font-size: 3.5em
-			line-height: 0
+			line-height: 0.4
+
+	.modal-content
+		padding: 1em
 
 	.modal-footer
+		border-top: none
+
 		a
 			width: 100%
 			padding: 0.7em 0
 
-	+breakpoint($breakpoint-max-768)
-		left: 5%
-		width: 88%
-		margin-left: 0
+	.close
+		text-decoration: none
+		color: white
+		+text-shadow(rgba(0, 0, 0, 0.4) 0 1px 0)
+		opacity: 1

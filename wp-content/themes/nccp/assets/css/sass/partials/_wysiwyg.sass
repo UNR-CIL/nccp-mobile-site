@@ -1,0 +1,35 @@
+// WYSIWYG output styles
+
+.entry-content
+	pre
+		background: $blue-light
+		padding: 1.5em 1em
+		line-height: 0.1em
+		font-family: 'Oswald', Sans-Serif
+		font-size: 1em
+
+		h3
+			margin: 0.2em
+			color: white
+
+		ul
+			font-weight: 300
+			color: white
+			margin: 1em
+
+			li
+				font-weight: 300
+
+				&:before
+					color: $orange-light
+
+		a
+			color: $blue-light
+			padding: 1.2em
+			background: white
+			display: block
+			+border-radius(0.1em)
+			text-align: center
+
+			&:hover
+				color: $blue-highlight

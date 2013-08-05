@@ -10,6 +10,9 @@ var App = Backbone.View.extend({
 		var $ = jQuery, // In case $.noConflict was called
 			app = this;
 
+		// Ensure every child fn of the view has a reference to the parent
+		_.each( this.__proto__, function( fn ) { fn.app = app; } );
+
 		// Generic Setup //////////////////////////////////////////
 		this.Thwomp();
 
@@ -22,7 +25,7 @@ var App = Backbone.View.extend({
 
 		// Status page
 		if ( $('.status').length ) {
-			this.GetServerStatus();
+			this.GetStatus();
 		}
 
 		// Data
@@ -87,9 +90,9 @@ var App = Backbone.View.extend({
 		});
 	},
 
-	GetServerStatus: function () {
+	GetStatus: function () {
 		// Check the main server status
-		this._GetServerStatus( 'website', function ( status ) {		   
+		this.__.GetServerStatus( 'website', function ( status ) {		   
 			if ( status.error ) {
 				$('#nccp-status').removeClass( 'unknown' ).addClass( 'bad' ).find( '.status-text' ).html( "The NCCP Portal is <b>down</b>" );
 			} else if ( status.success ) {
@@ -102,7 +105,7 @@ var App = Backbone.View.extend({
 		});
 		
 		// Then the API status
-		this._GetServerStatus( 'data', function ( status ) {		   
+		this.__.GetServerStatus( 'data', function ( status ) {		   
 			if ( status.error ) {
 				$('#data-status').removeClass( 'unknown' ).addClass( 'bad' ).find( '.status-text' ).html( "The Data API is <b>down</b>" );
 			} else if ( status.success ) {
@@ -114,7 +117,7 @@ var App = Backbone.View.extend({
 			$('#data-status').find( '.status-date' ).text( 'As of: ' + now.getHours() + ':' + now.getMinutes() );
 		});
 		
-		this._GetServerStatus( 'measurement', function ( status ) {		   
+		this.__.GetServerStatus( 'measurement', function ( status ) {		   
 			if ( status.error ) {
 				$('#measurement-status').removeClass( 'unknown' ).addClass( 'bad' ).find( '.status-text' ).html( "The Measurement API is <b>down</b>" );
 			} else if ( status.success ) {
@@ -173,7 +176,7 @@ var App = Backbone.View.extend({
 					nccp.sensor_search_results = sensors;
 
 					// Construct sensor list
-					var sensor_list = app._BuildSensorList( sensors );
+					var sensor_list = app.__.BuildSensorList( sensors );
 					$('.data-sensor-search-results .results').append( sensor_list );
 
 					$('.data-sensor-search').fadeOut( 250, function () {
@@ -217,7 +220,25 @@ var App = Backbone.View.extend({
 						});
 						timepicker.timepicker().on('changeTime.timepicker', function(e) {
 							timepicker.text( e.time.value );
-						});						
+						});
+
+						// Hook up interval picking
+						$( '#data-filter-interval-modal' ).on( 'show.bs.modal', function () {
+							var active = _.filter( $('#data-filter-interval-modal a'), function ( element ) {
+								return $(element).text() == $('#interval-picker-trigger').text();
+							});
+
+							$('#data-filter-interval-modal .active').removeClass( 'active' );
+							$(active).addClass( 'active' );
+						});
+						$('#data-filter-interval-modal a').click( function ( event ) {
+							event.preventDefault();
+
+							$('#interval-picker-trigger').text( $(this).text() );
+							$('#data-filter-interval-modal .active').removeClass( 'active' );
+							$(this).addClass( 'active' );
+							$('#data-filter-interval-modal').modal( 'hide' );
+						});
 					});
 				} else {
 					// Didn't find anything, so display error message
@@ -251,12 +272,17 @@ var App = Backbone.View.extend({
 		// View data table of sensor data
 		$('#data-view-sensor-data').click( function () {
 			// Collect sensor info			
-			var args = app._GetSensorInfo();
+			var args = app.__.GetSensorInfo();
 
 			if ( args.sensor_ids.length && args.start && args.end ) {
-				app._GetSensorData( args, false, function ( sensor_data ) {
+				app.__.GetSensorData( args, false, function ( sensor_data, msg ) {
 					if ( sensor_data ) {
 						var table_template = _.template( nccp.templates.data_table );
+
+						// Clear any errors
+						$('.data-view-options').find( '.error' ).fadeOut( 250, function () {
+							$('.data-view-options').find( '.error' ).hide();
+						});
 
 						$.each( sensor_data, function ( index ) {
 							// Get sensor info from the last search results
@@ -268,26 +294,32 @@ var App = Backbone.View.extend({
 								sensor_id 		= sensor_info.logical_sensor_id,
 								sensor_name 	= sensor_info.name;
 
-							$('.data-output .data-table').append( table_template({
+							$('.data-output .data-tables').append( table_template({
 								sensor: this,
 								sensor_id: sensor_id,
 								sensor_name: sensor_name
 							}));
 						});
 					}
+
+					if ( msg ) {
+						app.__.ThrowError( $('.data-view-options'), msg );
+					}
 				});
+			} else {
+				app.__.ThrowError( $('.data-view-options'), 'Please select at least one sensor.' );
 			}
 		});
 
 		// Get CSV download of the sensor data
 		$('#data-view-download').click( function () {
 			// Collect sensor info			
-			var args = app._GetSensorInfo();
+			var args = app.__.GetSensorInfo();
 
 			if ( args.sensor_ids.length && args.start && args.end ) {
-				app._GetSensorData( sensor_ids, true, function ( download_link ) {
+				app.__.GetSensorData( sensor_ids, true, function ( download_link ) {
 					if ( download_link ) {
-						app._ForceDownload( download_link );
+						app.__.ForceDownload( download_link );
 					}
 				});
 			}
@@ -304,98 +336,123 @@ var App = Backbone.View.extend({
 	// Internal functions ///////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////
 
-	_GetSensorInfo: function () {
-		var args = {
-				sensor_ids: [],
-				start: null,
-				end: null
-			};
+	__: {
+		GetSensorInfo: function () {
+			var args = {
+					sensor_ids: [],
+					start: null,
+					end: null,
+					interval: 'hourly'
+				};
 
-		// Collect selected sensors
-		$('.sensor-search-results:visible input:checked').each( function () {
-			args.sensor_ids.push( $(this).val() );
-		});
+			// Collect selected sensors
+			$('.sensor-search-results:visible input:checked').each( function () {
+				args.sensor_ids.push( $(this).val() );
+			});
 
-		// Grab time/date
-		var start = new Date( $('#date-start').text() ),
-			end = new Date( $('#date-end').text() );
+			// Grab time/date
+			var start = new Date( $('#date-start').text() ),
+				end = new Date( $('#date-end').text() );
 
-		// Dates
-		args.start = start.getFullYear() + '-' + ( start.getMonth() + 1 ) + '-' + start.getDate();
-		args.end = end.getFullYear() + '-' + ( end.getMonth() + 1 ) + '-' + end.getDate();
+			// Dates
+			args.start = start.getFullYear() + '-' + ( start.getMonth() + 1 ) + '-' + start.getDate();
+			args.end = end.getFullYear() + '-' + ( end.getMonth() + 1 ) + '-' + end.getDate();
 
-		// Time
-		var time = $('#time').data('timepicker');
-		args.start += ' ' + time.hour + ':' + time.minute + ':' + '00';
-		args.end += ' ' + time.hour + ':' + time.minute + ':' + '00';
+			// Time
+			var time = $('#time').data('timepicker');
+			args.start += ' ' + time.hour + ':' + time.minute + ':' + '00';
+			args.end += ' ' + time.hour + ':' + time.minute + ':' + '00';
 
-		return args;
-	},
+			// Grab interval
+			var interval = $('#interval-picker-trigger').text().toLowerCase();
+			args.interval = interval == 'per minute' ? null : interval;
 
-	_BuildSensorList: function ( sensors ) {
-		var list = $( '<div/>', {
-			'class': 'sensor-search-results data-list'
-		});
-		var controlGroup = $( '<fieldset/>' );
+			return args;
+		},
 
-		$.each( sensors, function () {
-			controlGroup.append(
-				$( '<label/>', {
-					html: '<span>Interval: ' + this.interval + 'm' + '</span> ' + this.name
-				}).prepend( $( '<input/>', {
-					type: 'checkbox',
-					value: this.logical_sensor_id,
-				}))
-			);
-		});
+		BuildSensorList: function ( sensors ) {
+			var list = $( '<div/>', {
+				'class': 'sensor-search-results data-list'
+			});
+			var controlGroup = $( '<fieldset/>' );
 
-		list.append( controlGroup );
+			$.each( sensors, function () {
+				controlGroup.append(
+					$( '<label/>', {
+						html: '<span>Interval: ' + this.interval + 'm' + '</span> ' + this.name
+					}).prepend( $( '<input/>', {
+						type: 'checkbox',
+						value: this.logical_sensor_id,
+					}))
+				);
+			});
 
-		// Remove checkboxes
-		list.find('input[type="checkbox"]').simpleCheckbox({
-			newElementClass: 'checkbox',
-			activeElementClass: 'checked'
-		});
+			list.append( controlGroup );
 
-		return list;
-	},
+			// Remove checkboxes
+			list.find('input[type="checkbox"]').simpleCheckbox({
+				newElementClass: 'checkbox',
+				activeElementClass: 'checked'
+			});
 
-	_GetServerStatus: function ( service, callback ) {
-		// Build the request URL	 
-		switch ( service ) {
-			case 'website': var url = this.attributes.DATA_SERVER + '/api/status/website?callback=?'; break;
-			case 'data': var url = this.attributes.DATA_SERVER + '/api/status/services/data?callback=?'; break;
-			case 'measurement': var url = this.attributes.DATA_SERVER + '/api/status/services/measurement?callback=?'; break;   
+			return list;
+		},
+
+		GetServerStatus: function ( service, callback ) {
+			// Build the request URL	 
+			switch ( service ) {
+				case 'website': var url = this.attributes.DATA_SERVER + '/api/status/website?callback=?'; break;
+				case 'data': var url = this.attributes.DATA_SERVER + '/api/status/services/data?callback=?'; break;
+				case 'measurement': var url = this.attributes.DATA_SERVER + '/api/status/services/measurement?callback=?'; break;   
+			}
+			 
+			// Make the request
+			$.getJSON( url, callback );
+		},
+
+		GetSensorData: function ( args, csv, callback ) {
+			var app = this.app;
+
+			if ( csv ) args.csv = true;
+
+			$.getJSON( app.attributes.DATA_SERVER + '/api/get?callback=?', args, function ( response ) {
+				if ( csv ) {
+					callback( response.download_link ? response.download_link : false );
+				} else {
+					if ( response.num_results > 0 ) {
+						callback( response.sensor_data );
+					} else {
+						callback( null, response.msg );
+					}					
+				}			
+			});
+		},
+
+		// Force download of CSV
+		ForceDownload: function ( url ) {
+			var iframe = document.getElementById( 'hiddenDownloader' );
+
+			if ( iframe === null ) {
+				iframe = document.createElement( 'iframe' );  
+				iframe.id = 'hiddenDownloader';
+				iframe.style.display = 'none';
+				document.body.appendChild( iframe );
+			}
+			
+		    iframe.src = url; // Trigger the download
+		},
+
+		ThrowError: function ( parent, error, type ) {
+			var type = ( type || 'error' );
+
+			if( ! $(parent).find( '.error' ).length ) {
+				$(parent).append( $('<div/>', { 'class': type }) );
+			} 
+
+			$(parent).find( '.error' ).fadeOut( 250, function () {
+				$(parent).find( '.error' ).html( error ).fadeIn( 250 );
+			});
 		}
-		 
-		// Make the request
-		$.getJSON( url, callback );
-	},
-
-	_GetSensorData: function ( args, csv, callback ) {
-		if ( csv ) args.csv = true;
-
-		$.getJSON( this.attributes.DATA_SERVER + '/api/get?callback=?', args, function ( response ) {
-			if ( csv ) {
-				callback( response.download_link ? response.download_link : false );
-			} else {
-				callback( response.num_results > 0 ? response.sensor_data : false );
-			}			
-		});
-	},
-
-	// Force download of CSV
-	_ForceDownload: function ( url ) {
-		var iframe = document.getElementById( 'hiddenDownloader' );
-
-		if ( iframe === null ) {
-			iframe = document.createElement( 'iframe' );  
-			iframe.id = 'hiddenDownloader';
-			iframe.style.display = 'none';
-			document.body.appendChild( iframe );
-		}
-		
-	    iframe.src = url; // Trigger the download
 	},
 
 	//////////////////////////////////////////////////////////

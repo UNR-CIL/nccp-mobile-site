@@ -1,15 +1,12 @@
 /* Data page */
 
 .page.get-data
-	//.data-filter-date-time, .data-view-options
-	//	display: none
+	.data-filter-date-time, .data-view-options, .data-filter-time-interval, .data-search-reset
+		display: none
 
 	.data-sensor-search
 		.data-form
 			margin-bottom: 1.5em
-
-		input[type="button"]
-			padding: 1.3em 0.7em
 
 	.data-list
 		margin-bottom: 1.5em
@@ -20,15 +17,11 @@
 			margin-top: 0
 
 	.data-view-options
-		display: none
-
 		+breakpoint($breakpoint-max-480)
 			.btn
 				font-size: 0.8em
 
 	.data-filter-date-time
-		display: none
-
 		.row
 			margin: 0
 

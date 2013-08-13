@@ -38,7 +38,7 @@ get_header(); ?>
 
 				<?php the_content(); ?>
 
-				<form class="data-selectors">				
+				<form class="data-selectors form-element">				
 					<div class="data-sensor-search">
 						<div class="data-form">
 
@@ -86,7 +86,7 @@ get_header(); ?>
 
 				<!-- Sensor search results -->
 
-				<div class="data-sensor-search-results">
+				<div class="data-sensor-search-results form-element">
 					<div class="table results">
 						<!-- Populated after sensor search -->
 					</div>
@@ -94,7 +94,7 @@ get_header(); ?>
 
 				<!-- Filter results by date/time -->
 
-				<div class="data-filter-date-time">
+				<div class="data-filter-date-time form-element">
 					<p>
 						In addition, data can be filtered by date/time if desired:
 					</p>
@@ -126,7 +126,7 @@ get_header(); ?>
 
 				<!-- Change data interval -->
 
-				<div class="data-filter-time-interval">
+				<div class="data-filter-time-interval form-element">
 					<p>
 						You can also choose the interval for each data point. Current interval:
 					</p>
@@ -136,7 +136,7 @@ get_header(); ?>
 
 				<!-- Choose how data should be viewed -->
 
-				<div class="data-view-options">
+				<div class="data-view-options form-element">
 					<p>
 						Finally, choose how you would like to view the retrieved data:
 					</p>
@@ -146,6 +146,16 @@ get_header(); ?>
 						<input type="button" class="data-button btn" id="data-view-graph" value="Graph Data">
 						<input type="button" class="data-button btn" id="data-view-download" value="Download Data">
 					</div>
+				</div>
+
+				<!-- Reset button -->
+
+				<div class="data-search-reset">
+					<p>
+						Start from the beginning:
+					</p>
+
+					<input type="button" class="data-button btn btn-large btn-block" id="data-sensor-search-reset" value="Start Over" />
 				</div>
 
 				<!-- Data output -->

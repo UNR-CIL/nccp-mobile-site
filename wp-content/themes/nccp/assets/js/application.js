@@ -179,9 +179,9 @@ var App = Backbone.View.extend({
 					var sensor_list = app.__.BuildSensorList( sensors );
 					$('.data-sensor-search-results .results').append( sensor_list );
 
-					$('.data-sensor-search').fadeOut( 250, function () {
+					$('.data-selectors').fadeOut( 250, function () {
 						// Fade in results and filtering options
-						$('.data-sensor-search-results, .data-filter-date-time, .data-view-options').fadeIn( 250 );
+						$('.data-sensor-search-results, .data-filter-date-time, .data-filter-time-interval, .data-view-options').fadeIn( 250 );
 
 						// Bind events for choosing date/time filtering
 						$('#data-filter-date').click( function () {
@@ -239,6 +239,12 @@ var App = Backbone.View.extend({
 							$(this).addClass( 'active' );
 							$('#data-filter-interval-modal').modal( 'hide' );
 						});
+
+						// Link up the reset button
+						$('#data-sensor-search-reset').click( function () {
+							app.__.ResetDataSearch();
+						});
+						$('.data-search-reset').fadeIn( 250 );
 					});
 				} else {
 					// Didn't find anything, so display error message
@@ -255,13 +261,13 @@ var App = Backbone.View.extend({
 						})
 					);
 
-					$('.data-sensor-search').fadeOut( 250, function () {
+					$('.data-selectors').fadeOut( 250, function () {
 						$('.data-sensor-search-results').fadeIn( 250 );
 
 						$('#data-reload-search').click( function () {
 							$('.data-sensor-search-results').fadeOut( 250, function () {
 								$('.data-sensor-search-results').html( '' );
-								$('.data-sensor-search').fadeIn( 250 );
+								$('.data-selectors').fadeIn( 250 );
 							});
 						});
 					});					
@@ -275,6 +281,9 @@ var App = Backbone.View.extend({
 			var args = app.__.GetSensorInfo();
 
 			if ( args.sensor_ids.length && args.start && args.end ) {
+				// Throw up loading animation
+				if ( ! $('.main-content .loading').length ) $('.main-content').append( nccp.templates.loading );
+
 				app.__.GetSensorData( args, false, function ( sensor_data, msg ) {
 					if ( sensor_data ) {
 						var table_template = _.template( nccp.templates.data_table );
@@ -283,6 +292,9 @@ var App = Backbone.View.extend({
 						$('.data-view-options').find( '.error' ).fadeOut( 250, function () {
 							$('.data-view-options').find( '.error' ).hide();
 						});
+
+						// Clear out the loading message
+						$('.main-content .loading').remove();
 
 						$.each( sensor_data, function ( index ) {
 							// Get sensor info from the last search results
@@ -300,6 +312,9 @@ var App = Backbone.View.extend({
 								sensor_name: sensor_name
 							}));
 						});
+
+						// Hide all the search stuff
+						$('.form-element').hide();
 					}
 
 					if ( msg ) {
@@ -428,6 +443,14 @@ var App = Backbone.View.extend({
 			});
 		},
 
+		ResetDataSearch: function () {
+			$('.form-element').not('.data-selectors').hide();
+			$('.data-output .data-tables, .data-output .data-graphs, .data-sensor-search-results .results').empty();
+			$('.data-search-reset').hide();
+
+			$('.data-selectors').fadeIn( 250 );	
+		},
+
 		// Force download of CSV
 		ForceDownload: function ( url ) {
 			var iframe = document.getElementById( 'hiddenDownloader' );
@@ -439,7 +462,7 @@ var App = Backbone.View.extend({
 				document.body.appendChild( iframe );
 			}
 			
-		    iframe.src = url; // Trigger the download
+			iframe.src = url; // Trigger the download
 		},
 
 		ThrowError: function ( parent, error, type ) {

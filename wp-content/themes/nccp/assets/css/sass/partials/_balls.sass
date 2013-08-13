@@ -1,0 +1,116 @@
+// Loading balls
+
+#followingBallsG
+	position: relative
+	width: 100%
+	height: 1em
+
+	.followingBallsG
+		background-color: $blue-light
+		position: absolute
+		top: 0
+		left: 0
+		width: 0.5em
+		height: 0.5em
+		+border-radius(0.5em)		
+		-moz-animation-name: bounce_followingBallsG
+		-moz-animation-duration: 2.9s
+		-moz-animation-iteration-count: infinite
+		-moz-animation-direction: linear
+		-webkit-animation-name: bounce_followingBallsG
+		-webkit-animation-duration: 2.9s
+		-webkit-animation-iteration-count: infinite
+		-webkit-animation-direction: linear
+		-ms-animation-name: bounce_followingBallsG
+		-ms-animation-duration: 2.9s
+		-ms-animation-iteration-count: infinite
+		-ms-animation-direction: linear
+		animation-name: bounce_followingBallsG
+		animation-duration: 2.9s
+		animation-iteration-count: infinite
+		animation-direction: linear
+
+	#followingBallsG_1
+		-moz-animation-delay: 0s	
+
+	#followingBallsG_1
+		-webkit-animation-delay: 0s	
+
+	#followingBallsG_1
+		-ms-animation-delay: 0s	
+
+	#followingBallsG_1
+		-o-animation-delay: 0s	
+
+	#followingBallsG_1
+		animation-delay: 0s	
+
+	#followingBallsG_2
+		-moz-animation-delay: 0.29s
+		-webkit-animation-delay: 0.29s
+		-ms-animation-delay: 0.29s
+		animation-delay: 0.29s	
+
+	#followingBallsG_3
+		-moz-animation-delay: 0.58s
+		-webkit-animation-delay: 0.58s
+		-ms-animation-delay: 0.58s
+		animation-delay: 0.58s	
+
+	#followingBallsG_4
+		-moz-animation-delay: 0.87s
+		-webkit-animation-delay: 0.87s
+		-ms-animation-delay: 0.87s
+		animation-delay: 0.87s	
+
+@-moz-keyframes bounce_followingBallsG
+	0%
+		left: 0px
+		background-color: $blue-light	
+
+	50%
+		left: 25%
+		background-color: white		
+
+	100%
+		left: 0px
+		background-color: $blue-light
+
+@-webkit-keyframes bounce_followingBallsG
+	0%
+		left: 0px
+		background-color: $blue-light		
+
+	50%
+		left: 25%
+		background-color: white
+
+	100%
+		left: 0px
+		background-color: $blue-light
+
+@-ms-keyframes bounce_followingBallsG
+	0%
+		left: 0px
+		background-color: $blue-light		
+
+	50%
+		left: 25%
+		background-color: white		
+
+	100%
+		left: 0px
+		background-color: $blue-light	
+
+@keyframes bounce_followingBallsG
+	0%
+		left: 0px
+		background-color: $blue-light		
+
+	50%
+		left: 25%
+		background-color: white		
+
+	100%
+		left: 0px
+		background-color: $blue-light	

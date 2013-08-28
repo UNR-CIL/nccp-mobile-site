@@ -150,10 +150,7 @@ function detect_mobile ( $return_info = false ) { // Pass true if more specific 
 // Register scripts/styles with the proper authorities
  
 add_action( 'wp_enqueue_scripts', 'theme_styles' ); // Front
-add_action( 'admin_enqueue_scripts', 'admin_styles' ); // Back
-
 add_action( 'wp_enqueue_scripts', 'theme_scripts' ); // Front
-add_action( 'admin_enqueue_scripts', 'admin_scripts' ); // Back
 
 // Register menus
 
@@ -195,6 +192,7 @@ function theme_styles () {
 	wp_enqueue_style( 'bootstrap-css', get_stylesheet_directory_uri() . '/assets/bootstrap/css/bootstrap.min.css' );
 	wp_enqueue_style( 'bootstrap-datepicker-css', get_stylesheet_directory_uri() . '/assets/css/bootstrap-datepicker.css' );
 	wp_enqueue_style( 'bootstrap-timepicker-css', get_stylesheet_directory_uri() . '/assets/css/bootstrap-timepicker.min.css' );
+	wp_enqueue_style( 'd3-nv-css', get_stylesheet_directory_uri() . '/assets/css/nv.d3.css' );
 	wp_enqueue_style( 'style-main', get_stylesheet_directory_uri() . '/assets/css/application.css' );
 
 }
@@ -205,11 +203,6 @@ function ie_theme_styles () {
 
 }
 
-// Styles to only be included in the admin version of the site
-function admin_styles () {
-	//wp_enqueue_style( 'style-main' );
-}
-
 // Global scripts
 function theme_scripts () {
 
@@ -217,7 +210,8 @@ function theme_scripts () {
 	wp_enqueue_script( 'jquery-simple-checkbox', get_stylesheet_directory_uri() . '/assets/js/jquery.simple-checkbox.js', array( 'jquery-cdn' ), false, true );
 	//wp_enqueue_script( 'google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBxK-OTkhR7AXxyzaRCbuFhzmVBTHhmOrs&sensor=false', false, false, true );
 	//wp_enqueue_script( 'google-maps', get_template_directory_uri() . '/assets/js/gmaps.js', array( 'google-maps-api', 'jquery-cdn' ), false, true );
-	wp_enqueue_script( 'd3', 'http://d3js.org/d3.v3.min.js', false, false, true );	
+	wp_enqueue_script( 'd3', 'http://d3js.org/d3.v3.min.js', false, false, true );
+	wp_enqueue_script( 'd3-nv', get_stylesheet_directory_uri() . '/assets/js/nv.d3.min.js', array( 'd3' ), false, true );
 	wp_enqueue_script( 'bootstrap-js', get_stylesheet_directory_uri() . '/assets/bootstrap/js/bootstrap.min.js', array( 'jquery-cdn' ), false, true );
 	wp_enqueue_script( 'bootstrap-datepicker', get_stylesheet_directory_uri() . '/assets/js/bootstrap-datepicker.js', array( 'jquery-cdn', 'bootstrap-js' ), false, true );
 	wp_enqueue_script( 'bootstrap-timepicker', get_stylesheet_directory_uri() . '/assets/js/bootstrap-timepicker.min.js', array( 'jquery-cdn', 'bootstrap-js' ), false, true );
@@ -231,13 +225,6 @@ function theme_scripts () {
 function ie_theme_scripts () {
 
 	wp_enqueue_script( 'respond', get_template_directory_uri() . '/assets/js/respond/respond.min.js', false, true );
-
-}
-
-// Scripts to only be included in the admin section of the site
-function admin_scripts () {
-
-	//wp_enqueue_script( 'jquery-local', get_template_directory_uri() . '/assets/js/jquery-1.8.3.min.js' );
 
 }
 

@@ -1,14 +1,17 @@
 var App = Backbone.View.extend({
 
 	attributes: {
-		//DATA_SERVER	: "http://api.nccp.local:6227",
-		DATA_SERVER 	: 'http://ec2-54-241-223-209.us-west-1.compute.amazonaws.com:6227'
+		DATA_SERVER	: "http://nccp-api.dev:6227",
+		//DATA_SERVER 	: 'http://ec2-54-241-223-209.us-west-1.compute.amazonaws.com:6227'
 	},
 
 	// Initial view setup - load functions, jQuery UI setup, etc.
 	initialize: function () {
 		var $ = jQuery, // In case $.noConflict was called
 			app = this;
+
+		// Extend a reference to the parent app into every child object
+		$.each( this, function () { $.extend( this, app ) });
 
 		// Ensure every child fn of the view has a reference to the parent
 		_.each( this.__proto__, function( fn ) { fn.app = app; } );
@@ -281,8 +284,8 @@ var App = Backbone.View.extend({
 			var args = app.__.GetSensorInfo();
 
 			if ( args.sensor_ids.length && args.start && args.end ) {
-				// Throw up loading animation
-				if ( ! $('.main-content .loading').length ) $('.main-content').append( nccp.templates.loading );
+				// Throw up loading animation before starting
+				app.__.ShowLoading( $('.main-content') );
 
 				app.__.GetSensorData( args, false, function ( sensor_data, msg ) {
 					if ( sensor_data ) {
@@ -294,7 +297,7 @@ var App = Backbone.View.extend({
 						});
 
 						// Clear out the loading message
-						$('.main-content .loading').remove();
+						app.__.RemoveLoading( $('.main-content') );
 
 						$.each( sensor_data, function ( index ) {
 							// Get sensor info from the last search results
@@ -332,11 +335,69 @@ var App = Backbone.View.extend({
 			var args = app.__.GetSensorInfo();
 
 			if ( args.sensor_ids.length && args.start && args.end ) {
-				app.__.GetSensorData( sensor_ids, true, function ( download_link ) {
+				// Throw up loading animation before starting
+				app.__.ShowLoading( $('.main-content') );
+
+				app.__.GetSensorData( args, true, function ( download_link, msg ) {
+					app.__.RemoveLoading( $('.main-content') );
+
 					if ( download_link ) {
 						app.__.ForceDownload( download_link );
+					} else {
+						app.__.ThrowError( $('.main-content'), msg );
 					}
 				});
+			} else {
+				app.__.ThrowError( $('.data-view-options'), 'Please select at least one sensor.' );
+			}
+		});
+
+		// Graph sensor data
+		$('#data-view-graph').click( function () {
+			// Collect sensor info			
+			var args = app.__.GetSensorInfo();
+
+			if ( args.sensor_ids.length && args.start && args.end ) {
+				// Throw up loading animation before starting
+				app.__.ShowLoading( $('.main-content') );
+
+				app.__.GetSensorData( args, false, function ( sensor_data, msg ) {
+					if ( sensor_data ) {
+						// Clear any errors
+						$('.data-view-options').find( '.error' ).fadeOut( 250, function () {
+							$('.data-view-options').find( '.error' ).hide();
+						});
+
+						// Clear out the loading message
+						app.__.RemoveLoading( $('.main-content') );
+
+						$.each( sensor_data, function ( index ) {
+							// Get sensor info from the last search results
+							// What this is doing: 
+							// Pull all the sensor_ids from the search results -->
+							// Find the index of said sensor_id -->
+							// Grab the sensor's object by the retrieved array index
+							var sensor_info 	= nccp.sensor_search_results[ _.pluck( nccp.sensor_search_results, 'logical_sensor_id' ).indexOf( parseInt( index ) ) ];
+								sensor_id 		= sensor_info.logical_sensor_id,
+								sensor_name 	= sensor_info.name;
+							
+							var nv_formatted = [{
+								values: _.map( this, function ( num, i ) { return { x: new Date( num.timestamp ), y: num.value }; } ),
+								key: sensor_name,
+								color: '#2ca02c'
+							}];
+							
+							app.Graphs.BuildNVLineGraph( nv_formatted, '.data-graphs' );
+						});
+
+						// Hide all the search stuff
+						$('.form-element').hide();
+					} else {
+						app.__.ThrowError( $('.main-content'), msg );
+					}
+				});
+			} else {
+				app.__.ThrowError( $('.data-view-options'), 'Please select at least one sensor.' );
 			}
 		});
 	},
@@ -432,7 +493,12 @@ var App = Backbone.View.extend({
 
 			$.getJSON( app.attributes.DATA_SERVER + '/api/get?callback=?', args, function ( response ) {
 				if ( csv ) {
-					callback( response.download_link ? response.download_link : false );
+					if ( response.download_link ) {
+						callback( response.download_link, null );
+					} else {
+						callback( null, response.msg );
+					}
+					
 				} else {
 					if ( response.num_results > 0 ) {
 						callback( response.sensor_data );
@@ -475,6 +541,15 @@ var App = Backbone.View.extend({
 			$(parent).find( '.error' ).fadeOut( 250, function () {
 				$(parent).find( '.error' ).html( error ).fadeIn( 250 );
 			});
+		},
+
+		// Throw up loading animation
+		ShowLoading: function ( container ) {
+			if ( ! $(container).find('.loading').length ) $(container).append( nccp.templates.loading );
+		},
+
+		RemoveLoading: function ( container ) {
+			$(container).find('.loading').remove();
 		}
 	},
 
@@ -490,6 +565,33 @@ var App = Backbone.View.extend({
 			'#F2CB05',
 			'#6ECAC7'
 		],
+
+		BuildNVLineGraph: function ( data, parent ) {
+			var graphs = this;
+
+			nv.addGraph( function () {  
+				var chart = nv.models.lineChart();
+
+				d3.select(parent).append('svg').style({ 'height': 500 });
+			 
+				chart.xAxis
+			    	.axisLabel( 'Time (ms)' )
+			    	.tickFormat( graphs.FormatGraphDate );
+			 
+				chart.yAxis
+			    	.axisLabel( 'Voltage (v)' )
+			    	.tickFormat(d3.format( '.02f' ));
+			 
+				d3.select(parent).select('svg')
+			    	.datum( data )
+			    	.transition().duration( 500 )
+			    	.call(chart);
+			 
+				nv.utils.windowResize( function () { d3.select(parent).select('svg').call( chart ) });
+			 
+				return chart;
+			});
+		},
 
 		BuildCombinedGraph: function ( data, parent ) {
 			// Base the scale off the first set of data
@@ -552,8 +654,6 @@ var App = Backbone.View.extend({
 			var line = d3.svg.line()
 				.x( function( d, i ) { return x( new Date( d.timestamp ) ); })
 				.y( function( d ) { return -1 * y( d.value ); });
-
-			console.log( this );
 
 			g.append( "svg:path" )
 				.attr( "d", line( data ) )
@@ -634,6 +734,11 @@ var App = Backbone.View.extend({
 				.attr( "y1", function( d ) { return -1 * y( d ) } )
 				.attr( "x2", width - margin )
 				.attr( "y2", function( d ) { return -1 * y( d ) } );
+		},
+
+		FormatGraphDate: function ( timestamp ) {
+			var date = new Date( timestamp ); 
+			return ( date.getMonth() + 1 ) + '/' + date.getDate() + '/' + date.getFullYear();
 		}
 	}
 

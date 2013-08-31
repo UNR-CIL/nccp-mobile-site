@@ -1,13 +1,16 @@
 /* Main Navigation */
 
 header
-	+box-shadow(rgba(0, 0, 0, 0.4) 0 0.2em 0.5em)
-
 	.navbar
 		padding-top: 0
 		background: none
 		margin: 0 auto
 		padding-bottom: 1em
+		background: white
+		+border-radius(0)
+		border: 2px solid $gray-blue
+		border-bottom: none
+		+box-shadow(rgba(0, 0, 0, 0.6) 0 0 4px)
 
 		+breakpoint($breakpoint-max-768)
 			padding-bottom: 6em

@@ -162,23 +162,20 @@ a.btn { text-decoration: none; }
 .modal .close { text-decoration: none; color: white; text-shadow: rgba(0, 0, 0, 0.4) 0 1px 0; opacity: 1; }
 
 /* Page components */
-.container.main { background: white; border-left: 2px solid #434c52; border-right: 2px solid #434c52; }
-
-.main-content { padding: 4%; }
+.main-content { background: white; padding: 4%; border-left: 2px solid #434c52; border-right: 2px solid #434c52; }
 .main-content li { font-weight: 400; line-height: 1.9em; padding-left: 1%; }
 .main-content li:before { content: "\00BB"; color: #73a266; margin-right: 0.3em; font-size: 1.5em; margin-left: -0.7em; }
 
 /* Header */
 header { z-index: 3; }
-header #logo { width: 96%; margin: 0 auto; z-index: 2; }
+header #logo { width: 98%; margin: 0 auto; z-index: 2; }
 
 /* Logo */
 /* Header ribbon */
 #ribbon { width: 13%; margin: 0 3% -10%; z-index: 3; }
 
 /* Main Navigation */
-header { -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0 0.2em 0.5em; -moz-box-shadow: rgba(0, 0, 0, 0.4) 0 0.2em 0.5em; box-shadow: rgba(0, 0, 0, 0.4) 0 0.2em 0.5em; }
-header .navbar { padding-top: 0; background: none; margin: 0 auto; padding-bottom: 1em; }
+header .navbar { padding-top: 0; background: none; margin: 0 auto; padding-bottom: 1em; background: white; -webkit-border-radius: 0; -moz-border-radius: 0; -ms-border-radius: 0; -o-border-radius: 0; border-radius: 0; border: 2px solid #434c52; border-bottom: none; -webkit-box-shadow: rgba(0, 0, 0, 0.6) 0 0 4px; -moz-box-shadow: rgba(0, 0, 0, 0.6) 0 0 4px; box-shadow: rgba(0, 0, 0, 0.6) 0 0 4px; }
 @media (max-width: 768px) { header .navbar { padding-bottom: 6em; } }
 header .navbar .brand { position: absolute; top: 10%; right: 16%; font-size: 1.2em; color: #1e5a12; text-decoration: none; }
 header .navbar .brand:after { content: "\00BB"; font-size: 1.4em; margin-left: 0.1em; top: 0.1em; position: relative; }
@@ -215,7 +212,7 @@ text { font-size: 0.4em; }
 .line { stroke-width: 3; }
 
 /* Footer */
-footer { width: 96%; margin: 0 auto; z-index: 3; }
+footer { z-index: 3; padding: 0 2%; background: white; border-left: 2px solid #434c52; border-right: 2px solid #434c52; }
 footer #footer-content { position: absolute; top: 0; width: 100%; margin: 7% 0 0 2%; }
 footer #footer-content .copyright { color: #c67300; font-weight: 300; }
 @media (max-width: 768px) { footer #footer-content .copyright { font-size: 1em; } }

@@ -35,11 +35,6 @@ var App = Backbone.View.extend({
 		if ( $('.data-selectors').length ) {
 			this.GetData();
 		}
-
-		// Graphs
-		if ( $('.data-graphs').length ) {
-			this.LoadGraphs();
-		}
 	},
 
 	// EVENT BINDINGS //////////////////////////////////
@@ -175,9 +170,12 @@ var App = Backbone.View.extend({
 				count: 20
 			}, function ( sensors ) {
 				if ( sensors.length ) {
-					// Save the sensor list to the global namespace for use elsewhere
+					// Get sensor meta info and save to global list for use later
 					nccp.sensor_search_results = sensors;
-
+					//app.__.GetSensorMeta( sensors, function ( meta ) {
+					//	nccp.sensor_search_results = sensors;
+					//});
+					
 					// Construct sensor list
 					var sensor_list = app.__.BuildSensorList( sensors );
 					$('.data-sensor-search-results .results').append( sensor_list );
@@ -371,6 +369,9 @@ var App = Backbone.View.extend({
 						// Clear out the loading message
 						app.__.RemoveLoading( $('.main-content') );
 
+						// Format the data for inserting into combined graph
+						var formatted = [];
+
 						$.each( sensor_data, function ( index ) {
 							// Get sensor info from the last search results
 							// What this is doing: 
@@ -380,15 +381,23 @@ var App = Backbone.View.extend({
 							var sensor_info 	= nccp.sensor_search_results[ _.pluck( nccp.sensor_search_results, 'logical_sensor_id' ).indexOf( parseInt( index ) ) ];
 								sensor_id 		= sensor_info.logical_sensor_id,
 								sensor_name 	= sensor_info.name;
-							
-							var nv_formatted = [{
+
+							formatted.push({
 								values: _.map( this, function ( num, i ) { return { x: new Date( num.timestamp ), y: num.value }; } ),
 								key: sensor_name,
-								color: '#2ca02c'
-							}];
-							
-							app.Graphs.BuildNVLineGraph( nv_formatted, '.data-graphs' );
+								color: app.Graphs.colors[ index ]
+							});
 						});
+
+						// Append the graph element if it doesn't exist
+						if ( ! $('.data-graphs svg').length ) {
+							d3.select('.data-graphs').append('svg').style({ 'height': 500 });
+						}
+						
+						// Build the resulting graphs
+						//app.Graphs.BuildNVLineGraph( formatted, '.data-graphs svg', 'Time' );
+						//app.Graphs.BuildNVBarGraph( formatted, '.data-graphs svg', 'Time' );
+						app.Graphs.BuildNVScatterGraph( formatted, '.data-graphs svg', 'Time' );
 
 						// Hide all the search stuff
 						$('.form-element').hide();
@@ -402,10 +411,6 @@ var App = Backbone.View.extend({
 		});
 	},
 
-	LoadGraphs: function () {
-
-	},
-
 	// Functionality ///////////////////////////////////
 
 	/////////////////////////////////////////////////////////////////
@@ -413,6 +418,11 @@ var App = Backbone.View.extend({
 	/////////////////////////////////////////////////////////////////
 
 	__: {
+		// Retrieve meta info about array of sensors (units, deployment, etc.)
+		GetSensorMeta: function ( sensors, callback ) {
+
+		},
+
 		GetSensorInfo: function () {
 			var args = {
 					sensor_ids: [],
@@ -566,174 +576,75 @@ var App = Backbone.View.extend({
 			'#6ECAC7'
 		],
 
-		BuildNVLineGraph: function ( data, parent ) {
+		BuildNVLineGraph: function ( data, container, xLabel, yLabel ) {
 			var graphs = this;
 
 			nv.addGraph( function () {  
 				var chart = nv.models.lineChart();
 
-				d3.select(parent).append('svg').style({ 'height': 500 });
+				chart.margin({top:50, right:50, bottom:50, left:75});
 			 
 				chart.xAxis
-			    	.axisLabel( 'Time (ms)' )
+			    	.axisLabel( xLabel )
 			    	.tickFormat( graphs.FormatGraphDate );
 			 
 				chart.yAxis
 			    	.axisLabel( 'Voltage (v)' )
 			    	.tickFormat(d3.format( '.02f' ));
-			 
-				d3.select(parent).select('svg')
+
+				d3.select( container )
 			    	.datum( data )
 			    	.transition().duration( 500 )
-			    	.call(chart);
+			    	.call( chart );
 			 
-				nv.utils.windowResize( function () { d3.select(parent).select('svg').call( chart ) });
+				nv.utils.windowResize( function () { d3.select( container ).call( chart ) });
 			 
 				return chart;
 			});
 		},
 
-		BuildCombinedGraph: function ( data, parent ) {
-			// Base the scale off the first set of data
-			var first = data[ Object.keys( data )[ 0 ] ];
+		BuildNVBarGraph: function ( data, container, xLabel, yLabel ) {
+			var graphs = this;
 
-			// Figure out who has the min and max values
-			var min = d3.min( first, function ( d ) { return d.value; } ),
-				max = d3.max( first, function ( d ) { return d.value; } )
+			nv.addGraph( function () {
+				var chart = nv.models.multiBarChart();
 
-			$.each( data, function () {
-				var thisMin = d3.min( this, function ( d ) { return d.value; } ),
-					thisMax = d3.max( this, function ( d ) { return d.value; } )
+				chart.xAxis
+					.tickFormat( graphs.FormatGraphDate );
 
-				if ( thisMin < min ) min = thisMin;
-				if ( thisMax > max ) max = thisMax;
+				chart.yAxis
+					.tickFormat( d3.format( ',.1f' ) );
+
+				d3.select( container )
+					.datum( data )
+					.transition().duration( 500 )
+					.call( chart );
+
+				nv.utils.windowResize( chart.update );
+
+				return chart;
 			});
-
-			// Graph width is calculated using window width because this is pretty much
-			// the only thing that will ALWAYS return a consistent value
-			var w = Math.floor( $(window).width() * 0.7 ),
-				h = Math.floor( $(window).height() / 3 ),
-				margin = 40,
-				start = new Date( first[0].timestamp ),
-				end = new Date( first[first.length - 1].timestamp ),
-				y = d3.scale.linear().domain([ min, max ]).range([0 + margin, h - margin]),
-				x = d3.scale.linear().domain([ start, end ]).range([0 + margin, w - margin]);
-
-			var g = d3.select( parent ).append("svg:g").attr("transform", "translate(0, " + h + ")");
-
-			// Calculate the actual data line and append to the graph
-			var line = d3.svg.line()
-				.x( function( d, i ) { return x( new Date( d.timestamp ) ); })
-				.y( function( d ) { return -1 * y( d.value ); });
-
-			$.each( data, function ( i ) {
-				g.append( "svg:path" )
-					.attr( "d", line( this ) )
-					.attr( "class", "line" )
-					.style( "stroke", colorSwatch[ i % colorSwatch.length ] );
-			});	
-
-			// Append axis boundaries
-			build_graph_axes( x, y, w, h, margin, g );
 		},
 
-		BuildLineGraph: function ( data, parent, index ) {
-			// Graph width is calculated using window width because this is pretty much
-			// the only thing that will ALWAYS return a consistent value
-			var w = Math.floor( $(window).width() * 0.7 ),
-				h = Math.floor( $(window).height() / 3 ),
-				margin = 40,
-				start = new Date( data[0].timestamp ),
-				end = new Date( data[data.length - 1].timestamp ),
-				y = d3.scale.linear().domain([d3.min(data, function ( d ) { return d.value; }), d3.max(data, function ( d ) { return d.value; })]).range([ 0 + margin, h - margin ]),
-				x = d3.scale.linear().domain([ start, end ]).range([0 + margin, w - margin]);
+		BuildNVScatterGraph: function ( data, container, xLabel, yLabel ) {
+			nv.addGraph(function() {
+				var chart = nv.models.scatterChart()
+					.showDistX( true )
+					.showDistY( true )
+					.color( d3.scale.category10().range() );
 
-			var g = d3.select( parent ).append("svg:g").attr("transform", "translate(0, " + h + ")");
+				chart.xAxis.tickFormat( d3.format( '.02f' ) )
+				chart.yAxis.tickFormat( d3.format( '.02f' ) )
 
-			// Calculate the actual data line and append to the graph
-			var line = d3.svg.line()
-				.x( function( d, i ) { return x( new Date( d.timestamp ) ); })
-				.y( function( d ) { return -1 * y( d.value ); });
+				d3.select( container )
+					.datum( data )
+					.transition().duration( 500 )
+					.call( chart );
 
-			g.append( "svg:path" )
-				.attr( "d", line( data ) )
-				.attr( "class", "line" )
-				.style( "stroke", this.colors[ index % this.colors.length ] );
+				nv.utils.windowResize( chart.update );
 
-			// Append axis boundaries
-			this.BuildGraphAxes( x, y, w, h, margin, g );
-		},
-
-		BuildGraphAxes: function ( x, y, width, height, margin, graph ) {
-			graph.append( "svg:line" )
-				.attr( "class", "boundary" )
-				.attr( "x1", margin )
-				.attr( "y1", 0 )
-				.attr( "x2", width - margin )
-				.attr( "y2", 0 );
-
-			graph.append( "svg:line" )
-				.attr( "class", "boundary" )
-				.attr( "x1", margin )
-				.attr( "y1", -height )
-				.attr( "x2", width - margin )
-				.attr( "y2", -height );
-			 
-			graph.append( "svg:line" )
-				.attr( "class", "boundary" )
-				.attr( "x1", margin )
-				.attr( "y1", 0 )
-				.attr( "x2", margin )
-				.attr( "y2", -height );
-
-			graph.append("svg:line" )
-				.attr( "class", "boundary" )
-				.attr( "x1", width - margin )
-				.attr( "y1", 0 )
-				.attr( "x2", width - margin )
-				.attr( "y2", -height );
-			
-			// Append tick labels
-			graph.selectAll( ".xLabel" )
-				.data( x.ticks( 5 ) )
-				.enter().append( "svg:text" )
-				.attr( "class", "xLabel" )
-				.text( function ( v ) { 
-					var date = new Date( v ); 
-					return date.getFullYear() + '-' + ( date.getMonth() + 1 ) + '-' + date.getDate() + ' ' + 
-						date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
-				})
-				.attr( "x", function( d ) { return x( d ) })
-				.attr( "y", 30 )
-				.attr( "text-anchor", "middle" )
-
-			graph.selectAll( ".xLines" )
-				.data( x.ticks( 5 ) )
-				.enter().append( "svg:line" )
-				.attr( "class", "xLines" )
-				.attr( "x1", function ( d ) { return x( d ); } )
-				.attr( "y1", 0 )
-				.attr( "x2", function ( d ) { return x( d ); } )
-				.attr( "y2", -height );
-
-			graph.selectAll( ".yLabel" )
-				.data( y.ticks( 5 ) )
-				.enter().append( "svg:text" )
-				.attr( "class", "yLabel" )
-				.text( function ( v ) { return parseFloat( v ); } )
-				.attr( "x", 0 )
-				.attr( "y", function( d ) { return -1 * y( d ) } )
-				.attr( "text-anchor", "left" )
-				.attr( "dy", 4 );
-
-			graph.selectAll( ".yLines" )
-				.data( y.ticks( 5 ) )
-				.enter().append( "svg:line" )
-				.attr( "class", "yLines" )
-				.attr( "x1", margin )
-				.attr( "y1", function( d ) { return -1 * y( d ) } )
-				.attr( "x2", width - margin )
-				.attr( "y2", function( d ) { return -1 * y( d ) } );
+				return chart;
+			});
 		},
 
 		FormatGraphDate: function ( timestamp ) {

@@ -170,81 +170,81 @@ var App = Backbone.View.extend({
 				count: 20
 			}, function ( sensors ) {
 				if ( sensors.length ) {
-					// Get sensor meta info and save to global list for use later
+					// Save sensor result info for use later - GetSensorMeta can be called to get more detailed info if needed
 					nccp.sensor_search_results = sensors;
-					//app.__.GetSensorMeta( sensors, function ( meta ) {
-					//	nccp.sensor_search_results = sensors;
-					//});
 					
 					// Construct sensor list
 					var sensor_list = app.__.BuildSensorList( sensors );
 					$('.data-sensor-search-results .results').append( sensor_list );
 
 					$('.data-selectors').fadeOut( 250, function () {
-						// Fade in results and filtering options
-						$('.data-sensor-search-results, .data-filter-date-time, .data-filter-time-interval, .data-view-options').fadeIn( 250 );
-
-						// Bind events for choosing date/time filtering
-						$('#data-filter-date').click( function () {
-							$('.filter-date').slideToggle();
-						});
-
-						$('#data-filter-time').click( function () {
-							$('.filter-time').slideToggle();
-						});
-
-						// Bind date/time pickers
-						$('#date-start, #date-end').datepicker({ 
-							autoclose: false,
-							template: 'modal'
-						});
-						$('#date-start').datepicker().on( 'changeDate', function( e ) {
-							$('#date-start').text( $('#date-start').data('date') );
-						});
-						$('#date-end').datepicker().on( 'changeDate', function( e ) {
-							$('#date-end').text( $('#date-end').data('date') );
-						});
-
-						// Tag the datepickers so they can be styled separately
-						$('#date-start').data( 'datepicker' ).picker.addClass( 'start' );
-						$('#date-end').data( 'datepicker' ).picker.addClass( 'end' );
-
-						var timepicker = $('#time').timepicker({
-							defaultTime: '00:00',
-							showMeridian: false,
-							template: 'modal',
-							modalBackdrop: true
-						});
-						$('.bootstrap-timepicker-widget').removeClass( 'hide' );
-						timepicker.click( function () {							
-							$(this).timepicker( 'showWidget' );							
-						});
-						timepicker.timepicker().on('changeTime.timepicker', function(e) {
-							timepicker.text( e.time.value );
-						});
-
-						// Hook up interval picking
-						$( '#data-filter-interval-modal' ).on( 'show.bs.modal', function () {
-							var active = _.filter( $('#data-filter-interval-modal a'), function ( element ) {
-								return $(element).text() == $('#interval-picker-trigger').text();
+						// Bind events, but only if they haven't been bound already
+						if ( ! nccp.form_reset ) {
+							// Bind events for choosing date/time filtering
+							$('#data-filter-date').click( function () {
+								$('.filter-date').slideToggle();
 							});
 
-							$('#data-filter-interval-modal .active').removeClass( 'active' );
-							$(active).addClass( 'active' );
-						});
-						$('#data-filter-interval-modal a').click( function ( event ) {
-							event.preventDefault();
+							$('#data-filter-time').click( function () {
+								$('.filter-time').slideToggle();
+							});
 
-							$('#interval-picker-trigger').text( $(this).text() );
-							$('#data-filter-interval-modal .active').removeClass( 'active' );
-							$(this).addClass( 'active' );
-							$('#data-filter-interval-modal').modal( 'hide' );
-						});
+							// Bind date/time pickers
+							$('#date-start, #date-end').datepicker({ 
+								autoclose: false,
+								template: 'modal'
+							});
+							$('#date-start').datepicker().on( 'changeDate', function( e ) {
+								$('#date-start').text( $('#date-start').data('date') );
+							});
+							$('#date-end').datepicker().on( 'changeDate', function( e ) {
+								$('#date-end').text( $('#date-end').data('date') );
+							});
 
-						// Link up the reset button
-						$('#data-sensor-search-reset').click( function () {
-							app.__.ResetDataSearch();
-						});
+							// Tag the datepickers so they can be styled separately
+							$('#date-start').data( 'datepicker' ).picker.addClass( 'start' );
+							$('#date-end').data( 'datepicker' ).picker.addClass( 'end' );
+
+							var timepicker = $('#time').timepicker({
+								defaultTime: '00:00',
+								showMeridian: false,
+								template: 'modal',
+								modalBackdrop: true
+							});
+							$('.bootstrap-timepicker-widget').removeClass( 'hide' );
+							timepicker.click( function () {							
+								$(this).timepicker( 'showWidget' );							
+							});
+							timepicker.timepicker().on('changeTime.timepicker', function(e) {
+								timepicker.text( e.time.value );
+							});
+
+							// Hook up interval picking
+							$( '#data-filter-interval-modal' ).on( 'show.bs.modal', function () {
+								var active = _.filter( $('#data-filter-interval-modal a'), function ( element ) {
+									return $(element).text() == $('#interval-picker-trigger').text();
+								});
+
+								$('#data-filter-interval-modal .active').removeClass( 'active' );
+								$(active).addClass( 'active' );
+							});
+							$('#data-filter-interval-modal a').click( function ( event ) {
+								event.preventDefault();
+
+								$('#interval-picker-trigger').text( $(this).text() );
+								$('#data-filter-interval-modal .active').removeClass( 'active' );
+								$(this).addClass( 'active' );
+								$('#data-filter-interval-modal').modal( 'hide' );
+							});
+
+							// Link up the reset button
+							$('#data-sensor-search-reset').click( function () {
+								app.__.ResetDataSearch();
+							});
+						}						
+
+						// Show everything
+						$('.data-sensor-search-results, .data-filter-date-time, .data-filter-time-interval, .data-view-options').fadeIn( 250 );
 						$('.data-search-reset').fadeIn( 250 );
 					});
 				} else {
@@ -359,52 +359,57 @@ var App = Backbone.View.extend({
 				// Throw up loading animation before starting
 				app.__.ShowLoading( $('.main-content') );
 
-				app.__.GetSensorData( args, false, function ( sensor_data, msg ) {
-					if ( sensor_data ) {
-						// Clear any errors
-						$('.data-view-options').find( '.error' ).fadeOut( 250, function () {
-							$('.data-view-options').find( '.error' ).hide();
-						});
-
-						// Clear out the loading message
-						app.__.RemoveLoading( $('.main-content') );
-
-						// Format the data for inserting into combined graph
-						var formatted = [];
-
-						$.each( sensor_data, function ( index ) {
-							// Get sensor info from the last search results
-							// What this is doing: 
-							// Pull all the sensor_ids from the search results -->
-							// Find the index of said sensor_id -->
-							// Grab the sensor's object by the retrieved array index
-							var sensor_info 	= nccp.sensor_search_results[ _.pluck( nccp.sensor_search_results, 'logical_sensor_id' ).indexOf( parseInt( index ) ) ];
-								sensor_id 		= sensor_info.logical_sensor_id,
-								sensor_name 	= sensor_info.name;
-
-							formatted.push({
-								values: _.map( this, function ( num, i ) { return { x: new Date( num.timestamp ), y: num.value }; } ),
-								key: sensor_name,
-								color: app.Graphs.colors[ index ]
+				// Fetch meta info about the sensor
+				app.__.GetSensorMeta( args.sensor_ids, function ( meta, msg ) {
+					
+					// Then fetch the sensor data itself
+					app.__.GetSensorData( args, false, function ( sensor_data, msg ) {
+						if ( sensor_data ) {
+							// Clear any errors
+							$('.data-view-options').find( '.error' ).fadeOut( 250, function () {
+								$('.data-view-options').find( '.error' ).hide();
 							});
-						});
 
-						// Append the graph element if it doesn't exist
-						if ( ! $('.data-graphs svg').length ) {
-							d3.select('.data-graphs').append('svg').style({ 'height': 500 });
+							// Clear out the loading message
+							app.__.RemoveLoading( $('.main-content') );
+
+							// Format the data for inserting into combined graph
+							var formatted = [],
+								count = 0;
+
+							$.each( sensor_data, function ( index ) {
+								// Collect the sensor from the retrieved meta info 
+								var sensor_info = meta[ index ];
+
+								formatted.push({
+									values: _.map( this, function ( num, i ) { return { x: new Date( num.timestamp ), y: num.value }; } ),
+									key: sensor_info.property_name + ' - ' + sensor_info.type_name,
+									color: app.Graphs.colors[ count ],
+									yLabel: sensor_info.abbreviation + ' (' + sensor_info.unit_name + ')'
+								});
+
+								count++;
+							});
+
+							// Append the graph element if it doesn't exist
+							if ( ! $('.data-graphs svg').length ) {
+								d3.select('.data-graphs').append('svg').style({ 'height': 500 });
+							}
+							
+							// Build the resulting graphs - note that the Y label is taken from the first returned sensor
+							//app.Graphs.BuildNVLineGraph( formatted, '.data-graphs svg', 'Time', formatted[0].yLabel );
+							//app.Graphs.BuildNVBarGraph( formatted, '.data-graphs svg', 'Time', formatted[0].yLabel );
+							//app.Graphs.BuildNVScatterGraph( formatted, '.data-graphs svg', 'Time', formatted[0].yLabel );
+							app.Graphs.BuildNVStackedArea( formatted, '.data-graphs svg', 'Time', formatted[0].yLabel );
+
+
+							// Hide all the search stuff
+							$('.form-element').hide();
+						} else {
+							app.__.ThrowError( $('.main-content'), msg );
 						}
-						
-						// Build the resulting graphs
-						//app.Graphs.BuildNVLineGraph( formatted, '.data-graphs svg', 'Time' );
-						//app.Graphs.BuildNVBarGraph( formatted, '.data-graphs svg', 'Time' );
-						app.Graphs.BuildNVScatterGraph( formatted, '.data-graphs svg', 'Time' );
-
-						// Hide all the search stuff
-						$('.form-element').hide();
-					} else {
-						app.__.ThrowError( $('.main-content'), msg );
-					}
-				});
+					});
+				});		
 			} else {
 				app.__.ThrowError( $('.data-view-options'), 'Please select at least one sensor.' );
 			}
@@ -420,7 +425,15 @@ var App = Backbone.View.extend({
 	__: {
 		// Retrieve meta info about array of sensors (units, deployment, etc.)
 		GetSensorMeta: function ( sensors, callback ) {
-
+			if ( sensors.length ) {
+				$.getJSON( this.app.attributes.DATA_SERVER + '/api/get/sensor-info?callback=?', { sensor_ids: sensors }, function ( meta ) {
+					if ( meta.msg ) {
+						callback( null, meta.msg );
+					} else {
+						callback( meta, null );
+					}
+				});
+			}
 		},
 
 		GetSensorInfo: function () {
@@ -524,7 +537,10 @@ var App = Backbone.View.extend({
 			$('.data-output .data-tables, .data-output .data-graphs, .data-sensor-search-results .results').empty();
 			$('.data-search-reset').hide();
 
-			$('.data-selectors').fadeIn( 250 );	
+			$('.data-selectors').fadeIn( 250 );
+
+			// Keep track of the fact that the form was reset so we don't bind events twice
+			nccp.form_reset = true;
 		},
 
 		// Force download of CSV
@@ -582,20 +598,20 @@ var App = Backbone.View.extend({
 			nv.addGraph( function () {  
 				var chart = nv.models.lineChart();
 
-				chart.margin({top:50, right:50, bottom:50, left:75});
+				chart.margin({ top: 50, right: 50, bottom: 50, left: 75 });
 			 
 				chart.xAxis
-			    	.axisLabel( xLabel )
-			    	.tickFormat( graphs.FormatGraphDate );
+					.axisLabel( xLabel )
+					.tickFormat( graphs.FormatGraphDate );
 			 
 				chart.yAxis
-			    	.axisLabel( 'Voltage (v)' )
-			    	.tickFormat(d3.format( '.02f' ));
+					.axisLabel( yLabel )
+					.tickFormat( d3.format( '.02f' ) );
 
 				d3.select( container )
-			    	.datum( data )
-			    	.transition().duration( 500 )
-			    	.call( chart );
+					.datum( data )
+					.transition().duration( 500 )
+					.call( chart );
 			 
 				nv.utils.windowResize( function () { d3.select( container ).call( chart ) });
 			 
@@ -609,10 +625,14 @@ var App = Backbone.View.extend({
 			nv.addGraph( function () {
 				var chart = nv.models.multiBarChart();
 
+				chart.margin({ top: 50, right: 50, bottom: 50, left: 75 });
+
 				chart.xAxis
+					.axisLabel( xLabel )
 					.tickFormat( graphs.FormatGraphDate );
 
 				chart.yAxis
+					.axisLabel( yLabel )
 					.tickFormat( d3.format( ',.1f' ) );
 
 				d3.select( container )
@@ -627,14 +647,23 @@ var App = Backbone.View.extend({
 		},
 
 		BuildNVScatterGraph: function ( data, container, xLabel, yLabel ) {
+			var graphs = this;
+
 			nv.addGraph(function() {
 				var chart = nv.models.scatterChart()
 					.showDistX( true )
 					.showDistY( true )
 					.color( d3.scale.category10().range() );
 
-				chart.xAxis.tickFormat( d3.format( '.02f' ) )
-				chart.yAxis.tickFormat( d3.format( '.02f' ) )
+				chart.margin({ top: 50, right: 50, bottom: 50, left: 75 });
+
+				chart.xAxis
+					.axisLabel( xLabel )
+					.tickFormat( graphs.FormatGraphDate );
+
+				chart.yAxis
+					.axisLabel( yLabel )
+					.tickFormat( d3.format( '.02f' ) )
 
 				d3.select( container )
 					.datum( data )
@@ -643,6 +672,43 @@ var App = Backbone.View.extend({
 
 				nv.utils.windowResize( chart.update );
 
+				return chart;
+			});
+		},
+
+		BuildNVStackedArea: function ( data, container, xLabel, yLabel ) {
+			var graphs = this;
+
+			// Stacked area requires each subarray have the same length, so we have to find the min
+			// and splice out any elements longer than that from the others
+			var min = _.min( data, function ( sensor ) { return sensor.values.length; } );
+			$.each( data, function () { 
+				if ( this.values.length > min.values.length ) {
+					this.values.splice( min.values.length, this.values.length - min.values.length );
+				} 
+			});
+
+			nv.addGraph(function() {
+				var chart = nv.models.stackedAreaChart()
+					.x( function( d ) { return d.x; } )
+					.y( function( d ) { return d.y; } )
+					.clipEdge(true);
+ 
+				chart.xAxis
+					.axisLabel( xLabel )
+					.tickFormat( graphs.FormatGraphDate );
+ 
+				chart.yAxis
+					.axisLabel( yLabel )
+					.tickFormat( d3.format( ',.2f' ) );
+ 
+				d3.select( container )
+					.datum( data )
+					.transition().duration( 500 )
+					.call( chart );
+ 
+				nv.utils.windowResize( chart.update );
+ 
 				return chart;
 			});
 		},

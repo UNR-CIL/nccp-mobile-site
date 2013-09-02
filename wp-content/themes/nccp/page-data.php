@@ -46,11 +46,11 @@ get_header(); ?>
 								<h2 class="thwomp up">Sensor Properties</h2>
 								
 								<div class="data-properties data-list">
-								    <fieldset>
-									   <?php foreach ( $properties as $p ) { ?>
-									   <label><input type="checkbox" value="<?php echo $p->property_id; ?>" /> <?php echo $p->name; ?> </label>
-									   <?php } ?>
-								    </fieldset>
+									<fieldset>
+										<?php foreach ( $properties as $p ) { ?>
+										<label><input type="checkbox" value="<?php echo $p->property_id; ?>" /> <?php echo $p->name; ?> </label>
+										<?php } ?>
+									</fieldset>
 								</div>								
 							</div>
 							
@@ -58,11 +58,11 @@ get_header(); ?>
 								<h2 class="thwomp up">Sensor Sites</h2>
 								
 								<div class="data-sites data-list">
-								    <fieldset >
-									   <?php foreach ( $sites as $s ) { ?>
-									   <label><input type="checkbox" name="data-sites" id="data-sites" value="<?php echo $s->site_id; ?>" /> <?php echo $s->site_name; ?> </label>
-									   <?php } ?>
-								    </fieldset>
+									<fieldset >
+										<?php foreach ( $sites as $s ) { ?>
+										<label><input type="checkbox" name="data-sites" id="data-sites" value="<?php echo $s->site_id; ?>" /> <?php echo $s->site_name; ?> </label>
+										<?php } ?>
+									</fieldset>
 								</div>
 							</div>
 
@@ -70,11 +70,11 @@ get_header(); ?>
 								<h2 class="thwomp up">Measurement Types</h2>
 								
 								<div class="data-measurements-types data-list">
-								    <fieldset>									   
-									   <?php foreach ( $types as $t ) { ?>
-									   <label><input type="checkbox" value="<?php echo $t->type_id; ?>" /> <?php echo $t->name; ?> </label>
-									   <?php } ?>
-								    </fieldset>
+									<fieldset>										
+										<?php foreach ( $types as $t ) { ?>
+										<label><input type="checkbox" value="<?php echo $t->type_id; ?>" /> <?php echo $t->name; ?> </label>
+										<?php } ?>
+									</fieldset>
 								</div>
 							</div>
 
@@ -146,6 +146,23 @@ get_header(); ?>
 						<input type="button" class="data-button btn" id="data-view-graph" value="Graph Data">
 						<input type="button" class="data-button btn" id="data-view-download" value="Download Data">
 					</div>
+				</div>
+
+				<!-- Graph types -->
+
+				<div class="data-graph-types form-element">
+					<p>
+						Graph types:
+					</p>
+
+					<fieldset>
+						<label><input type="checkbox" value="line"> Line graph</label>
+						<label><input type="checkbox" value="bar"> Bar graph</label>
+						<label><input type="checkbox" value="scatter"> Scatter graph</label>
+						<label><input type="checkbox" value="stacked"> Stacked area graph</label>
+					</fieldset>
+
+					<a id="data-get-graphs" href="#" class="btn btn-primary btn-large no-underline">Graph Data</a>
 				</div>
 
 				<!-- Reset button -->

@@ -352,67 +352,34 @@ var App = Backbone.View.extend({
 
 		// Graph sensor data
 		$('#data-view-graph').click( function () {
-			// Collect sensor info			
-			var args = app.__.GetSensorInfo();
+			// Display available graph types
+			$('.data-graph-types').fadeIn( 250, function () {
+				// Bind graphing event handling
+				$('#data-get-graphs').click( function ( event ) {
+					event.preventDefault();
 
-			if ( args.sensor_ids.length && args.start && args.end ) {
-				// Throw up loading animation before starting
-				app.__.ShowLoading( $('.main-content') );
+					// Get the chart types to produce + sensors to chart
+					var types = _.map( $('.data-graph-types input:checked'), function ( el ) { return $(el).val(); } ),
+						args = app.__.GetSensorInfo();
 
-				// Fetch meta info about the sensor
-				app.__.GetSensorMeta( args.sensor_ids, function ( meta, msg ) {
-					
-					// Then fetch the sensor data itself
-					app.__.GetSensorData( args, false, function ( sensor_data, msg ) {
-						if ( sensor_data ) {
-							// Clear any errors
-							$('.data-view-options').find( '.error' ).fadeOut( 250, function () {
-								$('.data-view-options').find( '.error' ).hide();
-							});
+					// Throw appropriate errors if both are empty
+					if ( ! args.sensor_ids.length ) {
+						app.__.ThrowError( $('.data-view-options'), 'Please select at least one sensor.' );
+						return false;
+					}
+					if ( ! args.start || ! args.end ) {
+						app.__.ThrowError( $('.data-view-options'), 'Please select a valid start and end period.' );
+						return false;
+					}
+					if ( ! types.length ) {
+						app.__.ThrowError( $('.data-view-options'), 'Please select at least one graph type.' );
+						return false;
+					}
 
-							// Clear out the loading message
-							app.__.RemoveLoading( $('.main-content') );
-
-							// Format the data for inserting into combined graph
-							var formatted = [],
-								count = 0;
-
-							$.each( sensor_data, function ( index ) {
-								// Collect the sensor from the retrieved meta info 
-								var sensor_info = meta[ index ];
-
-								formatted.push({
-									values: _.map( this, function ( num, i ) { return { x: new Date( num.timestamp ), y: num.value }; } ),
-									key: sensor_info.property_name + ' - ' + sensor_info.type_name,
-									color: app.Graphs.colors[ count ],
-									yLabel: sensor_info.abbreviation + ' (' + sensor_info.unit_name + ')'
-								});
-
-								count++;
-							});
-
-							// Append the graph element if it doesn't exist
-							if ( ! $('.data-graphs svg').length ) {
-								d3.select('.data-graphs').append('svg').style({ 'height': 500 });
-							}
-							
-							// Build the resulting graphs - note that the Y label is taken from the first returned sensor
-							//app.Graphs.BuildNVLineGraph( formatted, '.data-graphs svg', 'Time', formatted[0].yLabel );
-							//app.Graphs.BuildNVBarGraph( formatted, '.data-graphs svg', 'Time', formatted[0].yLabel );
-							//app.Graphs.BuildNVScatterGraph( formatted, '.data-graphs svg', 'Time', formatted[0].yLabel );
-							app.Graphs.BuildNVStackedArea( formatted, '.data-graphs svg', 'Time', formatted[0].yLabel );
-
-
-							// Hide all the search stuff
-							$('.form-element').hide();
-						} else {
-							app.__.ThrowError( $('.main-content'), msg );
-						}
-					});
-				});		
-			} else {
-				app.__.ThrowError( $('.data-view-options'), 'Please select at least one sensor.' );
-			}
+					// If everything is cool, send the graph request
+					app.Graphs.BuildGraphs( args, types );
+				});
+			});
 		});
 	},
 
@@ -592,6 +559,69 @@ var App = Backbone.View.extend({
 			'#6ECAC7'
 		],
 
+		BuildGraphs: function ( args, types ) {
+			var app = this;
+
+			// Throw up loading animation before starting
+			app.__.ShowLoading( $('.main-content') );
+
+			// Fetch meta info about the sensor
+			app.__.GetSensorMeta( args.sensor_ids, function ( meta, msg ) {
+				
+				// Then fetch the sensor data itself
+				app.__.GetSensorData( args, false, function ( sensor_data, msg ) {
+					if ( sensor_data ) {
+						// Clear any errors
+						$('.data-view-options').find( '.error' ).fadeOut( 250, function () {
+							$('.data-view-options').find( '.error' ).hide();
+						});
+
+						// Clear out the loading message
+						app.__.RemoveLoading( $('.main-content') );
+
+						// Format the data for inserting into combined graph
+						var formatted = [],
+							count = 0;
+
+						$.each( sensor_data, function ( index ) {
+							// Collect the sensor from the retrieved meta info 
+							var sensor_info = meta[ index ];
+
+							formatted.push({
+								values: _.map( this, function ( num, i ) { return { x: new Date( num.timestamp ), y: num.value }; } ),
+								key: sensor_info.property_name + ' - ' + sensor_info.type_name,
+								color: app.colors[ count ],
+								yLabel: sensor_info.abbreviation + ' (' + sensor_info.unit_name + ')'
+							});
+
+							count++;
+						});
+						
+						// Build the graphs with the formatted data
+						$.each( types, function () {
+							// Append a graph element for the graph
+							d3.select('.data-graphs').append('svg')
+								.attr( 'class', this )
+								.style({ 'height': 500 });
+
+							// Build the resulting graphs - note that the Y label is taken from the first returned sensor
+							switch ( this.toString() ) {
+								case 'line': 	app.BuildNVLineGraph( formatted, '.data-graphs svg.line', 'Time', formatted[0].yLabel ); 		break;
+								case 'bar': 	app.BuildNVBarGraph( formatted, '.data-graphs svg.bar', 'Time', formatted[0].yLabel ); 			break;
+								case 'scatter': app.BuildNVScatterGraph( formatted, '.data-graphs svg.scatter', 'Time', formatted[0].yLabel ); 	break;
+								case 'stacked': app.BuildNVStackedArea( formatted, '.data-graphs svg.stacked', 'Time', formatted[0].yLabel ); 	break;
+							}
+						});
+
+						// Hide all the search stuff
+						$('.form-element').hide();
+					} else {
+						app.__.ThrowError( $('.main-content'), msg );
+					}
+				});
+			});
+		},
+
 		BuildNVLineGraph: function ( data, container, xLabel, yLabel ) {
 			var graphs = this;
 
@@ -693,6 +723,8 @@ var App = Backbone.View.extend({
 					.x( function( d ) { return d.x; } )
 					.y( function( d ) { return d.y; } )
 					.clipEdge(true);
+
+				chart.margin({ top: 50, right: 50, bottom: 50, left: 75 });
  
 				chart.xAxis
 					.axisLabel( xLabel )

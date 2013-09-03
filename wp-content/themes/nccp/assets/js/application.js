@@ -566,8 +566,7 @@ var App = Backbone.View.extend({
 			app.__.ShowLoading( $('.main-content') );
 
 			// Fetch meta info about the sensor
-			app.__.GetSensorMeta( args.sensor_ids, function ( meta, msg ) {
-				
+			app.__.GetSensorMeta( args.sensor_ids, function ( meta, msg ) {				
 				// Then fetch the sensor data itself
 				app.__.GetSensorData( args, false, function ( sensor_data, msg ) {
 					if ( sensor_data ) {
@@ -587,11 +586,20 @@ var App = Backbone.View.extend({
 							// Collect the sensor from the retrieved meta info 
 							var sensor_info = meta[ index ];
 
+							// Then figure out what data precision to display.  The database will not return a standard precision so
+							// this has to be established before graphing.  Use only a sample of the data set because the set may be
+							// large (>100k).
+							var sample = this.slice(0, 100),
+								max_precision = _.max( sample, function ( num ) { var val = num.value.toString().split( '.' ); return val.length > 1 ? val[1].length : 0; } ),
+								max_split = max_precision.value.toString().split('.'),
+								precision = max_split.length > 1 ? max_split[1].length : 0;
+
 							formatted.push({
 								values: _.map( this, function ( num, i ) { return { x: new Date( num.timestamp ), y: num.value }; } ),
 								key: sensor_info.property_name + ' - ' + sensor_info.type_name,
 								color: app.colors[ count ],
-								yLabel: sensor_info.abbreviation + ' (' + sensor_info.unit_name + ')'
+								yLabel: sensor_info.abbreviation + ' (' + sensor_info.unit_name + ')',
+								precision: precision
 							});
 
 							count++;
@@ -636,7 +644,7 @@ var App = Backbone.View.extend({
 			 
 				chart.yAxis
 					.axisLabel( yLabel )
-					.tickFormat( d3.format( '.02f' ) );
+					.tickFormat( d3.format( '.0' + data.precision + 'f' ) );
 
 				d3.select( container )
 					.datum( data )
@@ -663,7 +671,7 @@ var App = Backbone.View.extend({
 
 				chart.yAxis
 					.axisLabel( yLabel )
-					.tickFormat( d3.format( ',.1f' ) );
+					.tickFormat( d3.format( '.0' + data.precision + 'f' ) );
 
 				d3.select( container )
 					.datum( data )
@@ -693,7 +701,7 @@ var App = Backbone.View.extend({
 
 				chart.yAxis
 					.axisLabel( yLabel )
-					.tickFormat( d3.format( '.02f' ) )
+					.tickFormat( d3.format( '.0' + data.precision + 'f' ) )
 
 				d3.select( container )
 					.datum( data )
@@ -732,7 +740,7 @@ var App = Backbone.View.extend({
  
 				chart.yAxis
 					.axisLabel( yLabel )
-					.tickFormat( d3.format( ',.2f' ) );
+					.tickFormat( d3.format( '.0' + data.precision + 'f' ) );
  
 				d3.select( container )
 					.datum( data )

@@ -46,7 +46,7 @@ label
 	+border-radius(4px)
 	position: absolute
 	left: -2em
-	top: -0.2em
+	top: -0.4em
 	cursor: pointer
 	+box-shadow(rgba(0, 0, 0, 0.4) 0 0 3px)
 	border: 1px solid #E9FFE4
@@ -69,6 +69,12 @@ label
 
 	&:hover
 		border-color: $blue-highlight
+
+	&.error
+		margin: inherit
+		background-color: #eb4f3d
+		+background-image(linear-gradient( #eb4f3d, #df3045 ))
+		border-color: #7c1121
 
 a.btn
 	text-decoration: none

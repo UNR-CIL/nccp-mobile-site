@@ -132,11 +132,12 @@ input[type="button"] { text-shadow: rgba(0, 0, 0, 0.5) 1px 0 2px; }
 
 label { font-size: 1em; font-weight: 300; position: relative; display: block; margin: 1.2em 0 1.2em 2.5em; }
 
-.checkbox { background-color: #35861f; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #35861f), color-stop(100%, #256912)); background-image: -webkit-linear-gradient(#35861f, #256912); background-image: -moz-linear-gradient(#35861f, #256912); background-image: -o-linear-gradient(#35861f, #256912); background-image: linear-gradient(#35861f, #256912); height: 1.5em; width: 1.5em; padding: 0; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px; border-radius: 4px; position: absolute; left: -2em; top: -0.2em; cursor: pointer; -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0 0 3px; -moz-box-shadow: rgba(0, 0, 0, 0.4) 0 0 3px; box-shadow: rgba(0, 0, 0, 0.4) 0 0 3px; border: 1px solid #e9ffe4; }
+.checkbox { background-color: #35861f; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #35861f), color-stop(100%, #256912)); background-image: -webkit-linear-gradient(#35861f, #256912); background-image: -moz-linear-gradient(#35861f, #256912); background-image: -o-linear-gradient(#35861f, #256912); background-image: linear-gradient(#35861f, #256912); height: 1.5em; width: 1.5em; padding: 0; -webkit-border-radius: 4px; -moz-border-radius: 4px; -ms-border-radius: 4px; -o-border-radius: 4px; border-radius: 4px; position: absolute; left: -2em; top: -0.4em; cursor: pointer; -webkit-box-shadow: rgba(0, 0, 0, 0.4) 0 0 3px; -moz-box-shadow: rgba(0, 0, 0, 0.4) 0 0 3px; box-shadow: rgba(0, 0, 0, 0.4) 0 0 3px; border: 1px solid #e9ffe4; }
 .checkbox.checked { background-image: url(../img/sprites/checkbox-active.png); background-size: cover; }
 
 .btn, .input-group-addon, .sendbutton { background-color: #3ba2f7; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #3ba2f7), color-stop(100%, #1b81d6)); background-image: -webkit-linear-gradient(#3ba2f7, #1b81d6); background-image: -moz-linear-gradient(#3ba2f7, #1b81d6); background-image: -o-linear-gradient(#3ba2f7, #1b81d6); background-image: linear-gradient(#3ba2f7, #1b81d6); border: 1px solid #1362a4; border-bottom: 4px solid #0c5088; -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0 0 3px; -moz-box-shadow: rgba(0, 0, 0, 0.5) 0 0 3px; box-shadow: rgba(0, 0, 0, 0.5) 0 0 3px; font-size: 1em; padding: 0.7em; margin-bottom: 1em; color: white; -webkit-transition-duration: 0.3s; -moz-transition-duration: 0.3s; -o-transition-duration: 0.3s; transition-duration: 0.3s; }
 .btn:hover, .input-group-addon:hover, .sendbutton:hover { border-color: #74b9ef; }
+.btn.error, .input-group-addon.error, .sendbutton.error { margin: inherit; background-color: #eb4f3d; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #eb4f3d), color-stop(100%, #df3045)); background-image: -webkit-linear-gradient(#eb4f3d, #df3045); background-image: -moz-linear-gradient(#eb4f3d, #df3045); background-image: -o-linear-gradient(#eb4f3d, #df3045); background-image: linear-gradient(#eb4f3d, #df3045); border-color: #7c1121; }
 
 a.btn { text-decoration: none; }
 
@@ -201,15 +202,7 @@ header .navbar .nav .sub-menu li a { color: #7c7c7c; line-height: 1.6em; font-si
 /* Data tables */
 /* Graphs */
 .graph { margin: 0.5em 0; }
-.graph.combined { display: none; }
-
-.boundary { stroke-width: 2; }
-
-text { font-size: 0.4em; }
-
-.xLines, .yLines { stroke-width: 0.5; z-index: 1; stroke: #7c7c7c; }
-
-.line { stroke-width: 3; }
+.graph text { font-family: Oswald, sans-serif; font-weight: 300; font-size: 0.5em; }
 
 /* Footer */
 footer { z-index: 3; padding: 0 2%; background: white; border-left: 2px solid #434c52; border-right: 2px solid #434c52; -webkit-box-shadow: rgba(0, 0, 0, 0.8) 0 1em 1em; -moz-box-shadow: rgba(0, 0, 0, 0.8) 0 1em 1em; box-shadow: rgba(0, 0, 0, 0.8) 0 1em 1em; }

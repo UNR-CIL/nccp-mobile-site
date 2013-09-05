@@ -1,8 +1,8 @@
 var App = Backbone.View.extend({
 
 	attributes: {
-		DATA_SERVER	: "http://nccp-api.dev:6227",
-		//DATA_SERVER 	: 'http://ec2-54-241-223-209.us-west-1.compute.amazonaws.com:6227'
+		//DATA_SERVER	: "http://nccp-api.dev:6227",
+		DATA_SERVER 	: 'http://ec2-54-241-223-209.us-west-1.compute.amazonaws.com:6227'
 	},
 
 	// Initial view setup - load functions, jQuery UI setup, etc.
@@ -609,7 +609,7 @@ var App = Backbone.View.extend({
 						$.each( types, function () {
 							// Append a graph element for the graph
 							d3.select('.data-graphs').append('svg')
-								.attr( 'class', this )
+								.attr( 'class', this + ' graph' )
 								.style({ 'height': 500 });
 
 							// Build the resulting graphs - note that the Y label is taken from the first returned sensor

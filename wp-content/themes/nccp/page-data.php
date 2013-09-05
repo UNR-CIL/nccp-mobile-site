@@ -172,7 +172,7 @@ get_header(); ?>
 						Start from the beginning:
 					</p>
 
-					<input type="button" class="data-button btn btn-large btn-block" id="data-sensor-search-reset" value="Start Over" />
+					<input type="button" class="data-button btn btn-large btn-block error" id="data-sensor-search-reset" value="Start Over" />
 				</div>
 
 				<!-- Data output -->

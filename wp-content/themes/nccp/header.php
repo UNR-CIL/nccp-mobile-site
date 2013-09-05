@@ -15,7 +15,7 @@
 <meta charset="<?php bloginfo( 'charset' ); ?>" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>NCCP Mobile</title>
+<title><?php if ( $post->post_title ) { echo $post->post_title . ' - '; bloginfo( 'name' ); }?></title>
 
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>" />
 

@@ -2,8 +2,16 @@
 
 .graph
 	margin: 0.5em 0
+	height: 500px
+
+	+breakpoint($breakpoint-max-768)
+		height: 300px
 
 	text
 		font-family: Oswald, sans-serif
 		font-weight: 300
 		font-size: 0.5em
+
+	.nv-controlsWrap
+		+breakpoint($breakpoint-max-768)
+			+transform(translate(-110%, -380%))		

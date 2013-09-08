@@ -1,11 +1,36 @@
+# Core
+wp-includes
+wp-admin
+wp-content/uploads
+wp-content/index.php
+wp-content/themes/index.php
+wp-config.php
+favicon.gif
+favicon.ico
+index.php
+license.txt
+readme.html
+wp-activate.php
+wp-app.php
+wp-blog-header.php
+wp-comments-post.php
+wp-cron.php
+wp-links-opml.php
+wp-load.php
+wp-login.php
+wp-mail.php
+wp-settings.php
+wp-signup.php
+wp-trackback.php
+xmlrpc.php
+
+# Other folder/file excludes
 design
 *.psd
-wp-content/themes/nccp/assets/css/.sass-cache
 bak
 generated
 notes.txt
-wp-config.php
-data/application/config/config.php
-node/node_modules/config.js
-wp-content/uploads/csv
 .DS_Store
+
+# Theme excludes
+wp-content/themes/nccp/assets/css/.sass-cache

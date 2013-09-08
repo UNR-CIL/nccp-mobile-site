@@ -64,9 +64,9 @@
 			function Click ( newObj, input ) {
 				$(newObj).toggleClass( options.activeElementClass );
 				if ( $(newObj).hasClass( options.activeElementClass ) ) {
-					$(input).attr( 'checked', true );
+					$(input).prop( 'checked', true );
 				} else {
-					$(input).attr( 'checked', false );
+					$(input).prop( 'checked', false );
 				}
 			}
  

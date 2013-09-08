@@ -32,7 +32,7 @@
 		<header>
 
 			<div id="ribbon" class="pull-right fluid">
-				<a href="../status">
+				<a href="../status" alt="Site Status" title="Site Status">
 					<img class="status-ribbon" border="0" src="<?php echo get_template_directory_uri(); ?>/assets/img/icons/status.png" border="0" />
 				</a>
 			</div>
@@ -42,6 +42,7 @@
 			</div>
 
 			<div class="navbar">
+				<div class="navbar-bg"></div>
 				<div class="container fluid">
 				    <a class="brand" href="#">menu</a>
 

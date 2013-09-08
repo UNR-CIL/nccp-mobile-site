@@ -17,7 +17,12 @@ var App = Backbone.View.extend({
 		_.each( this.__proto__, function( fn ) { fn.app = app; } );
 
 		// Generic Setup //////////////////////////////////////////
+		
+		// Collapsible headers
 		this.Thwomp();
+
+		// Navigation
+		this.Navigation();
 
 		// Page setup /////////////////////////////////////////////
 
@@ -54,6 +59,16 @@ var App = Backbone.View.extend({
 			parent.next().stop().slideToggle( function () {
 				parent.toggleClass( 'up' );
 			});
+		});
+	},
+
+	Navigation: function () {
+		$('.navbar .nav > li > a').click( function ( event ) {
+			event.preventDefault();
+			console.log( 'click' );
+
+			$(this).parent().siblings().find('.sub-menu').hide();
+			$(this).parent().animate({ height: '7em' }, 250 ).find('.sub-menu').fadeIn( 250 );
 		});
 	},
 
@@ -354,31 +369,34 @@ var App = Backbone.View.extend({
 		$('#data-view-graph').click( function () {
 			// Display available graph types
 			$('.data-graph-types').fadeIn( 250, function () {
-				// Bind graphing event handling
-				$('#data-get-graphs').click( function ( event ) {
-					event.preventDefault();
+				// Bind graphing event handling (if the form wasn't reset)
+				if ( ! nccp.form_reset ) {
+					$('#data-get-graphs').click( function ( event ) {
+						event.preventDefault();
 
-					// Get the chart types to produce + sensors to chart
-					var types = _.map( $('.data-graph-types input:checked'), function ( el ) { return $(el).val(); } ),
-						args = app.__.GetSensorInfo();
+						// Get the chart types to produce + sensors to chart
+						var types = _.map( $('.data-graph-types input:checked'), function ( el ) { return $(el).val(); } ),
+							args = app.__.GetSensorInfo();
 
-					// Throw appropriate errors if both are empty
-					if ( ! args.sensor_ids.length ) {
-						app.__.ThrowError( $('.data-view-options'), 'Please select at least one sensor.' );
-						return false;
-					}
-					if ( ! args.start || ! args.end ) {
-						app.__.ThrowError( $('.data-view-options'), 'Please select a valid start and end period.' );
-						return false;
-					}
-					if ( ! types.length ) {
-						app.__.ThrowError( $('.data-view-options'), 'Please select at least one graph type.' );
-						return false;
-					}
+						// Throw appropriate errors if both are empty
+						if ( ! args.sensor_ids.length ) {
+							app.__.ThrowError( $('.data-view-options'), 'Please select at least one sensor.' );
+							return false;
+						}
+						if ( ! args.start || ! args.end ) {
+							app.__.ThrowError( $('.data-view-options'), 'Please select a valid start and end period.' );
+							return false;
+						}
+						if ( ! types.length ) {
+							app.__.ThrowError( $('.data-view-options'), 'Please select at least one graph type.' );
+							return false;
+						}
 
-					// If everything is cool, send the graph request
-					app.Graphs.BuildGraphs( args, types );
-				});
+						// If everything is cool, clear out old graphs and send the graph request
+						$('.data-graphs svg').remove();
+						app.Graphs.BuildGraphs( args, types );
+					});
+				}
 			});
 		});
 	},
@@ -563,7 +581,7 @@ var App = Backbone.View.extend({
 			var app = this;
 
 			// Throw up loading animation before starting
-			app.__.ShowLoading( $('.main-content') );
+			app.__.ShowLoading( $('.data-graph-types') );
 
 			// Fetch meta info about the sensor
 			app.__.GetSensorMeta( args.sensor_ids, function ( meta, msg ) {				
@@ -576,7 +594,7 @@ var App = Backbone.View.extend({
 						});
 
 						// Clear out the loading message
-						app.__.RemoveLoading( $('.main-content') );
+						app.__.RemoveLoading( $('.data-graph-types') );
 
 						// Format the data for inserting into combined graph
 						var formatted = [],
@@ -609,8 +627,7 @@ var App = Backbone.View.extend({
 						$.each( types, function () {
 							// Append a graph element for the graph
 							d3.select('.data-graphs').append('svg')
-								.attr( 'class', this + ' graph' )
-								.style({ 'height': 500 });
+								.attr( 'class', this + ' graph' );
 
 							// Build the resulting graphs - note that the Y label is taken from the first returned sensor
 							switch ( this.toString() ) {
@@ -651,8 +668,10 @@ var App = Backbone.View.extend({
 					.transition().duration( 500 )
 					.call( chart );
 			 
-				nv.utils.windowResize( function () { d3.select( container ).call( chart ) });
-			 
+				nv.utils.windowResize( function () { 
+					d3.select( container ).call( chart );
+				});
+			 	
 				return chart;
 			});
 		},
@@ -747,10 +766,41 @@ var App = Backbone.View.extend({
 					.transition().duration( 500 )
 					.call( chart );
  
-				nv.utils.windowResize( chart.update );
+				nv.utils.windowResize( function () {
+					chart.update();
+				});
  
 				return chart;
 			});
+		},
+
+		// Adjust various graph elements depending on standard bootstrap breakpoints
+		// Should be called on resize or graph load
+		ResponsiveGraph: function ( container, chart ) {
+			if ( $(container).length ) {
+				var container = $(container),
+					windowWidth = window.outerWidth,
+					windowHeight = window.outerHeight;
+
+				// Smaller tablet and below
+				if ( windowWidth <= 768 ) {
+					/*if ( container.find('.nv-controlsWrap').length ) {
+						var offset = ( -0.4 * container.width() ).toString();
+						container.find('.nv-controlsWrap').attr('transform', 'translate(' + offset + ',-30)' );
+					}
+
+					chart.margin({ top: 25, right: 25, bottom: 25, left: 75 });*/
+				}
+
+				// Larger tablets and above
+				if ( windowWidth > 768 ) {
+					/*if ( container.find('.nv-controlsWrap').length ) {
+						container.find('.nv-controlsWrap').attr('transform', 'translate(0,-30)' );
+					}
+
+					chart.margin({ top: 50, right: 50, bottom: 50, left: 75 });*/
+				}
+			}
 		},
 
 		FormatGraphDate: function ( timestamp ) {

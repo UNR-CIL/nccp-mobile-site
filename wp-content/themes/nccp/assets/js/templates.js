@@ -6,7 +6,7 @@ nccp = {}; // Global namespace for sharing
 nccp.templates = {
 
 	data_table: ' \
-	<div class="sensor"> \
+	<div id="sensor-<%= sensor_id %>" class="sensor"> \
 		<div class="sensor-info collapse-trigger"> \
 			<div class="id">Sensor <%= sensor_id %>: <%= sensor_name %></div> \
 		</div> \
@@ -17,16 +17,23 @@ nccp.templates = {
 					<th>Value</th> \
 				<tr> \
 			</thead> \
-			<tbody> \
-				<% _.each( sensor, function ( row ) { %> \
+			<tbody></tbody> \
+			<tfoot> \
 				<tr> \
-					<td class="timestamp"><%= row.timestamp %></td> \
-					<td class="value"><%= row.value %></td> \
+					<td colspan="2"> \
+						<input type="button" class="data-button btn btn-large btn-block load-more" value="Load More" /> \
+					</td> \
 				</tr> \
-				<% }); %> \
-			</tbody> \
+			</tfoot> \
 		</table> \
 	</div> \
+	',
+
+	data_table_row: ' \
+				<tr <% if ( ! visible ) { %>style="display: none;"<% } %>> \
+					<td class="timestamp"><%= timestamp %></td> \
+					<td class="value"><%= value %></td> \
+				</tr> \
 	',
 
 	loading: ' \
@@ -37,4 +44,5 @@ nccp.templates = {
 			<div id="followingBallsG_4" class="followingBallsG"></div> \
 		</div> \
 	'
+
 };

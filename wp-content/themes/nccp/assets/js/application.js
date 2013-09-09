@@ -1,8 +1,9 @@
 var App = Backbone.View.extend({
 
 	attributes: {
-		//DATA_SERVER	: "http://nccp-api.dev:6227",
-		DATA_SERVER 	: 'http://ec2-54-241-223-209.us-west-1.compute.amazonaws.com:6227'
+		//DATA_SERVER		: 'http://nccp-api.dev:6227',
+		DATA_SERVER 		: 'http://ec2-54-241-223-209.us-west-1.compute.amazonaws.com:6227',
+		DATA_ROWS_PER_PAGE	: 50
 	},
 
 	// Initial view setup - load functions, jQuery UI setup, etc.
@@ -302,7 +303,8 @@ var App = Backbone.View.extend({
 
 				app.__.GetSensorData( args, false, function ( sensor_data, msg ) {
 					if ( sensor_data ) {
-						var table_template = _.template( nccp.templates.data_table );
+						var table_template = _.template( nccp.templates.data_table ),
+							row_template = _.template( nccp.templates.data_table_row );
 
 						// Clear any errors
 						$('.data-view-options').find( '.error' ).fadeOut( 250, function () {
@@ -322,11 +324,32 @@ var App = Backbone.View.extend({
 								sensor_id 		= sensor_info.logical_sensor_id,
 								sensor_name 	= sensor_info.name;
 
+							// Append the table
 							$('.data-output .data-tables').append( table_template({
-								sensor: this,
 								sensor_id: sensor_id,
-								sensor_name: sensor_name
+								sensor_name: sensor_name,
+								load_more: this.length > app.attributes.DATA_ROWS_PER_PAGE ? true : false
 							}));
+
+							// Then append a few visible rows to start and the rest as hidden
+							$.each( this, function ( index ) {
+								$('#sensor-' + sensor_id + ' table tbody').append( row_template({
+									timestamp: this.timestamp,
+									value: this.value,
+									visible: index < app.attributes.DATA_ROWS_PER_PAGE - 1 ? true : false
+								}));
+							});
+
+							// Link up Load More buttons
+							$('.sensor .load-more').click( function () {
+								var next = $(this).parents('tfoot').prev().find('tr:not(:visible):lt(50)');
+								
+								if ( next.length ) next.fadeIn();
+
+								if ( ! next.last().next().length ) {
+									$(this).parent().html( 'End of records.' );
+								}
+							});
 						});
 
 						// Hide all the search stuff

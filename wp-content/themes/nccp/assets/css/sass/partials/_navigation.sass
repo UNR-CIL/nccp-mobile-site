@@ -6,11 +6,11 @@ header
 		margin: 0 auto
 		padding-bottom: 1.5em
 		+border-radius(0)
-		border: 2px solid $gray-blue
 		border-bottom: none
 		+box-shadow(rgba(0, 0, 0, 0.8) 0 -0.2em 1em)
 		z-index: 3
 		background-color: transparent
+		width: 99.5%
 
 		+breakpoint($breakpoint-max-768)
 			padding-bottom: 6em
@@ -61,7 +61,7 @@ header
 		.nav-collapse
 			+breakpoint($breakpoint-max-768)
 				background: $green-darker
-				+background-image(linear-gradient($green-darker, #1b4d0e))
+				+background-image(linear-gradient(#1b4d0e, $green-darker))
 				border: 1px solid $green-dark
 				border-top: none
 
@@ -88,7 +88,7 @@ header
 
 					+breakpoint($breakpoint-max-768)
 						color: white
-						padding: 1em
+						padding: 0.6em
 						background: rgb(37, 94, 22)
 						border-top: 1px solid rgb(94, 170, 74)
 						border-bottom: 2px solid rgb(15, 41, 8)
@@ -128,10 +128,14 @@ header
 					font-weight: 300
 					margin-bottom: 0.6em
 					display: inline-block
-					margin-right: 3.6em
+					margin-right: 2.5em
+
+					+breakpoint($breakpoint-max-992)
+						font-size: 0.9em
+						margin-right: 1.5em
 
 					&:first-child
-						margin-left: 2.2em
+						margin-left: 1.4em
 
 					a
 						color: white
@@ -144,7 +148,7 @@ header
 					position: relative
 					display: block !important
 					font-size: 1.1em
-					margin-top: 1.5em
+					margin-top: 1em
 
 					li 
 						margin: 1.5%

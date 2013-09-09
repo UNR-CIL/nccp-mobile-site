@@ -13,7 +13,8 @@ header
 		width: 99.5%
 
 		+breakpoint($breakpoint-max-768)
-			padding-bottom: 6em
+			padding-bottom: 5.5em
+			margin-bottom: -5.5em
 
 		.navbar-bg
 			position: absolute
@@ -78,6 +79,7 @@ header
 					text-decoration: none
 					display: inline-block
 					+text-shadow(rgba(0, 0, 0, 0.8) 0 2px 0)
+					font-weight: 300
 
 					&:hover
 						text-decoration: underline
@@ -140,9 +142,10 @@ header
 					a
 						color: white
 						line-height: 1.6em
-						font-size: 1em
+						font-size: 0.8em
 						z-index: 2
-						font-style: italic
+						text-decoration: none
+						font-weight: 400
 
 				+breakpoint($breakpoint-max-768)
 					position: relative

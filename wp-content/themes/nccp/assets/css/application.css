@@ -177,6 +177,7 @@ a.btn { text-decoration: none; }
 
 /* Page components */
 .main-content { background: white; padding: 4%; border: 2px solid #434c52; border-bottom: 0; -webkit-box-shadow: rgba(0, 0, 0, 0.8) 0 0 1em; -moz-box-shadow: rgba(0, 0, 0, 0.8) 0 0 1em; box-shadow: rgba(0, 0, 0, 0.8) 0 0 1em; }
+@media (max-width: 768px) { .main-content { padding-top: 5em; } }
 .main-content li { font-weight: 400; line-height: 1.9em; padding-left: 1%; }
 .main-content li:before { content: "\00BB"; color: #93ca84; margin-right: 0.3em; font-size: 1.5em; margin-left: -0.7em; }
 
@@ -190,7 +191,7 @@ header #logo { width: 98%; margin: 0 auto; z-index: 2; }
 
 /* Main Navigation */
 header .navbar { padding: 0; margin: 0 auto; padding-bottom: 1.5em; -webkit-border-radius: 0; -moz-border-radius: 0; -ms-border-radius: 0; -o-border-radius: 0; border-radius: 0; border-bottom: none; -webkit-box-shadow: rgba(0, 0, 0, 0.8) 0 -0.2em 1em; -moz-box-shadow: rgba(0, 0, 0, 0.8) 0 -0.2em 1em; box-shadow: rgba(0, 0, 0, 0.8) 0 -0.2em 1em; z-index: 3; background-color: transparent; width: 99.5%; }
-@media (max-width: 768px) { header .navbar { padding-bottom: 6em; } }
+@media (max-width: 768px) { header .navbar { padding-bottom: 5.5em; margin-bottom: -5.5em; } }
 header .navbar .navbar-bg { position: absolute; top: 0; width: 100%; height: 100%; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #000000), color-stop(100%, rgba(0, 0, 0, 0.3))); background-image: -webkit-linear-gradient(#000000, rgba(0, 0, 0, 0.3)); background-image: -moz-linear-gradient(#000000, rgba(0, 0, 0, 0.3)); background-image: -o-linear-gradient(#000000, rgba(0, 0, 0, 0.3)); background-image: linear-gradient(#000000, rgba(0, 0, 0, 0.3)); opacity: 0.5; }
 header .navbar .brand { position: absolute; top: 10%; right: 18%; font-size: 1.4em; color: white; text-decoration: none; font-weight: 300; }
 header .navbar .brand:after { content: "\00BB"; font-size: 1.4em; margin-left: 0.1em; top: 0.1em; position: relative; font-weight: 300; }
@@ -200,7 +201,7 @@ header .navbar .btn-navbar { padding: 0; width: 14%; right: 1%; -moz-border-radi
 @media (min-width: 768px) { header .navbar .btn-navbar { display: none !important; } }
 @media (max-width: 768px) { header .navbar .nav-collapse { background: #103407; background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #1b4d0e), color-stop(100%, #103407)); background-image: -webkit-linear-gradient(#1b4d0e, #103407); background-image: -moz-linear-gradient(#1b4d0e, #103407); background-image: -o-linear-gradient(#1b4d0e, #103407); background-image: linear-gradient(#1b4d0e, #103407); border: 1px solid #2d7818; border-top: none; } }
 header .navbar .nav li a:hover { text-decoration: underline; }
-header .navbar .nav > li > a { color: white; font-size: 1.5em; padding-top: 1.2em; z-index: 3; text-decoration: none; display: inline-block; text-shadow: rgba(0, 0, 0, 0.8) 0 2px 0; }
+header .navbar .nav > li > a { color: white; font-size: 1.5em; padding-top: 1.2em; z-index: 3; text-decoration: none; display: inline-block; text-shadow: rgba(0, 0, 0, 0.8) 0 2px 0; font-weight: 300; }
 header .navbar .nav > li > a:hover { text-decoration: underline; background-color: transparent; }
 @media (max-width: 768px) { header .navbar .nav > li > a:hover { background: #398026; } }
 @media (max-width: 768px) { header .navbar .nav > li > a { color: white; padding: 0.6em; background: #255e16; border-top: 1px solid #5eaa4a; border-bottom: 2px solid #0f2908; display: block; }
@@ -212,7 +213,7 @@ header .navbar .nav .sub-menu { list-style: none; margin-left: 0.8em; padding-le
 header .navbar .nav .sub-menu li { font-weight: 300; margin-bottom: 0.6em; display: inline-block; margin-right: 2.5em; }
 @media (max-width: 992px) { header .navbar .nav .sub-menu li { font-size: 0.9em; margin-right: 1.5em; } }
 header .navbar .nav .sub-menu li:first-child { margin-left: 1.4em; }
-header .navbar .nav .sub-menu li a { color: white; line-height: 1.6em; font-size: 1em; z-index: 2; font-style: italic; }
+header .navbar .nav .sub-menu li a { color: white; line-height: 1.6em; font-size: 0.8em; z-index: 2; text-decoration: none; font-weight: 400; }
 @media (max-width: 768px) { header .navbar .nav .sub-menu { position: relative; display: block !important; font-size: 1.1em; margin-top: 1em; }
   header .navbar .nav .sub-menu li { margin: 1.5%; display: block; }
   header .navbar .nav .sub-menu li:first-child { margin-left: 1.5%; }

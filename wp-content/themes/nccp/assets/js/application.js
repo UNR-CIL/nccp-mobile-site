@@ -792,38 +792,14 @@ var App = Backbone.View.extend({
 				nv.utils.windowResize( function () {
 					chart.update();
 				});
+
+				// Bump the window now that graph exists to trigger graph CSS
+				$(window).trigger( 'resize' );
  
 				return chart;
 			});
-		},
 
-		// Adjust various graph elements depending on standard bootstrap breakpoints
-		// Should be called on resize or graph load
-		ResponsiveGraph: function ( container, chart ) {
-			if ( $(container).length ) {
-				var container = $(container),
-					windowWidth = window.outerWidth,
-					windowHeight = window.outerHeight;
-
-				// Smaller tablet and below
-				if ( windowWidth <= 768 ) {
-					/*if ( container.find('.nv-controlsWrap').length ) {
-						var offset = ( -0.4 * container.width() ).toString();
-						container.find('.nv-controlsWrap').attr('transform', 'translate(' + offset + ',-30)' );
-					}
-
-					chart.margin({ top: 25, right: 25, bottom: 25, left: 75 });*/
-				}
-
-				// Larger tablets and above
-				if ( windowWidth > 768 ) {
-					/*if ( container.find('.nv-controlsWrap').length ) {
-						container.find('.nv-controlsWrap').attr('transform', 'translate(0,-30)' );
-					}
-
-					chart.margin({ top: 50, right: 50, bottom: 50, left: 75 });*/
-				}
-			}
+				
 		},
 
 		FormatGraphDate: function ( timestamp ) {

@@ -4,11 +4,14 @@
 	background: white
 	padding: 4%
 	border: 2px solid $gray-blue
-	border-bottom: 0 
+	border-bottom: 0
 	+box-shadow(rgba(0, 0, 0, 0.8) 0 0 1em)
 
 	+breakpoint($breakpoint-max-768)
 		padding-top: 5em
+
+	+breakpoint($breakpoint-max-480)
+		padding-top: 3em
 
 	li
 		font-weight: 400
